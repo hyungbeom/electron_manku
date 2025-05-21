@@ -182,6 +182,41 @@ export default function SearchInfoModal({
         setOpen(false);
     };
 
+    /**
+     * @description row를 선택할때 documentNumberFull 을 기준으로 같은 문서번호 row들은 동시 체크되게 하는 로직
+     * @param event
+     */
+    const handleRowSelected = (event) => {
+        if (type === 'write') {
+            return false; // 'write' 타입일 경우 아무 작업도 하지 않음
+        }
+
+        const selectedNode = event.node; // 현재 선택된 노드
+        const selectedData = selectedNode.data; // 선택된 데이터
+
+        // documentNumberFull 필드가 없으면 패스
+        if (!selectedData?.documentNumberFull) {
+            return false;
+        }
+
+        let groupValueKey = 'documentNumberFull';
+
+        const groupValue = selectedData?.[groupValueKey];
+        const rowIndex = selectedNode.rowIndex;
+        const previousData = event.api.getDisplayedRowAtIndex(rowIndex - 1)?.data?.[groupValueKey];
+
+        // 이전 데이터와 그룹 값이 다를 때만 처리
+        if (!previousData || previousData !== groupValue) {
+            const isSelected = selectedNode.isSelected();
+
+            // 동일한 groupValue를 가진 행들만 선택 상태 변경
+            event.api.forEachNode((node) => {
+                if (node.data?.[groupValueKey] === groupValue) {
+                    node.setSelected(isSelected);
+                }
+            });
+        }
+    };
 
     /**
      * @description 조회 Modal > 테이블 클릭
@@ -266,6 +301,7 @@ export default function SearchInfoModal({
 
                 <AgGridReact containerStyle={{height: '93%', width: '100%'}} theme={tableTheme} ref={testRef}
                              rowSelection="multiple"
+                             onRowSelected={handleRowSelected}
                              onCellClicked={async (e) => {
                                  switch (openCheck) {
                                      case 'customerName' :

@@ -478,8 +478,12 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
      */
     function resetFileSorting () {
         const sortedList = sortFileList(fileList);
-        setFileList(filterLatestFileList(sortedList));
-        console.log(filterLatestFileList(sortedList), '파일 재정렬!!!')
+
+        const includeType = ['remittance'];
+        const isAll = includeType.includes(type)
+
+        setFileList(filterLatestFileList(sortedList, isAll));
+        console.log(filterLatestFileList(sortedList, isAll), '파일 재정렬!!!')
     }
 
     /**
@@ -534,13 +538,16 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
     /**
      * @description 파일 업로드 컴포넌트 > 03 이후는 최신것만 보이기
      * @param list
+     * @param isAll
      */
-    function filterLatestFileList(list) {
+    function filterLatestFileList(list, isAll = false) {
+        if (isAll) return list;
+
         const seen = new Set();
         const filteredList = list.filter(item => {
             const {main, sub} = extractNumbers(item.name);
 
-            if (main <= 2) return true; // 00, 01, 02는 다 포함
+            if (main <= 2) return true;
 
             // 이미 본 main이면 skip
             if (seen.has(main)) return false;

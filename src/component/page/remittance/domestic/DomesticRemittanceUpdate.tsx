@@ -456,7 +456,7 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef, getCopy
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'금액 정보'}>
                                     <div style={{fontSize: 12, paddingBottom: 10}}>
-                                        <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>총액</div>
+                                        <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>총액 (공급가액 + 부가세)</div>
                                         <div style={{display: 'flex'}}>
                                             <input placeholder={''}
                                                    id={'totalAmount'}

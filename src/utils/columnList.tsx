@@ -186,21 +186,21 @@ export const amountFormat = (params) => {
         return "";
     }
 
-    const num = Number(params);
-    if (isNaN(num)) {
-        return "";
-    }
-
-    // 소수점은 최대 2자리까지만 유지 (원하는 자릿수로 조절 가능)
-    const fixedNum = num.toFixed(2); // "1371.60"
-
-    const [integerPart, decimalPart] = fixedNum.split(".");
-
-    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    return decimalPart !== "00"
-        ? `${formattedInteger}.${decimalPart}`
-        : formattedInteger; // 소수점이 0.00이면 아예 표시 안 함
+    // const num = Number(params);
+    // if (isNaN(num)) {
+    //     return "";
+    // }
+    //
+    // // 소수점은 최대 2자리까지만 유지 (원하는 자릿수로 조절 가능)
+    // const fixedNum = num.toFixed(2); // "1371.60"
+    //
+    // const [integerPart, decimalPart] = fixedNum.split(".");
+    //
+    // const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    //
+    // return decimalPart !== "00"
+    //     ? `${formattedInteger}.${decimalPart}`
+    //     : formattedInteger; // 소수점이 0.00이면 아예 표시 안 함
 };
 export const amountFormatParser = (params) => {
     // 쉼표 제거 후 숫자로 변환하여 저장
@@ -215,6 +215,28 @@ export const columnPlaceHolder = (params, placeHolder, suffix) => {
         <span style={{color: 'lightGray'}} className="ag-cell-placeholder">{placeHolder}</span>
     );
 
+}
+
+export const formatAmount = (amount, currency = 'KRW') => {
+    if (amount === null || amount === undefined) return '';
+
+    const cleaned =
+        typeof amount === 'string'
+            ? amount.replace(/,/g, '').trim()
+            : amount;
+
+    const num = parseFloat(String(cleaned));
+    if (isNaN(num) || num === 0) return '';
+
+    const isKRW = currency === 'KRW';
+    const isInteger = Number.isInteger(num);
+
+    return num.toLocaleString(undefined, {
+        minimumFractionDigits: isKRW
+            ? (isInteger ? 0 : 1) // 소수 있으면 최소 1자리
+            : 2,
+        maximumFractionDigits: isKRW ? 2 : 2,
+    });
 }
 
 
@@ -638,7 +660,7 @@ export const tableOrderWriteColumn = [
     },
     {
         headerName: '매출 총액',
-        field: 'totalPrice',
+        field: 'totalNet',
         editable: true,
         valueFormatter: (params) => {
             if (params.node.rowPinned) {
@@ -1121,7 +1143,15 @@ export const rfqReadColumns = [
         field: 'unitPrice',
         minWidth: 60,
         maxWidth: 120,
-        valueFormatter: params => !isNaN(params?.value) ? params?.value?.toLocaleString() : 0,
+        valueFormatter: (params) => {
+            const { unitPrice, currencyUnit = 'KRW' } = params.data ?? {};
+            const value = params.node.rowPinned
+                ? params.value
+                : unitPrice
+                    ? unitPrice
+                    : null;
+            return formatAmount(value, currencyUnit);
+        },
         cellStyle: {textAlign: 'right'}
     },
     {
@@ -1386,8 +1416,8 @@ export const ExpectedOrderReadColumns = [
     },
     {
         headerName: '매출 총액',
-        field: 'totalPrice',
-        key: 'totalPrice',
+        field: 'totalNet',
+        key: 'totalNet',
         align: 'center',
         minWidth: 60,
         valueFormatter: (params) => {
@@ -1575,8 +1605,8 @@ export const tableOrderReadColumns = [
     },
     {
         headerName: '매출 총액',
-        field: 'totalPrice',
-        key: 'totalPrice',
+        field: 'totalNet',
+        key: 'totalNet',
         align: 'center',
         minWidth: 60,
         valueFormatter: (params) => {
@@ -1709,7 +1739,29 @@ export const tableSelectOrderReadColumns = [
         headerName: '매입 단가',
         field: 'unitPrice',
         align: 'center',
-        valueFormatter: numberFormat,
+        valueFormatter: (params) => {
+            const { unitPrice, currency } = params.data ?? {};
+
+            const isPinned = params.node.rowPinned;
+            let value = isPinned
+                ? params.value
+                : unitPrice
+                    ? unitPrice
+                    : null;
+
+            const inferredCurrency = isPinned
+                ? (() => {
+                    let hasKRW = false;
+                    params.api.forEachNode((node) => {
+                        const c = node.data?.currency;
+                        if (!c || c === 'KRW') hasKRW = true;
+                    });
+                    return hasKRW ? 'KRW' : 'USD';
+                })()
+                : (currency ?? 'KRW');
+
+            return formatAmount(value, inferredCurrency);
+        },
         cellStyle: {textAlign: 'right'}
     },
     {
@@ -1718,11 +1770,27 @@ export const tableSelectOrderReadColumns = [
         key: 'totalPrice',
         align: 'center',
         valueFormatter: (params) => {
-            if (params.node.rowPinned) {
-                return params.value !== undefined ? params.value.toLocaleString() : '0';
-            }
-            const {quantity, unitPrice} = params.data;
-            return (!quantity || !unitPrice) ? null : Math.floor(quantity * unitPrice).toLocaleString();
+            const { quantity, unitPrice, currency } = params.data ?? {};
+
+            const isPinned = params.node.rowPinned;
+            let value = isPinned
+                ? params.value
+                : quantity && unitPrice
+                    ? quantity * unitPrice
+                    : null;
+
+            const inferredCurrency = isPinned
+                ? (() => {
+                    let hasKRW = false;
+                    params.api.forEachNode((node) => {
+                        const c = node.data?.currency;
+                        if (!c || c === 'KRW') hasKRW = true;
+                    });
+                    return hasKRW ? 'KRW' : 'USD';
+                })()
+                : (currency ?? 'KRW');
+
+            return formatAmount(value, inferredCurrency);
         },
         cellStyle: {textAlign: 'right'}
     },
@@ -1740,7 +1808,15 @@ export const tableSelectOrderReadColumns = [
         field: 'net',
         key: 'net',
         align: 'center',
-        valueFormatter: numberFormat,
+        valueFormatter: (params) => {
+            const { net } = params.data ?? {};
+            const value = params.node.rowPinned
+                ? params.value
+                : net
+                    ? net
+                    : null;
+            return formatAmount(value, 'KRW');
+        },
         cellStyle: {textAlign: 'right'}
     },
     {
@@ -1749,11 +1825,13 @@ export const tableSelectOrderReadColumns = [
         key: 'totalNet',
         align: 'center',
         valueFormatter: (params) => {
-            if (params.node.rowPinned) {
-                return params.value !== undefined ? params.value.toLocaleString() : '0';
-            }
-            const {quantity, net} = params.data;
-            return (!quantity || !net) ? null : Math.floor(quantity * net).toLocaleString();
+            const { quantity, net } = params.data ?? {};
+            const value = params.node.rowPinned
+                ? params.value
+                : quantity && net
+                    ? quantity * net
+                    : null;
+            return formatAmount(value);
         },
         cellStyle: {textAlign: 'right'}
     },
@@ -2493,18 +2571,51 @@ export const tableCodeOverseasRemittanceReadColumn = [
     {
         headerName: '공급가액',
         field: 'supplyAmount',
-        valueFormatter: params => parseFloat(params.data.supplyAmount)?.toLocaleString(),
+        valueFormatter: (params) => {
+            const { supplyAmount } = params.data ?? {};
+
+            const isPinned = params.node.rowPinned;
+            let value = isPinned
+                ? params.value
+                : supplyAmount
+                    ? supplyAmount
+                    : null;
+
+            return formatAmount(value, 'USD');
+        },
     },
     {
-        headerName: '부가세',
-        field: 'net',
-        valueFormatter: params => Math.round(parseFloat(params.data.supplyAmount) * 0.1 * 10 / 10)?.toLocaleString(),
-        cellEditor: 'agNumberCellEditor',
+        headerName: '수수료',
+        field: 'fee',
+        valueFormatter: (params) => {
+            const { fee } = params.data ?? {};
+
+            const isPinned = params.node.rowPinned;
+            let value = isPinned
+                ? params.value
+                : fee
+                    ? fee
+                    : null;
+
+            return formatAmount(value, 'USD');
+        },
     },
     {
         headerName: '합계',
         field: 'total',
-        valueFormatter: params => (parseFloat(params.data.supplyAmount) + Math.round(params.data.supplyAmount * 0.1 * 10 / 10))?.toLocaleString(),
+        valueFormatter: (params) => {
+            const { supplyAmount, fee } = params.data ?? {};
+
+            const isPinned = params.node.rowPinned;
+            let value = isPinned
+                ? params.value
+                : supplyAmount && fee
+                    ? Number(supplyAmount) + Number(fee)
+                    : null;
+
+            return formatAmount(value, 'USD');
+        },
+
     },
     {
         headerName: '담당자',
@@ -3313,52 +3424,131 @@ export const tableSourceUpdateColumns = [
             const docNum = String(params.data?.documentNumber || '').toUpperCase();
             return !docNum.startsWith('STO');
         },
-        cellStyle: {textAlign: "center"}, // 스타일 설정
         maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
-        filter: false
+        filter: false,
+        cellStyle: (params) => {
+            const docNum = String(params.data?.documentNumber || '').toUpperCase();
+            if (docNum.startsWith('STO')) {
+                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
+            } else {
+                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+            }
+        }
     },
     {
         pinned: 'left',
         headerName: '입고 일자',
         field: 'receiptDate',
         maxWidth: 100,
+        cellStyle: (params) => {
+            const docNum = String(params.data?.documentNumber || '').toUpperCase();
+            if (docNum.startsWith('STO')) {
+                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
+            } else {
+                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+            }
+        }
     },
     {
         pinned: 'left',
         headerName: '문서번호',
         field: 'documentNumber',
-        maxWidth: 120
+        maxWidth: 120,
+        cellStyle: (params) => {
+            const docNum = String(params.data?.documentNumber || '').toUpperCase();
+            if (docNum.startsWith('STO')) {
+                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
+            } else {
+                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+            }
+        }
     },
     {
         headerName: 'Maker',
         field: 'maker',
         pinned: 'left',
+        cellStyle: (params) => {
+            const docNum = String(params.data?.documentNumber || '').toUpperCase();
+            if (docNum.startsWith('STO')) {
+                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
+            } else {
+                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+            }
+        }
     },
     {
         headerName: 'Model',
         field: 'model',
         pinned: 'left',
+        cellStyle: (params) => {
+            const docNum = String(params.data?.documentNumber || '').toUpperCase();
+            if (docNum.startsWith('STO')) {
+                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
+            } else {
+                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+            }
+        }
     },
     {
         headerName: '입고',
         field: 'totalReceivedQuantity',
+        cellStyle: (params) => {
+            const docNum = String(params.data?.documentNumber || '').toUpperCase();
+            if (docNum.startsWith('STO')) {
+                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
+            } else {
+                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+            }
+        }
     },
     {
         headerName: '출고',
         field: 'outBound',
+        cellStyle: (params) => {
+            const docNum = String(params.data?.documentNumber || '').toUpperCase();
+            if (docNum.startsWith('STO')) {
+                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
+            } else {
+                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+            }
+        }
     },
     {
         headerName: '잔량',
         field: 'stock',
+        cellStyle: (params) => {
+            const docNum = String(params.data?.documentNumber || '').toUpperCase();
+            if (docNum.startsWith('STO')) {
+                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
+            } else {
+                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+            }
+        }
     },
     {
         headerName: '위치',
         field: 'location',
+        cellStyle: (params) => {
+            const docNum = String(params.data?.documentNumber || '').toUpperCase();
+            if (docNum.startsWith('STO')) {
+                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
+            } else {
+                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+            }
+        }
     },
     {
         headerName: '비고',
         field: 'remarks',
+        cellStyle: (params) => {
+            const docNum = String(params.data?.documentNumber || '').toUpperCase();
+            if (docNum.startsWith('STO')) {
+                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
+            } else {
+                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+            }
+        }
     }
 ]
 

@@ -251,15 +251,18 @@ const TableGrid = ({
      * (사용처: 견적의뢰, 견적서, 발주서 등)
      */
     const includeKeys = ['estimateRequestId', 'estimateId', 'orderId', 'orderStatusId'];
+    const excludedTypes = ['Remittance', 'Tax', 'SourceWrite', 'SourceUpdate'];
     const containsIncludeKey = (list) => {
         const firstRow = list?.[0];
         if (!firstRow) return false;
         return includeKeys.some(key => key in firstRow);
     };
     const handleSelectionChanged = () => {
+        if (excludedTypes.includes(customType)) return;
+
         const selectedRows = gridRef.current.getSelectedRows(); // 체크된 행 가져오기
 
-        if ((!selectedRows.length || !containsIncludeKey(selectedRows)) || customType) {
+        if (!selectedRows.length || !containsIncludeKey(selectedRows)) {
             setPinnedBottomRowData([]);
             return;
         }
@@ -486,6 +489,13 @@ const TableGrid = ({
                     onCellValueChanged={dataChange}
                     pinnedBottomRowData={pinnedBottomRowData}
                     onSelectionChanged={handleSelectionChanged} // 선택된 행 변경 이벤트
+                    onModelUpdated={(params) => { // 데이터 변경시
+                        if (customType === 'Remittance' || customType === 'Tax') {
+                            const allData = [];
+                            params.api.forEachNode(node => allData.push(node.data));
+                            if (allData?.length) setPinnedBottomRowData([commonFunc.sumCalc(allData)]);
+                        }
+                    }}
                     // getRowStyle={(params) => {
                     //     if (params.data?.replyStatus === 1 && reply) {
                     //         return { color: 'blue'}; // 글씨 색상 변경

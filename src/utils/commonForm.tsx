@@ -518,7 +518,15 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
     return <div style={{fontSize: 12, paddingBottom: 10}}>
         <div style={{paddingBottom: 6}}>{title}</div>
         <Radio.Group id={id} value={bowl[id]} disabled={disabled}
-                     style={{width: '100%', display: 'flex', flexWrap:'wrap', gap: '25px', alignItems: 'center'}}
+                     // style={{width: '100%', display: 'flex', flexWrap:'wrap', gap: '25px', alignItems: 'center'}}
+                     style={{
+                         width: '100%',
+                         display: 'flex',
+                         flexWrap: 'nowrap', // 줄바꿈 안되게
+                         justifyContent: 'center', // 가운데 정렬
+                         columnGap: '20px', // 적당한 간격
+                         alignItems: 'center',
+                     }}
                      onChange={e => {
                          e.target['id'] = id
                          onChange(e);

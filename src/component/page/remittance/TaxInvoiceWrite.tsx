@@ -24,7 +24,7 @@ import Spin from "antd/lib/spin";
 import {TIInfo} from "@/utils/column/ProjectInfo";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
-import {tableOrderReadColumns} from "@/utils/columnList";
+import {tableOrderReadColumns, tableSelectOrderReadColumns} from "@/utils/columnList";
 import TableGrid from "@/component/tableGrid";
 
 const listType = 'list';
@@ -98,6 +98,7 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
         if(!isGridLoad.current) return;
         gridManage.resetData(gridRef, selectOrderList);
         setTotalRow(selectOrderList?.length ?? 0);
+        gridRef.current.selectAll();
     }, [selectOrderList]);
 
     /**
@@ -230,7 +231,7 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
      */
     function modalSelected(list= []) {
         if (!list?.length) return;
-
+        console.log(list[0])
         setSelectOrderList(prevList => {
             // 발주서 Modal에서 같은 발주서 항목 필터
             const newItems = list.filter(
@@ -545,7 +546,7 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
                     }
                     totalRow={totalRow}
                     gridRef={gridRef}
-                    columns={tableOrderReadColumns}
+                    columns={tableSelectOrderReadColumns}
                     customType={'Tax'}
                     onGridReady={onGridReady}
                     funcButtons={['agPrint']}

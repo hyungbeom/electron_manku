@@ -80,23 +80,32 @@ const Table = forwardRef(({
             if (['unitPrice', 'total', 'net', 'totalNet', 'purchasePrice', 'totalPurchase', 'supplyAmount', 'tax', 'exchange', 'fee'].includes(prop)) {
 
                 const rowData = hotRef.current.hotInstance.getSourceDataAtRow(row);
-                const isForeignCurrency = ['USD', 'EUR', 'JPY', 'GBP'].includes(rowData?.currencyUnit ?? rowData?.currency);
+                const currency = rowData?.currencyUnit ?? rowData?.currency;
+                const isKRW = (!currency || currency === 'KRW') && !('exchange' in rowData);
 
+                console.log(value, 'value:::')
                 const parsedValue = parseFloat(value);
                 if (value === 0 || isNaN(parsedValue)) {
-                    td.textContent = ""; // 🔥 0 또는 NaN이면 빈 문자열 적용
+                    td.textContent = "";
                 } else {
-                    // 견적서, 발주서 - 매출 단가, 매출 총액은 KRW 고정으로 소수점 처리 안함
-                    if (['net', 'totalNet', 'exchange', 'fee'].includes(prop)) {
-                        td.textContent = parsedValue?.toLocaleString(); // 🔢 숫자는 쉼표 추가
+                    if (['net', 'totalNet'].includes(prop)) {
+                        // 무조건 정수
+                        td.textContent = Math.floor(parsedValue).toLocaleString();
+                    } else if (isKRW) {
+                        // KRW: 정수면 정수, 소수면 그대로
+                        const isInteger = Number.isInteger(parsedValue);
+                        td.textContent = parsedValue.toLocaleString(undefined, {
+                            minimumFractionDigits: isInteger ? 0 : 1,
+                            maximumFractionDigits: 2,
+                        });
                     } else {
-                        // KRW 화폐까 아니면 소수점 2자리까지
-                        if (isForeignCurrency) {
-                            const truncated = Math.floor(parseFloat(value) * 100) / 100;
-                            td.textContent = truncated.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                        } else {
-                            td.textContent = parsedValue?.toLocaleString(); // 🔢 숫자는 쉼표 추가
-                        }
+                        console.log(parsedValue, 'parsedValue:::')
+                        // 외화: 항상 소수점 2자리
+                        const truncated = Math.floor(parsedValue * 100) / 100;
+                        td.textContent = truncated.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        });
                     }
                 }
             }

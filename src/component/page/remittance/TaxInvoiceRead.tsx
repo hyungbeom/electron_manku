@@ -142,10 +142,6 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
                 searchInfo(true);
                 notificationAlert('success', '🗑️ 세금계산서 요청 삭제완료',
                     <>
-                        <div>Inquiry No. :
-                            : {list[0].documentNumbers} {list.length > 1 ? ('외' + " " + (list.length - 1) + '개') : ''} 세금계산서 요청 이(가)
-                            삭제되었습니다.
-                        </div>
                         <div>삭제일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                     </>
                     , null, null, 2
