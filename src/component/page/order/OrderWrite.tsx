@@ -164,7 +164,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 const manager = estimateDetail?.managerAdminId;
                                 const findManager = memberList.find(v => v.adminId === manager)
 
-                                let result = 'null';
+                                let result = 1;
                                 if(estimateDetail?.connectDocumentNumberFull) {
 
                                     const source = await getData.post('estimate/getEstimateRequestDetail', {
@@ -179,7 +179,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                         .map(item => Number(item.deliveryDate))
                                         .filter(date => !isNaN(date) && date > 0);
 
-                                     result = String(validDates.length > 0 ? Math.max(...validDates) : 1);
+                                     result = validDates.length > 0 ? Math.max(...validDates) : 1;
 
                                 }
 
@@ -194,7 +194,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     customerManagerEmail: estimateDetail?.customerManagerEmail,
                                     customerManagerFaxNumber: estimateDetail?.faxNumber,
                                     sendTerms: !isNaN(estimateDetail?.delivery) ? moment().add(parseInt(estimateDetail?.delivery), 'weeks').format('YYYY-MM-DD') : null,
-                                    deliveryTerms: !isNaN(Number(result)) ? moment().add(result, 'weeks').format('YYYY-MM-DD') : null,
+                                    deliveryTerms: !isNaN(result) ? moment().add(result, 'weeks').format('YYYY-MM-DD') : null,
                                     delivery: estimateDetail?.deliveryDate ? estimateDetail.deliveryDate : '',
                                     managerAdminId: adminParams['managerAdminId'],
                                     managerAdminName: adminParams['managerAdminName'],

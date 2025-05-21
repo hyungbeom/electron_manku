@@ -497,7 +497,7 @@ const TableGrid = ({
                         }
                     }}
                     getRowStyle={(params) => {
-                        if (params.data?.replyStatus !== 0 && reply) {
+                        if (params.data?.replyStatus === 1 && reply) {
                             return { color: 'blue'}; // 글씨 색상 변경
                         }
                         return null;

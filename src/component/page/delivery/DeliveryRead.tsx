@@ -15,13 +15,16 @@ import {useRouter} from "next/router";
 import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 
 
-function DeliveryRead({getPropertyId, getCopyPage}:any) {
+function DeliveryRead({getPropertyId, getCopyPage}: any) {
     const router = useRouter();
 
     const gridRef = useRef(null);
 
+    const groupRef = useRef<any>(null)
     const copyInit = _.cloneDeep(searchOrderInitial)
 
     const [info, setInfo] = useState(copyInit)
@@ -29,13 +32,20 @@ function DeliveryRead({getPropertyId, getCopyPage}:any) {
 
     const [loading, setLoading] = useState(false);
 
+    const getSavedSizes = () => {
+        const savedSizes = localStorage.getItem('delivery_read');
+        return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 5]; // 기본값 [50, 50, 50]
+    };
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
+
+
     /**
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
      * @param params ag-grid 제공 event 파라미터
      */
     const onGridReady = (params) => {
         gridRef.current = params.api;
-        getDeliveryList({data: searchOrderInitial}).then(v=>{
+        getDeliveryList({data: searchOrderInitial}).then(v => {
             params.api.applyTransaction({add: v});
         })
     };
@@ -56,7 +66,7 @@ function DeliveryRead({getPropertyId, getCopyPage}:any) {
 
 
     async function moveRouter() {
-        getCopyPage('delivery_write', {orderStatusDetailList : []})
+        getCopyPage('delivery_write', {orderStatusDetailList: []})
     }
 
     /**
@@ -89,10 +99,11 @@ function DeliveryRead({getPropertyId, getCopyPage}:any) {
 
     return <Spin spinning={loading} tip={'배송정보 조회중...'}>
         <ReceiveComponent componentName={'delivery_read'} searchInfo={searchInfo}/>
+        <PanelSizeUtil groupRef={groupRef} storage={'delivery_read'}/>
         <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '240px' : '65px'} calc(100vh - ${mini ? 370 : 195}px)`,
+                gridTemplateRows: `${mini ? '250px' : '65px'} calc(100vh - ${mini ? 380 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'배송조회'}
@@ -101,9 +112,8 @@ function DeliveryRead({getPropertyId, getCopyPage}:any) {
                               {name: '신규생성', func: moveRouter}]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
-
-
-                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', gap: 20}}>
+                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5}}>
+                            <Panel defaultSize={sizes[0]} minSize={5}>
                                 <BoxCard title={'기본 정보'}>
                                     {rangePickerForm({title: '출고일자', id: 'searchDate', onChange: onChange, data: info})}
                                     {inputForm({
@@ -114,6 +124,9 @@ function DeliveryRead({getPropertyId, getCopyPage}:any) {
                                         data: info
                                     })}
                                 </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'받는분 정보'}>
                                     {inputForm({
                                         title: '고객사명',
@@ -130,7 +143,9 @@ function DeliveryRead({getPropertyId, getCopyPage}:any) {
                                         data: info
                                     })}
                                 </BoxCard>
-
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={'기타 정보'} tooltip={''}>
                                     {selectBoxForm({
                                         title: '확인여부', id: 'searchIsConfirm', list: [
@@ -147,8 +162,9 @@ function DeliveryRead({getPropertyId, getCopyPage}:any) {
                                         data: info
                                     })}
                                 </BoxCard>
+                            </Panel>
+                        </PanelGroup>
                             </div>
-                        </div>
                         : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}

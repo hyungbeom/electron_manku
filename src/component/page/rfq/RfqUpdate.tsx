@@ -165,6 +165,16 @@ function RqfUpdate({
         commonManage.resetValidate(id, value, setValidate);
     }
 
+    function checkEmail(){
+        console.log(updateKey['rfq_update'],'????')
+        getData.post('estimate/updateCheckEmail',updateKey['rfq_update']).then(v=>{
+            message.success({
+                content: '메일회신확인 완료',
+                duration: 2, // 3초 후 사라짐
+            })
+        })
+    }
+    
     /**
      * @description 수정 페이지 > 메일 발송 처리 버튼
      * 견적의뢰 > 견적의뢰 수정
@@ -377,6 +387,10 @@ function RqfUpdate({
                 rowGap: 10,
             }}>
                 <MainCard title={'견적의뢰 수정'} list={[
+                    {
+                        name: <div><SettingOutlined style={{paddingRight: 8}}/>메일 회신 확인</div>,
+                        func: checkEmail
+                    },
                     {
                         name: <div><SettingOutlined style={{paddingRight: 8}}/>메일 발송 처리</div>,
                         func: checkSend,

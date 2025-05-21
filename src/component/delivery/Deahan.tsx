@@ -26,6 +26,7 @@ export default function Deahan({info, setInfo}) {
             switch (e.target.id) {
                 case 'connectInquiryNo' :
                     const result = await findDocumentInfo(e, setInfo);
+                    console.log(result,':result')
                     setInfo(v => {
                         return {
                             ...result[0],

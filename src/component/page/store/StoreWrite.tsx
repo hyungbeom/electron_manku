@@ -34,7 +34,7 @@ import moment from "moment";
 const listType = 'orderStatusDetailList'
 
 
-function StoreWrite({copyPageInfo,notificationAlert = null, getPropertyId}:any) {
+function StoreWrite({copyPageInfo, notificationAlert = null, getPropertyId}: any) {
     const [ready, setReady] = useState(false);
     const router = useRouter();
 
@@ -91,30 +91,29 @@ function StoreWrite({copyPageInfo,notificationAlert = null, getPropertyId}:any) 
     const [mini, setMini] = useState(true);
 
 
+    useEffect(() => {
+        if (ready) {
+            // if(copyPageInfo['store_write'] && !isEmptyObj(copyPageInfo['store_write'])){
+            //     setInfo(infoInit);
+            //     gridManage.resetData(gridRef,[])
+            // }else{
+            //     setInfo({...copyPageInfo['store_write']});
+            //     gridManage.resetData(gridRef, copyPageInfo['store_write'][listType])
+            // }
+        }
+    }, [copyPageInfo['store_write'], ready]);
 
     useEffect(() => {
-        if(ready) {
-            if(copyPageInfo['store_write'] && !isEmptyObj(copyPageInfo['store_write'])){
-                setInfo(infoInit);
-                gridManage.resetData(gridRef,[])
-            }else{
-                setInfo({...copyPageInfo['store_write']});
-                gridManage.resetData(gridRef, copyPageInfo['store_write'][listType])
-            }
-        }
-    }, [copyPageInfo['store_write'],ready]);
-
-    useEffect(() => {
-        if (!isEmptyObj(copyPageInfo['store_write'])) {
-            // copyPageInfo 가 없을시
-            setInfo(infoInit);
-            setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000))
-        } else {
-            // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
-            // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-            setInfo({...copyPageInfo['store_write'], writtenDate: moment().format('YYYY-MM-DD')});
-            setTableData(copyPageInfo['store_write'][listType])
-        }
+        // if (!isEmptyObj(copyPageInfo['store_write'])) {
+        //     // copyPageInfo 가 없을시
+        //     setInfo(infoInit);
+        //     setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000))
+        // } else {
+        //     // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
+        //     // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
+        //     setInfo({...copyPageInfo['store_write'], writtenDate: moment().format('YYYY-MM-DD')});
+        //     setTableData(copyPageInfo['store_write'][listType])
+        // }
     }, [copyPageInfo['store_write']]);
 
 
@@ -157,32 +156,9 @@ function StoreWrite({copyPageInfo,notificationAlert = null, getPropertyId}:any) 
     }
 
     async function saveFunc() {
-        gridRef.current.clearFocusedCell();
-        if (!info['blNo']) {
-            return message.warn('B/L No.가 누락되었습니다.')
-        }
-        const tableList = gridManage.getAllData(gridRef);
 
-        if (!tableList.length) {
-            return message.warn('하위 데이터 1개 이상이여야 합니다');
-        }
-        const totalList = gridManage.getAllData(gridRef)
 
-        let copyInfo = _.cloneDeep(info)
-        copyInfo[listType] = totalList
-
-        copyInfo[listType].forEach((v,idx) => {
-
-            const processedItemDetailNo = Array.isArray(v.itemDetailNo)
-                ? v.itemDetailNo.join(',') // 배열을 쉼표로 구분된 문자열로 변환
-                : v.itemDetailNo; // 배열이 아니면 그대로 사용
-
-            copyInfo[listType][idx]['itemDetailNo'] = processedItemDetailNo;
-
-        })
-        await saveStore({data: copyInfo, router: router})
     }
-
 
 
     function clearAll() {
@@ -274,8 +250,47 @@ function StoreWrite({copyPageInfo,notificationAlert = null, getPropertyId}:any) 
 
 
 
+     function saveApi(){
+         const sendParam = {
+             blNo: '운송넘버',
+             carrier: '운수사명',
+             inboundDate: '2025-05-22',  //입고일자
+             tax: 500,                   //부가세
+             tariff: 30000,              //관세
+             freightCost: 30000,         //운임비
+             selectOrderList: JSON.stringify([202,204,278]),
+             managerAdminId: 26,
+         }
+         getData.post('inbound/addInbound',sendParam).then(v=>{
+             if(v?.data?.code === 1){
+                 console.log(v.data?.entity?.inboundId,'< ==== invoundId ')
+             }
+         })
+     }
+
+    function updateApi(){
+        const sendParam = {
+            inboundId: 5,
+            blNo: '운송update넘버',
+            carrier: '운수update사명',
+            inboundDate: '2025-06-22',  //입고일자
+            tax: 1500,                   //부가세
+            tariff: 130000,              //관세
+            freightCost: 130000,         //운임비
+            selectOrderList: JSON.stringify([212,224,288]),
+            managerAdminId: 26,
+        }
+        getData.post('inbound/updateInbound',sendParam).then(v=>{
+            if(v?.data?.code === 1){
+                console.log(v,'< ==== invoundId ')
+            }
+        })
+    }
+
+
     return <>
-        {isModalOpen ? <OrderListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} getRows={getSelectedRows}/> : <></>}
+        {isModalOpen ? <OrderListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
+                                       getRows={getSelectedRows}/> : <></>}
         <>
             <div style={{
                 display: 'grid',
@@ -283,7 +298,10 @@ function StoreWrite({copyPageInfo,notificationAlert = null, getPropertyId}:any) 
                 rowGap: 10,
             }}>
 
-                <MainCard title={'입고 등록'} list={[
+                <MainCard title={<>입고 등록
+                    <Button onClick={saveApi}>saveApi</Button>
+                    <Button onClick={updateApi}>updateApi</Button>
+                </>} list={[
                     {name: '저장', func: saveFunc, type: 'primary'},
                     {name: '초기화', func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
@@ -355,7 +373,8 @@ function StoreWrite({copyPageInfo,notificationAlert = null, getPropertyId}:any) 
                         : <></>}
                 </MainCard>
 
-                <Table data={tableData} column={storeInfo['write']} funcButtons={['print']} ref={tableRef} type={'order_write_column'}/>
+                <Table data={tableData} column={storeInfo['write']} funcButtons={['print']} ref={tableRef}
+                       type={'order_write_column'}/>
             </div>
         </>
     </>
