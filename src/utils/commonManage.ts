@@ -1,6 +1,6 @@
 import moment from "moment";
 import * as XLSX from "xlsx";
-import {dateFormat, rfqReadColumns} from "@/utils/columnList";
+import {dateFormat, formatAmount, rfqReadColumns} from "@/utils/columnList";
 import message from "antd/lib/message";
 import {jsPDF} from "jspdf";
 import html2canvas from "html2canvas";
@@ -752,41 +752,39 @@ commonFunc.unValidateInput = function (id) {
 
 
 commonFunc.sumCalc = function calculateTotals(rowData) {
-
-
-    if (!rowData) {
-        return false
+    if (!rowData || rowData.length === 0) {
+        return null;
     }
+    const totalQuantity = rowData.reduce((sum, row) => sum + (parseFloat(row.quantity) || 0), 0);
 
     const unitPrice = rowData.reduce((sum, row) => sum + (parseFloat(row.unitPrice) || 0), 0);
+    const totalPrice = rowData.reduce((sum, row) => {
+        const calculatedPrice = (parseFloat(row.quantity) || 0) * (parseFloat(row.unitPrice) || 0);
+        return sum + calculatedPrice;
+    }, 0);
     const net = rowData.reduce((sum, row) => sum + (parseFloat(row.net) || 0), 0);
+    const totalNet = rowData.reduce((sum, row) => {
+        const calculatedPrice = (parseFloat(row.quantity) || 0) * (parseFloat(row.net) || 0);
+        return sum + calculatedPrice;
+    }, 0);
+
     const receivedQuantity = rowData.reduce((sum, row) => sum + (parseFloat(row.receivedQuantity) || 0), 0);
     const unreceivedQuantity = rowData.reduce((sum, row) => sum + (parseFloat(row.unreceivedQuantity) || 0), 0);
 
+    const hasKRW = rowData.some(row => !row.currency || row.currency === 'KRW');
+    const currency = hasKRW ? 'KRW' : 'USD';
 
-    let amount = 0
-    rowData.map((row) => {
-        const sum = (parseFloat(row.net) || 0) * (parseFloat(row.quantity) || 0);
-        amount += sum;
-    });
-
-
-    const totalPrice = rowData.reduce((sum, row) => {
-        // const calculatedPrice = (parseFloat(row.unitPrice) || 0) * (parseFloat(row.quantity) || 0);
-        const calculatedPrice = (parseFloat(row.net) || 0) * (parseFloat(row.quantity) || 0);
-        return sum + calculatedPrice;
-    }, 0);
-    const totalQuantity = rowData.reduce((sum, row) => sum + (parseFloat(row.quantity) || 0), 0);
     return {
         writtenDate: 'Total',
-        amount: totalPrice,
         quantity: totalQuantity,
+        unitPrice: unitPrice,
+        totalPrice: totalPrice,
+        net: net,
+        totalNet: totalNet,
+        amount: totalNet,
+        totalAmount: totalNet,
         receivedQuantity: receivedQuantity,
         unreceivedQuantity: totalQuantity - receivedQuantity,
-        totalAmount: amount,
-        unitPrice: unitPrice,
-        net: net,
-        totalPrice: totalPrice
     };
 }
 

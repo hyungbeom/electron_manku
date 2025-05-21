@@ -21,6 +21,7 @@ import Remittance from "@/component/remittance/Remittance";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
+import {formatAmount} from "@/utils/columnList";
 
 const listType = 'list';
 
@@ -34,7 +35,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_remittance_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 25, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 25, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -217,7 +218,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                 <div style={{height: 285}}>
                     <Order key={tabNumb} gridRef={gridRef}
                            tableData={selectOrderList} setTableData={setSelectOrderList}
-                           setInfo={setInfo} customFunc={getOrderFile}/>
+                           setInfo={setInfo} customFunc={getOrderFile} type={'overseas'}/>
                 </div>
             )
         },
@@ -227,7 +228,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
             children: (
                 <div style={{height: 330}}>
                     <Remittance key={tabNumb} tableRef={tableRef} tableData={sendRemittanceList}
-                                setInfo={setInfo} type={'foreign'}/>
+                                setInfo={setInfo} type={'overseas'}/>
                 </div>
             )
         }
@@ -308,8 +309,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
             const orderDetailIds = updatedList.map(row => row.orderDetailId).join(', ');
 
             // 발주서 총액 계산
-            const total = updatedList.reduce((sum, row) => sum + ((Number(row.quantity) || 0) * (Number(row.unitPrice) || 0)), 0);
-            const totalAmount = total + (total * 0.1 * 10 / 10);
+            const totalAmount = updatedList.reduce((sum, row) => sum + ((Number(row.quantity) || 0) * (Number(row.unitPrice) || 0)), 0);
             let partialRemittance = Number(String(info.partialRemittance || '0').replace(/,/g, ''));
 
             // 송금 리스크가 없으면 첫 데이터 생성
@@ -322,21 +322,25 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                 setSendRemittanceList(prev => [
                     {
                         remittanceDetailId: '',
-                        remittanceRequestDate: moment().format('YYYY-MM-DD'),
                         remittanceDueDate: '',
-                        supplyAmount: total,
-                        tax: '',
+                        remittanceRequestDate: moment().format('YYYY-MM-DD'),
+                        supplyAmount: totalAmount,
+                        fee: '',
                         total: '',
                         sendStatus: '요청',
                         invoiceStatus: 'O',
+                        exchange: ''
                     },
                     ...prev.slice(1)
                 ])
             }
 
+            // KRW 있는지 (소수점 처리를위한 flag)
+            const hasKRW = updatedList.some(row => !row.currency || row.currency === 'KRW');
+            const currency = hasKRW ? 'KRW' : 'USD';
+
             // 잔액 계산
             const balance = totalAmount - partialRemittance;
-
             setInfo(prevInfo => {
                 return {
                     ...prevInfo,
@@ -344,9 +348,9 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                     agencyName: updatedList?.[0]?.agencyName || '',
                     connectInquiryNo: connectInquiryNos.join(', '),
                     orderDetailIds,
-                    totalAmount: totalAmount.toLocaleString(),
-                    partialRemittance: partialRemittance.toLocaleString(),
-                    balance: balance.toLocaleString()
+                    totalAmount: formatAmount(totalAmount, currency) || 0,
+                    partialRemittance: formatAmount(partialRemittance, currency) || 0,
+                    balance: formatAmount(balance, currency) || 0
                 }
             });
             return updatedList;
@@ -436,7 +440,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                             <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'금액 정보'}>
                                     <div style={{fontSize: 12, paddingBottom: 10}}>
-                                        <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>총액</div>
+                                        <div style={{paddingBottom: 12 / 2, fontWeight: 700}}>총액 (공급가액)</div>
                                         <div style={{display: 'flex'}}>
                                             <input placeholder={''}
                                                    id={'totalAmount'}
@@ -451,7 +455,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                                                        setInfo(prev => {
                                                            return {
                                                                ...prev,
-                                                               totalAmount: Number((e.target.value || '0').toString().replace(/,/g, ''))
+                                                               totalAmount: Number((e.target.value || '0').toString().replace(/,/g, '')) || ''
                                                            }
                                                        })
                                                    }}
@@ -462,8 +466,8 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                                                            const balance = totalAmount - partialRemittance;
                                                            return {
                                                                ...prev,
-                                                               totalAmount: totalAmount.toLocaleString(),
-                                                               balance: balance.toLocaleString()
+                                                               totalAmount: formatAmount(totalAmount, 'USD'),
+                                                               balance: formatAmount(balance, 'USD')
                                                            }
                                                        })
                                                    }}

@@ -3,7 +3,7 @@ import {gridManage} from "@/utils/commonManage";
 import {DeleteOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
-import {tableOrderReadColumns, tableSelectOrderReadColumns} from "@/utils/columnList";
+import {formatAmount, tableOrderReadColumns, tableSelectOrderReadColumns} from "@/utils/columnList";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
 import _ from "lodash";
@@ -13,7 +13,8 @@ function Order({
                                   tableData = [],
                                   setTableData = null,
                                   setInfo = null,
-                                  customFunc = null}) {
+                                  customFunc = null,
+                                  type = ''}) {
 
     const [totalRow, setTotalRow] = useState(0);
     const isGridLoad = useRef(null);
@@ -61,7 +62,16 @@ function Order({
 
         // 발주서 총액 계산
         const total = filterSelectList.reduce((sum, row) => sum + ((Number(row.quantity) || 0) * (Number(row.unitPrice) || 0)), 0);
-        const totalAmount = total + (total * 0.1 * 10 / 10);
+        let totalAmount = 0;
+        if (type === 'overseas') {
+            totalAmount = total;
+        } else {
+            totalAmount = total + (total * 0.1 * 10 / 10);
+        }
+
+        // KRW 있는지 (소수점 처리를위한 flag)
+        const hasKRW = filterSelectList.some(row => !row.currency || row.currency === 'KRW');
+        const currency = hasKRW ? 'KRW' : 'USD';
 
         setInfo(prevInfo => {
             const partialRemittance = Number(String(prevInfo.partialRemittance || '0').replace(/,/g, ''));
@@ -72,8 +82,8 @@ function Order({
                 agencyName: filterSelectList?.[0]?.agencyName || '',
                 connectInquiryNo: connectInquiryNos.join(', '),
                 orderDetailIds,
-                totalAmount: totalAmount.toLocaleString(),
-                balance: balance.toLocaleString(),
+                totalAmount: formatAmount(totalAmount, currency),
+                balance: formatAmount(balance, currency),
             }
         });
     }

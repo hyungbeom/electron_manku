@@ -291,7 +291,7 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
                     orderDetailIds,
                     yourPoNo: updatedList?.[0]?.yourPoNo || '',
                     customerName: updatedList?.[0]?.customerName || '',
-                    sendEmail: updatedList?.[0]?.customerManagerEmail || '',
+                    sendEmail: updatedList?.[0]?.sendEmail ? updatedList?.[0]?.sendEmail : updatedList?.[0]?.customerManagerEmail || '',
                     customerManagerName: updatedList?.[0]?.customerManagerName || '',
                     supplyAmount: supplyAmount ? supplyAmount.toLocaleString() : '',
                     tax: tax ? tax.toLocaleString() : '',
