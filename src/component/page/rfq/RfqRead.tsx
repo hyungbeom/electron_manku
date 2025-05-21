@@ -181,16 +181,12 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
             }, {})
         );
 
-        console.log(grouped,':::')
-     // const params =   gridRef.current.getSelectedRows().map(v=> {
-     //     return {
-     //         estimateRequestDetailId : v.estimateRequestDetailId,
-     //         managerAdminEmail : v.managerAdminEmail,
-     //         documentNumberFull : v.documentNumberFull
-     //     }
-     // })
+
         getData.post('estimate/updateCheckEmail', {data : grouped}).then(v=>{
-            console.log(v,':::::::::::::')
+         if(v?.data?.code === 1){
+             message.success("요청메일 보내기가 완료되었습니다");
+             searchInfo();
+         }
         })
     }
 
