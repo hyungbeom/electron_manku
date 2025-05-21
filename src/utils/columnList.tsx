@@ -5,6 +5,10 @@ import message from "antd/lib/message";
 
 let lastClickedRowNode = null; // ✅ 마지막으로 클릭된 row 추적
 
+export const replyStatus = {
+    "1" : '요청중',
+    "2" : '확인완료'
+}
 
 function handleCellClick(params) {
     const clickedNode = params.node;
@@ -1164,6 +1168,12 @@ export const rfqReadColumns = [
             min: '2023-01-01',
             max: '2028-12-31',
         }
+    },    {
+        headerName: 'replyStatus',
+        field: 'replyStatus',
+        minWidth: 100,
+        maxWidth: 120,
+        valueFormatter: (params) => replyStatus[params.value]
     },
     {
         headerName: 'End User',

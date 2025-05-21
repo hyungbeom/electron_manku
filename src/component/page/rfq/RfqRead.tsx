@@ -4,14 +4,14 @@ import {
     ExclamationCircleOutlined,
     RadiusSettingOutlined,
     SaveOutlined,
-    SearchOutlined
+    SearchOutlined, SendOutlined
 } from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {rfqReadColumns} from "@/utils/columnList";
 import {estimateRequestDetailUnit, subRfqReadInitial} from "@/utils/initialList";
 import TableGrid from "@/component/tableGrid";
 import message from "antd/lib/message";
-import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import _ from "lodash";
 import {deleteRfq, searchRfq} from "@/utils/api/mainApi";
 import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
@@ -24,10 +24,12 @@ import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import ReceiveComponent from "@/component/ReceiveComponent";
 import {getData} from "@/manage/function/api";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 
 function RfqRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
+    const { userInfo, adminList } = useAppSelector((state) => state.user);
     const groupRef = useRef<any>(null)
 
     const router = useRouter();
@@ -150,6 +152,48 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
     }
 
 
+    function sendAlertMail(){
+        const list = gridRef.current.getSelectedRows();
+        function checkMail(managerAdminId) {
+            // 실제 구현에 맞게 수정
+            if (managerAdminId === 20) return "test20@example.com";
+            if (managerAdminId === 17) return "test17@example.com";
+            if (managerAdminId === 19) return "test19@example.com";
+            return "";
+        }
+
+
+// data는 위에서 주신 배열
+        const grouped = Object.values(
+            list.reduce((acc, cur) => {
+                const id = cur.managerAdminId;
+                if (!acc[id]) {
+                   const findMember = adminList.find(v=> v.adminId === id)
+
+                    acc[id] = {
+                        email: findMember?.email,
+                        managerAdminName: cur.managerAdminName,
+                        detailList: []
+                    };
+                }
+                acc[id].detailList.push(cur);
+                return acc;
+            }, {})
+        );
+
+        console.log(grouped,':::')
+     // const params =   gridRef.current.getSelectedRows().map(v=> {
+     //     return {
+     //         estimateRequestDetailId : v.estimateRequestDetailId,
+     //         managerAdminEmail : v.managerAdminEmail,
+     //         documentNumberFull : v.documentNumberFull
+     //     }
+     // })
+        getData.post('estimate/updateCheckEmail', {data : grouped}).then(v=>{
+            console.log(v,':::::::::::::')
+        })
+    }
+
     return <>
         <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
             <ReceiveComponent componentName={'rfq_read'} searchInfo={searchInfo}/>
@@ -222,32 +266,27 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                                                         })
                                                     }}>M</Button>
                                         </div>
-                                        <div style={{paddingBottom: 9}}>
-                                            {selectBoxForm({
-                                                title: '회신 여부',
-                                                id: 'searchContent',
-                                                onChange: onChange,
-                                                data: info,
-                                                list: [
-                                                    {value: '', label: '전체'},
-                                                    {value: '회신', label: '회신'},
-                                                    {value: '미회신', label: '미회신'}
-                                                ]
-                                            })}
-                                        </div>
                                         {inputForm({
-                                            title: '등록직원명', id: 'searchCreatedBy',
+                                            title: '문서번호', id: 'searchDocumentNumber',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
+
+                                        {inputForm({
+                                            title: 'Project No.', id: 'searchRfqNo',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[1]} minSize={5}>
                                     <BoxCard>
                                         {inputForm({
-                                            title: '문서번호', id: 'searchDocumentNumber',
+                                            title: '등록직원명', id: 'searchCreatedBy',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info
@@ -293,11 +332,37 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[3]} minSize={5}>
                                     <BoxCard>
-                                        {inputForm({
-                                            title: 'Project No.', id: 'searchRfqNo',
+                                        <div style={{paddingBottom: 9}}>
+                                            {selectBoxForm({
+                                                title: '회신 여부',
+                                                id: 'searchContent',
+                                                onChange: onChange,
+                                                data: info,
+                                                list: [
+                                                    {value: '', label: '전체'},
+                                                    {value: '회신', label: '회신'},
+                                                    {value: '미회신', label: '미회신'}
+                                                ]
+                                            })}
+                                        </div>
+                                        {datePickerForm({
+                                            title: '회신일',
                                             onChange: onChange,
-                                            handleKeyPress: handleKeyPress,
+                                            id: 'searchReplyDate',
                                             data: info
+                                        })}
+                                        {selectBoxForm({
+                                            title: '관리자 요청상태',
+                                            id: 'searchReplyStatus',
+                                            onChange: onChange,
+                                            data: info,
+                                            list: [
+
+                                                {value: "", label: "전체"},
+                                                {value: 0, label: "미요청"},
+                                                {value: 1, label: "요청중"},
+                                                {value: 2, label: "확인완료"}
+                                            ]
                                         })}
                                     </BoxCard>
                                 </Panel>
@@ -309,14 +374,23 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
 
                     {/*@ts-ignored*/}
 
-                    <TableGrid deleteComp={<Popconfirm
-                        title="삭제하시겠습니까?"
-                        onConfirm={deleteList}
-                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
-                            <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
-                        </Button>
-                    </Popconfirm>}
+                    <TableGrid deleteComp={<>
+                        <Popconfirm
+                            title="담당자에 알림 메일을 보내겠습니까?"
+                            onConfirm={sendAlertMail}
+                            icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                            <Button type={'primary'}  size={'small'} style={{fontSize: 11}}>
+                                <SendOutlined />알림메일 보내기
+                            </Button>
+                        </Popconfirm>
+                        <Popconfirm
+                            title="삭제하시겠습니까?"
+                            onConfirm={deleteList}
+                            icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                            <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                                <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                            </Button>
+                        </Popconfirm> </>}
                                totalRow={totalRow}
                                getPropertyId={getPropertyId}
                                gridRef={gridRef}

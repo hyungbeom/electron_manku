@@ -486,12 +486,12 @@ const TableGrid = ({
                     onCellValueChanged={dataChange}
                     pinnedBottomRowData={pinnedBottomRowData}
                     onSelectionChanged={handleSelectionChanged} // 선택된 행 변경 이벤트
-                    getRowStyle={(params) => {
-                        if (params.data?.replyStatus === 1 && reply) {
-                            return { color: 'blue'}; // 글씨 색상 변경
-                        }
-                        return null;
-                    }}
+                    // getRowStyle={(params) => {
+                    //     if (params.data?.replyStatus === 1 && reply) {
+                    //         return { color: 'blue'}; // 글씨 색상 변경
+                    //     }
+                    //     return null;
+                    // }}
                     gridOptions={{
                         loadThemeGoogleFonts: true,
                         onCellClicked: onCellClicked,

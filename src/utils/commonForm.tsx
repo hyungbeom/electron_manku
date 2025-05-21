@@ -293,6 +293,7 @@ export const inputForm = ({
         {/*@ts-ignored*/}
         <div style={{display: 'flex'}}>
             <input placeholder={placeholder}
+                   autoComplete={'off'}
                    id={id}
                    size={size}
                    disabled={disabled}

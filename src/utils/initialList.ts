@@ -354,6 +354,8 @@ export const subRfqReadInitial = {
     "searchSentStatus": 0,              // 전송 여부 1: 전송, 2: 미전송
     "searchContent": '',             // 회신 여부 1: 회신, 2: 미회신
     "searchAgencyCode": "",          // 대리점코드 검색
+    "searchReplyDate": "",          // 대리점코드 검색
+    "searchReplyStatus": "",          // 대리점코드 검색
 
     "page": 1,
     "limit": -1
