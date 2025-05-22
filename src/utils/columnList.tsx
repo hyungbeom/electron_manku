@@ -186,21 +186,21 @@ export const amountFormat = (params) => {
         return "";
     }
 
-    // const num = Number(params);
-    // if (isNaN(num)) {
-    //     return "";
-    // }
-    //
-    // // 소수점은 최대 2자리까지만 유지 (원하는 자릿수로 조절 가능)
-    // const fixedNum = num.toFixed(2); // "1371.60"
-    //
-    // const [integerPart, decimalPart] = fixedNum.split(".");
-    //
-    // const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    //
-    // return decimalPart !== "00"
-    //     ? `${formattedInteger}.${decimalPart}`
-    //     : formattedInteger; // 소수점이 0.00이면 아예 표시 안 함
+    const num = Number(params);
+    if (isNaN(num)) {
+        return "";
+    }
+
+    // 소수점은 최대 2자리까지만 유지 (원하는 자릿수로 조절 가능)
+    const fixedNum = num.toFixed(2); // "1371.60"
+
+    const [integerPart, decimalPart] = fixedNum.split(".");
+
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    return decimalPart !== "00"
+        ? `${formattedInteger}.${decimalPart}`
+        : formattedInteger; // 소수점이 0.00이면 아예 표시 안 함
 };
 export const amountFormatParser = (params) => {
     // 쉼표 제거 후 숫자로 변환하여 저장
@@ -4005,20 +4005,20 @@ export const delilveryReadColumn = [
         filter: false
     },
     {
-
-        pinned: 'left',
         headerName: '출고일자.',
         field: 'deliveryDate',
+        pinned: 'left',
         maxWidth: 80
-    }, {
-        headerName: '운송유형',
-        field: 'deliveryType',
-        minWidth: 80
     }, {
         headerName: 'Inquiry No.',
         field: 'connectInquiryNo',
         maxWidth: 120,
         pinned: 'left',
+    }, {
+        headerName: '고객사명',
+        field: 'customerName',
+        minWidth: 150,
+        pinned: 'right'
     }, {
         headerName: '받는분 성명',
         field: 'recipientName',
@@ -4032,42 +4032,39 @@ export const delilveryReadColumn = [
         field: 'recipientAddress',
         minWidth: 300
     }, {
-        headerName: '수량',
-        field: 'quantity',
-        minWidth: 50
-    },
-    {
-        headerName: '포장',
-        field: 'packagingType',
-        cellEditor: 'agNumberCellEditor',
-        editable: true,
-        valueFormatter: params => commonManage.calcFloat(params, 2),
-        cellStyle: {textAlign: 'right'}
-    }, {
-        headerName: '배송방식',
-        field: 'shippingType',
-        minWidth: 150
-    }, {
         headerName: '결제방식',
         field: 'paymentMethod',
         minWidth: 150
+    }, {
+        headerName: '운송유형',
+        field: 'deliveryType',
+        minWidth: 80
     }, {
         headerName: '운송장번호',
         field: 'trackingNumber',
         minWidth: 150
     }, {
-        headerName: '고객사명',
-        field: 'customerName',
-        minWidth: 150,
-        pinned: 'right'
+        headerName: '배송방식',
+        field: 'shippingType',
+        minWidth: 150
     }, {
-        headerName: 'model',
-        field: 'model',
-        maxWidth: 120,
+        headerName: '포장',
+        field: 'packagingType',
+        cellEditor: 'agNumberCellEditor',
+        valueFormatter: params => commonManage.calcFloat(params, 2),
+        cellStyle: {textAlign: 'right'}
+    }, {
+        headerName: '수량',
+        field: 'quantity',
+        minWidth: 50
     }, {
         headerName: 'maker',
         field: 'maker',
         minWidth: 150,
+    }, {
+        headerName: 'model',
+        field: 'model',
+        maxWidth: 120,
     }, {
         headerName: 'item',
         field: 'item',

@@ -1,8 +1,5 @@
 import React, {memo, useRef, useState} from "react";
 import {searchOrderInitial} from "@/utils/initialList";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
 import Button from "antd/lib/button";
 import {CopyOutlined} from "@ant-design/icons";
 import {deleteDelivery, getDeliveryList} from "@/utils/api/mainApi";
@@ -147,13 +144,17 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={'기타 정보'} tooltip={''}>
-                                    {selectBoxForm({
-                                        title: '확인여부', id: 'searchIsConfirm', list: [
-                                            {value: 'X', label: 'X'},
-                                            {value: 'O', label: 'O'},
-                                            {value: '', label: '전체'},
-                                        ], onChange: onChange, data: info
-                                    })}
+                                    <div style={{paddingBottom: 9}}>
+                                        {selectBoxForm({
+                                            title: '확인여부', id: 'searchIsConfirm', list: [
+                                                {value: '', label: '전체'},
+                                                {value: 'O', label: 'O'},
+                                                {value: 'X', label: 'X'},
+                                            ],
+                                            onChange: onChange,
+                                            data: info
+                                        })}
+                                    </div>
                                     {inputForm({
                                         title: '운송장번호',
                                         id: 'searchTrackingNumber',
@@ -168,16 +169,16 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
                         : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}
-                <TableGrid deleteComp={<Button type={'danger'} size={'small'} style={{fontSize: 11, marginLeft: 5}}
-                                               onClick={deleteList}>
-                    <CopyOutlined/>삭제
-                </Button>}
-                           getPropertyId={getPropertyId}
-                           gridRef={gridRef}
-                           columns={delilveryReadColumn}
-                           onGridReady={onGridReady}
-                           type={'read'}
-                           funcButtons={['agPrint']}
+                <TableGrid
+                    deleteComp={
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11, marginLeft: 5}} onClick={deleteList}>
+                            <CopyOutlined/>삭제
+                        </Button>}
+                    getPropertyId={getPropertyId}
+                    gridRef={gridRef}
+                    columns={delilveryReadColumn}
+                    onGridReady={onGridReady}
+                    funcButtons={['agPrint']}
                 />
             </div>
         </>
