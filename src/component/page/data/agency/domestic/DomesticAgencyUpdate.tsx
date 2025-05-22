@@ -299,7 +299,7 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
-                                         disabled={!userInfo['microsoftId']}>
+                                         disabled={false}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
                                                      info={info} key={driveKey} type={'agency'}/>
                                 </BoxCard>

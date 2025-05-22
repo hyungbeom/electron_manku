@@ -807,11 +807,11 @@ export const tableEstimateReadColumns = [
         maxWidth: 100, // 컬럼 너비
         pinned: 'left'
     },
-    // {
-    //     headerName: '매입처',
-    //     field: 'agencyName',
-    //     maxWidth: 100,
-    // },
+    {
+        headerName: '매입처',
+        field: 'agencyName',
+        maxWidth: 100,
+    },
     {
         headerName: '고객사명',
         field: 'customerName',
@@ -1482,6 +1482,10 @@ export const tableOrderReadColumns = [
         field: 'rfqNo',
         maxWidth: 100, // 컬럼 너비
         pinned: 'left'
+    },    {
+        headerName: '매입처명',
+        field: 'agencyName',
+        minWidth: 100,
     },
     {
         headerName: '고객사명',
