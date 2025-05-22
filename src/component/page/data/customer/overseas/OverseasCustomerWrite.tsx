@@ -1,5 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {getData} from "@/manage/function/api";
+import {getFormData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import {BoxCard, datePickerForm, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
 import {commonFunc, commonManage} from "@/utils/commonManage";
@@ -105,7 +105,7 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList);
         commonManage.getUploadList(fileRef, formData);
-        await getData.post('customer/addOverseasCustomer', formData).then(v => {
+        await getFormData.post('customer/addOverseasCustomer', formData).then(v => {
             if (v?.data?.code === 1) {
                 window.postMessage({message: 'reload', target: 'overseas_customer_read'}, window.location.origin);
                 notificationAlert('success', '💾 해외 고객사 등록완료',

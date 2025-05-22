@@ -223,38 +223,33 @@ function DeliveryWrite({copyPageInfo}:any) {
 
     const getInfoByType = (type, detail = {}) => {
         const isEmpty = !detail || Object.keys(detail).length === 0;
-
         setInfo(prev => {
-            const isEmpty = !external || Object.keys(external).length === 0;
-
-            let base: Record<string, any> = {};
+            let bowl = {};
             switch (type) {
                 case 'CJ':
-                    base = {
+                    bowl = {
                         deliveryType: 'CJ',
                         cjTrackingNo: '',
                     };
                     break;
                 case 'DAESIN':
-                    base = {
+                    bowl = {
                         deliveryType: 'DAESIN',
                         daesinField: '',
                     };
                     break;
                 case 'QUICK':
-                    base = {
+                    bowl = {
                         deliveryType: 'QUICK',
                         quickMemo: '',
                     };
                     break;
                 default:
-                    base = {};
+                    bowl = {};
             }
-
             return {
                 ...prev,
-                ...base,
-                ...(isEmpty ? {} : external),
+                ...bowl,
             };
         });
     };

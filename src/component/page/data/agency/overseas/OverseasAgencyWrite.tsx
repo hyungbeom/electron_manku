@@ -1,5 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {getData} from "@/manage/function/api";
+import {getFormData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import {BoxCard, datePickerForm, inputForm, inputNumberForm, MainCard, selectBoxForm} from "@/utils/commonForm";
 import _ from "lodash";
@@ -104,7 +104,7 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList);
         commonManage.getUploadList(fileRef, formData);
-        await getData.post('agency/addOverseasAgency', formData).then(v => {
+        await getFormData.post('agency/addOverseasAgency', formData).then(v => {
             if (v?.data?.code === 1) {
                 window.postMessage({message: 'reload', target: 'overseas_agency_read'}, window.location.origin);
                 notificationAlert('success', '💾 해외 매입처 등록완료',

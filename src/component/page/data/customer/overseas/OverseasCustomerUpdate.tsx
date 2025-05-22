@@ -211,7 +211,7 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
     return <Spin spinning={loading}>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '480px' : '65px'} calc(100vh - ${mini ? 575 : 150}px)`,
+            gridTemplateRows: `${mini ? '415px' : '65px'} calc(100vh - ${mini ? 510 : 160}px)`,
             rowGap: 10,
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'overseas_customer_update'}/>

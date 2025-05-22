@@ -335,9 +335,15 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
             case 8:
                 result = `${prefix}${info?.documentNumberFull || baseFileName}_ETC.${extension}`;
                 break;
-            case 9:
-                result = `${baseFileName || '제목없음'}_사업자등록증.${extension}`;
+            case 9: {
+                const isAgency = type === 'agency';
+                const code = isAgency ? info?.agencyCode || '' : info?.customerCode || '';
+                const name = isAgency ? info?.agencyName || '' : info?.customerName || '';
+
+                const namePart = code && name ? `${code}_${name}` : code || name;
+                result = `${namePart ? `${namePart}` : '사업자등록증'}.${extension}`;
                 break;
+            }
             default:
                 result = `${prefix}${info?.documentNumberFull || baseFileName}.${extension}`;
         }
@@ -352,7 +358,6 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
     async function fileRemove(file): Promise<boolean> {
         // 수정페이지이고 folderId 가 있으면 쉐어포인트 직접삭제
         if (type && info?.folderId) {
-            console.log('####')
             setLoading(true);
             try {
                 const res = await getData.post('common/fileDelete', file);
@@ -408,7 +413,6 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
             formData.append('file', file?.originFileObj || file);
             formData.append('fileName', fileName);
 
-            console.log("????")
             try {
                 const uploadRes = await getFormData.post('common/fileAdd', formData);
                 if (uploadRes?.data?.code === 1) {
@@ -485,7 +489,8 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
     function resetFileSorting () {
         const sortedList = sortFileList(fileList);
 
-        const includeType = ['remittance'];
+        // 파일 최신거 다 보이게 하려면 추가
+        const includeType = ['remittance', 'agency', 'customer'];
         const isAll = includeType.includes(type)
 
         setFileList(filterLatestFileList(sortedList, isAll));
@@ -625,7 +630,6 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
                     }}
                     onRemove={async (file) => {
                         if (isExcluded()) return false;
-                        console.log('@@@@@@')
                         return await fileRemove(file);
                     }}
                     // onChange={fileChange} // 파일 리스트 업데이트

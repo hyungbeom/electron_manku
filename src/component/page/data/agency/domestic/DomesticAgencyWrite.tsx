@@ -7,7 +7,8 @@ import {
     inputNumberForm,
     MainCard,
     selectBoxForm,
-    textAreaForm, tooltipInfo
+    textAreaForm,
+    tooltipInfo
 } from "@/utils/commonForm";
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
@@ -19,7 +20,7 @@ import {DAInfo} from "@/utils/column/ProjectInfo";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import moment from "moment/moment";
-import {getData} from "@/manage/function/api";
+import {getFormData} from "@/manage/function/api";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import Spin from "antd/lib/spin";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
@@ -111,7 +112,7 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList);
         commonManage.getUploadList(fileRef, formData);
-        await getData.post('agency/addAgency', formData).then(v => {
+        await getFormData.post('agency/addAgency', formData).then(v => {
             if (v?.data?.code === 1) {
                 window.postMessage({message: 'reload', target: 'domestic_agency_read'}, window.location.origin);
                 notificationAlert('success', '💾 국내매입처 등록완료',
