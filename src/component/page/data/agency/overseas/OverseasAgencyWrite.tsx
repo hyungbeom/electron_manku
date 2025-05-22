@@ -14,6 +14,7 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Spin from "antd/lib/spin";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'overseasAgencyManagerList'
 
@@ -23,6 +24,7 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
     const tableRef = useRef(null);
     const groupRef = useRef<any>(null);
 
+    const fileRef = useRef(null);
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_agency_write');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
@@ -31,7 +33,8 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
 
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
-
+    const [driveKey, setDriveKey] = useState(0);
+    const [fileList, setFileList] = useState([]);
     const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -56,6 +59,7 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
         setValidate(getOAValidateInit());
         setInfo(getOAInit());
         setTableData([]);
+        setDriveKey(prev => prev + 1);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setTableData(commonFunc.repeatObject(OAInfo['write']['defaultData'], 1000))
@@ -67,6 +71,7 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
                 ..._.cloneDeep(copyPageInfo)
             });
             setTableData(copyPageInfo[listType])
+            setFileList(copyPageInfo?.['attachmentFileList'] ?? []);
         }
         setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
@@ -83,7 +88,6 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
      * 데이터 관리 > 매입처 > 해외매입처
      */
     async function saveFunc() {
-        console.log(info, 'info:::');
         if (!commonManage.checkValidate(info, OAInfo['write']['validationList'], setValidate)) return;
 
         const tableList = tableRef.current?.getSourceData();
@@ -93,38 +97,44 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
         }
         info[listType] = filterTableList;
 
-        setLoading(true);
-        await getData.post('agency/addOverseasAgency', info).then(v => {
-            if (v?.data?.code === 1) {
-                window.postMessage({message: 'reload', target: 'overseas_agency_read'}, window.location.origin);
-                notificationAlert('success', '💾 해외 매입처 등록완료',
-                    <>
-                        <div>코드(약칭) : {info['agencyCode']}</div>
-                        <div>상호 : {info['agencyName']}</div>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    ,
-                    function () {
-                        getPropertyId('overseas_agency_update', v?.data?.entity?.overseasAgencyId)
-                    },
-                    {cursor: 'pointer'}
-                )
-                clearAll();
-                getPropertyId('overseas_agency_update', v.data?.entity?.overseasAgencyId);
-            } else if (v?.data?.code === -90009) {
-                message.error('코드(약칭)이(가) 중복되었습니다.');
-            } else {
-                console.warn(v?.data?.message);
-                notificationAlert('error', '⚠️ 작업실패',
-                    <>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , function () {
-                        alert('작업 로그 페이지 참고')
-                    },
-                    {cursor: 'pointer'}
-                )
-            }
+        const formData: any = new FormData();
+        commonManage.setInfoFormData(info, formData, listType, filterTableList);
+        commonManage.getUploadList(fileRef, formData);
+
+
+
+        // setLoading(true);
+        await getData.post('agency/addOverseasAgency', formData).then(v => {
+            // if (v?.data?.code === 1) {
+            //     window.postMessage({message: 'reload', target: 'overseas_agency_read'}, window.location.origin);
+            //     notificationAlert('success', '💾 해외 매입처 등록완료',
+            //         <>
+            //             <div>코드(약칭) : {info['agencyCode']}</div>
+            //             <div>상호 : {info['agencyName']}</div>
+            //             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+            //         </>
+            //         ,
+            //         function () {
+            //             getPropertyId('overseas_agency_update', v?.data?.entity?.overseasAgencyId)
+            //         },
+            //         {cursor: 'pointer'}
+            //     )
+            //     clearAll();
+            //     getPropertyId('overseas_agency_update', v.data?.entity?.overseasAgencyId);
+            // } else if (v?.data?.code === -90009) {
+            //     message.error('코드(약칭)이(가) 중복되었습니다.');
+            // } else {
+            //     console.warn(v?.data?.message);
+            //     notificationAlert('error', '⚠️ 작업실패',
+            //         <>
+            //             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+            //         </>
+            //         , function () {
+            //             alert('작업 로그 페이지 참고')
+            //         },
+            //         {cursor: 'pointer'}
+            //     )
+            // }
         })
         .catch((err) => {
             notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
@@ -239,6 +249,16 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
                                 <BoxCard title={'ETC'}>
                                     {inputForm({title: '담당자', id: 'manager', onChange: onChange, data: info})}
                                     {inputForm({title: '홈페이지', id: 'homepage', onChange: onChange, data: info})}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[5]} minSize={5}>
+                                <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
+                                    {/*@ts-ignored*/}
+                                    <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                         info={info} key={driveKey}/>
+                                    </div>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

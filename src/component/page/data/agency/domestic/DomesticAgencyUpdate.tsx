@@ -8,9 +8,9 @@ import {
     inputNumberForm,
     MainCard,
     selectBoxForm,
-    textAreaForm
+    textAreaForm, tooltipInfo
 } from "@/utils/commonForm";
-import {commonFunc, commonManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import _ from "lodash";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
@@ -22,6 +22,7 @@ import moment from "moment";
 import {CopyOutlined, DeleteOutlined, FormOutlined} from "@ant-design/icons";
 import {Actions} from "flexlayout-react";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'agencyManagerList'
 
@@ -30,16 +31,16 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
     const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null);
     const tableRef = useRef(null);
-
+    const fileRef = useRef(null);
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_agency_update');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-
+    const [driveKey, setDriveKey] = useState(0);
     const [loading, setLoading] = useState<any>(false)
     const [mini, setMini] = useState(true);
-
+    const [fileList, setFileList] = useState([]);
     const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -72,12 +73,15 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
         setValidate(getDAValidateInit());
         setInfo(getDAInit());
         setTableData([]);
+        setFileList([]);
+        setDriveKey(prev => prev + 1);
         getDataInfo().then(v => {
             const {agencyDetail, attachmentFileList} = v;
             setInfo({
                 ...getDAInit(),
                 ...agencyDetail
             });
+            setFileList(fileManage.getFormatFiles(attachmentFileList));
             agencyDetail[listType] = [...agencyDetail[listType], ...commonFunc.repeatObject(DAInfo['write']['defaultData'], 1000 - agencyDetail[listType].length)];
             setTableData(agencyDetail[listType]);
         })
@@ -288,6 +292,17 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
                                     {textAreaForm({ title: '지시사항', rows: 5, id: 'instructions', onChange: onChange, data: info})}
                                 </BoxCard>
                             </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[4]} minSize={5}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
+                                         disabled={!userInfo['microsoftId']}>
+
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+
+                                                     info={info} key={driveKey} type={'agency'} />
+                                </BoxCard>
+                            </Panel>
+
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                         </PanelGroup>
