@@ -348,7 +348,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                                             data: info
                                         })}
                                         {selectBoxForm({
-                                            title: '관리자 요청상태',
+                                            title: '담당자 요청상태',
                                             id: 'searchReplyStatus',
                                             onChange: onChange,
                                             data: info,

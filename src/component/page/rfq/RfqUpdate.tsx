@@ -238,28 +238,19 @@ function RqfUpdate({
 
     async function returnFunc(v) {
         if (v.code === 1) {
-            await getAttachmentFileList({
-                data: {
-                    "relatedType": "ESTIMATE_REQUEST",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": updateKey['rfq_update']
-                }
-            }).then(v => {
-                // const list = fileManage.getFormatFiles(v);
-                // setFileList(list)
-                // setOriginFileList(list)
 
-                window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
-                notificationAlert('success', '💾 견적의뢰 수정완료',
-                    <>
-                        <div>의뢰자료 No. : {info.documentNumberFull}</div>
-                        <div>등록일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , function () {
-                        getPropertyId('rfq_update', updateKey['rfq_update'])
-                    },
-                    {cursor: 'pointer'}
-                )
-            })
+            window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
+            notificationAlert('success', '💾 견적의뢰 수정완료',
+                <>
+                    <div>의뢰자료 No. : {info.documentNumberFull}</div>
+                    <div>등록일자 : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                , function () {
+                    getPropertyId('rfq_update', updateKey['rfq_update'])
+                },
+                {cursor: 'pointer'}
+            )
+
         } else {
             notificationAlert('error', '⚠️ 작업실패',
                 <>
@@ -356,8 +347,8 @@ function RqfUpdate({
         getCopyPage('rfq_write', {...copyInfo, _meta: {updateKey: Date.now()}})
     }
 
-    function alertConfirm(){
-        getData.post('estimate/replyStatusConfirm',updateKey['rfq_update']).then(v=>{
+    function alertConfirm() {
+        getData.post('estimate/replyStatusConfirm', updateKey['rfq_update']).then(v => {
             message.success({
                 content: '메일회신확인 완료',
                 duration: 2, // 3초 후 사라짐
@@ -586,7 +577,8 @@ function RqfUpdate({
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                          disabled={!userInfo['microsoftId']}>
 
-                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     ref={uploadRef}
                                                      info={info} key={driveKey} type={'rfq'}/>
                                 </BoxCard>
                             </Panel>
