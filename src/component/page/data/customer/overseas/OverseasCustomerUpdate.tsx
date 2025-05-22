@@ -1,8 +1,16 @@
 import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
-import {BoxCard, datePickerForm, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
-import {commonFunc, commonManage} from "@/utils/commonManage";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    tooltipInfo
+} from "@/utils/commonForm";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import _ from "lodash";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
@@ -14,6 +22,7 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {CopyOutlined, DeleteOutlined, FormOutlined} from "@ant-design/icons";
 import {Actions} from "flexlayout-react";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'overseasCustomerManagerList'
 
@@ -22,10 +31,11 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
     const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null);
     const tableRef = useRef(null);
+    const fileRef = useRef(null);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_customer_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -49,6 +59,9 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
     const getOCValidateInit = () => _.cloneDeep(OCInfo['write']['validate']);
     const [validate, setValidate] = useState(getOCValidateInit());
 
+    const [driveKey, setDriveKey] = useState(0);
+    const [fileList, setFileList] = useState([]);
+
     const [tableData, setTableData] = useState([]);
 
     async function getDataInfo() {
@@ -63,13 +76,16 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
         setLoading(true);
         setValidate(getOCValidateInit());
         setInfo(getOCInit());
+        setFileList([]);
+        setDriveKey(prev => prev + 1);
         setTableData([]);
         getDataInfo().then(v => {
-            const {overseasCustomerDetail} = v;
+            const {overseasCustomerDetail, attachmentFileList} = v;
             setInfo({
                 ...getOCInit(),
                 ...overseasCustomerDetail
             });
+            setFileList(fileManage.getFormatFiles(attachmentFileList));
             overseasCustomerDetail[listType] = [...overseasCustomerDetail[listType], ...commonFunc.repeatObject(OCInfo['write']['defaultData'], 1000 - overseasCustomerDetail[listType].length)];
             setTableData(overseasCustomerDetail[listType]);
         })
@@ -195,7 +211,7 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
     return <Spin spinning={loading}>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '365px' : '65px'} calc(100vh - ${mini ? 460 : 150}px)`,
+            gridTemplateRows: `${mini ? '480px' : '65px'} calc(100vh - ${mini ? 575 : 150}px)`,
             rowGap: 10,
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'overseas_customer_update'}/>
@@ -264,7 +280,16 @@ function OverseasCustomerUpdate({ updateKey, getCopyPage, layoutRef}:any) {
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[4]} minSize={0}></Panel>
+                        <Panel defaultSize={sizes[4]} minSize={5}>
+                            <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
+                                     disabled={!userInfo['microsoftId']}>
+
+                                <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                 info={info} key={driveKey} type={'customer'}/>
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[5]} minSize={0}></Panel>
                     </PanelGroup>
                 </div>
                 : <></>}

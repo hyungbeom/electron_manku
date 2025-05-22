@@ -24,8 +24,6 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
     const infoRef = useRef<any>(null);
     const tableRef = useRef(null);
     const fileRef = useRef(null);
-    const uploadRef = useRef(null);
-    const [driveKey, setDriveKey] = useState(0);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_customer_write');
@@ -35,8 +33,7 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
 
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
-    const [fileList, setFileList] = useState([]);
-    const [isFolderId, setIsFolderId] = useState(false);
+
     const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -54,12 +51,16 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
     const getDCValidateInit = () => _.cloneDeep(DCInfo['write']['validate']);
     const [validate, setValidate] = useState(getDCValidateInit());
 
+    const [fileList, setFileList] = useState([]);
+    const [driveKey, setDriveKey] = useState(0);
+
     const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
         setLoading(true);
         setValidate(getDCValidateInit());
         setInfo(getDCInit());
+        setFileList([]);
         setDriveKey(prev => prev + 1);
         setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
@@ -72,9 +73,8 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
                 ...getDCInit(),
                 ..._.cloneDeep(copyPageInfo),
             });
-            if(copyPageInfo?.['info']?.['connectDocumentNumberFull'] && copyPageInfo?.['info']?.['folderId']) setIsFolderId(true);
-            setFileList(copyPageInfo?.['attachmentFileList'] ?? []);
             setTableData(copyPageInfo[listType])
+            setFileList(copyPageInfo?.['attachmentFileList'] ?? []);
         }
         setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
@@ -91,6 +91,7 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
      * 데이터 관리 > 고객사 > 국내고객사
      */
     async function saveFunc() {
+        console.log(info, 'info:::')
         if (!commonManage.checkValidate(info, DCInfo['write']['validationList'], setValidate)) return;
 
         const tableList = tableRef.current?.getSourceData();
@@ -150,6 +151,7 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
     function clearAll() {
         setValidate(getDCValidateInit());
         setInfo(getDCInit());
+        setFileList([]);
         tableRef?.current?.setData(commonFunc.repeatObject(DCInfo['write']['defaultData'], 1000));
     }
 
@@ -271,8 +273,8 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
-                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
-                                                         info={info} type={'customer'} key={driveKey}/>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                         info={info} key={driveKey} type={'customer'}/>
                                     </div>
                                 </BoxCard>
                             </Panel>

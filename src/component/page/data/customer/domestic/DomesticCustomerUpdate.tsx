@@ -31,17 +31,17 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
     const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null);
     const tableRef = useRef(null);
-    const uploadRef = useRef(null);
     const fileRef = useRef(null);
+
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_customer_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-    const [driveKey, setDriveKey] = useState(0);
+
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
-    const [fileList, setFileList] = useState([]);
+
     const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -59,6 +59,9 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
     const getDCValidateInit = () => _.cloneDeep(DCInfo['write']['validate']);
     const [validate, setValidate] = useState(getDCValidateInit());
 
+    const [driveKey, setDriveKey] = useState(0);
+    const [fileList, setFileList] = useState([]);
+
     const [tableData, setTableData] = useState([]);
 
     async function getDataInfo() {
@@ -73,9 +76,9 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
         setLoading(true);
         setValidate(getDCValidateInit());
         setInfo(getDCInit());
-        setTableData([]);
         setFileList([]);
         setDriveKey(prev => prev + 1);
+        setTableData([]);
         getDataInfo().then(v => {
             const {customerDetail, attachmentFileList} = v;
             setInfo({
@@ -316,13 +319,11 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
                                      disabled={!userInfo['microsoftId']}>
 
                                 <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                 ref={uploadRef}
-                                                 info={info} key={driveKey} type={'customer'} />
+                                                 info={info} key={driveKey} type={'customer'}/>
                             </BoxCard>
                         </Panel>
-
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[4]} minSize={0}></Panel>
+                        <Panel defaultSize={sizes[5]} minSize={0}></Panel>
                     </PanelGroup>
                 </div>
                     : <></>}

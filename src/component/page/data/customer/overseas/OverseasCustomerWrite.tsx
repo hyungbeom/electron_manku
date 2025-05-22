@@ -24,16 +24,16 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
     const fileRef = useRef(null);
+
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_customer_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
-    const [driveKey, setDriveKey] = useState(0);
-    const [fileList, setFileList] = useState([]);
+
     const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -51,14 +51,18 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
     const getOCValidateInit = () => _.cloneDeep(OCInfo['write']['validate']);
     const [validate, setValidate] = useState(getOCValidateInit());
 
+    const [fileList, setFileList] = useState([]);
+    const [driveKey, setDriveKey] = useState(0);
+
     const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
         setLoading(true);
         setValidate(getOCValidateInit());
         setInfo(getOCInit());
-        setTableData([]);
+        setFileList([]);
         setDriveKey(prev => prev + 1);
+        setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setTableData(commonFunc.repeatObject(OCInfo['write']['defaultData'], 1000))
@@ -98,7 +102,10 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
         info[listType] = filterTableList;
 
         setLoading(true);
-        await getData.post('customer/addOverseasCustomer', info).then(v => {
+        const formData: any = new FormData();
+        commonManage.setInfoFormData(info, formData, listType, filterTableList);
+        commonManage.getUploadList(fileRef, formData);
+        await getData.post('customer/addOverseasCustomer', formData).then(v => {
             if (v?.data?.code === 1) {
                 window.postMessage({message: 'reload', target: 'overseas_customer_read'}, window.location.origin);
                 notificationAlert('success', '💾 해외 고객사 등록완료',
@@ -145,13 +152,14 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
     function clearAll() {
         setValidate(getOCValidateInit());
         setInfo(getOCInit());
+        setFileList([]);
         tableRef?.current?.setData(commonFunc.repeatObject(OCInfo['write']['defaultData'], 1000));
     }
 
     return <Spin spinning={loading}>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '365px' : '65px'} calc(100vh - ${mini ? 460 : 150}px)`,
+            gridTemplateRows: `${mini ? '415px' : '65px'} calc(100vh - ${mini ? 510 : 160}px)`,
             rowGap: 10,
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'overseas_customer_write'}/>
@@ -223,17 +231,17 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[5]} minSize={5}>
+                        <Panel defaultSize={sizes[4]} minSize={5}>
                             <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                 {/*@ts-ignored*/}
                                 <div style={{overFlowY: "auto", maxHeight: 300}}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                     info={info} key={driveKey}/>
+                                                     info={info} key={driveKey} type={'customer'}/>
                                 </div>
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
-                        <Panel defaultSize={sizes[4]} minSize={0}></Panel>
+                        <Panel defaultSize={sizes[5]} minSize={0}></Panel>
                     </PanelGroup>
                 </div>
                 : <></>}

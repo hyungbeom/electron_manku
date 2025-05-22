@@ -7,7 +7,7 @@ import {
     inputNumberForm,
     MainCard,
     selectBoxForm,
-    textAreaForm
+    textAreaForm, tooltipInfo
 } from "@/utils/commonForm";
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
@@ -22,6 +22,7 @@ import moment from "moment/moment";
 import {getData} from "@/manage/function/api";
 import {RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
 import Spin from "antd/lib/spin";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'agencyManagerList'
 
@@ -30,10 +31,11 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
     const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null);
     const tableRef = useRef(null);
+    const fileRef = useRef(null);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_agency_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -57,12 +59,17 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
     const getDAValidateInit = () => _.cloneDeep(DAInfo['write']['validate']);
     const [validate, setValidate] = useState(getDAValidateInit());
 
+    const [driveKey, setDriveKey] = useState(0);
+    const [fileList, setFileList] = useState([]);
+
     const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
         setLoading(true);
         setValidate(getDAValidateInit());
         setInfo(getDAInit());
+        setFileList([]);
+        setDriveKey(prev => prev + 1);
         setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
@@ -91,7 +98,6 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
      * 데이터 관리 > 매입처 > 국내매입처
      */
     async function saveFunc() {
-
         if (!commonManage.checkValidate(info, DAInfo['write']['validationList'], setValidate)) return;
 
         const tableList = tableRef.current?.getSourceData();
@@ -102,7 +108,10 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
         info[listType] = filterTableList;
 
         setLoading(true);
-        await getData.post('agency/addAgency', info).then(v => {
+        const formData: any = new FormData();
+        commonManage.setInfoFormData(info, formData, listType, filterTableList);
+        commonManage.getUploadList(fileRef, formData);
+        await getData.post('agency/addAgency', formData).then(v => {
             if (v?.data?.code === 1) {
                 window.postMessage({message: 'reload', target: 'domestic_agency_read'}, window.location.origin);
                 notificationAlert('success', '💾 국내매입처 등록완료',
@@ -150,13 +159,14 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
     function clearAll() {
         setValidate(getDAValidateInit());
         setInfo(getDAInit());
+        setFileList([]);
         tableRef.current?.setData(commonFunc.repeatObject(DAInfo['write']['defaultData'], 1000));
     }
 
     return <Spin spinning={loading}>
         <div ref={infoRef} style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '365px' : '65px'} calc(100vh - ${mini ? 460 : 160}px)`,
+            gridTemplateRows: `${mini ? '415px' : '65px'} calc(100vh - ${mini ? 510 : 160}px)`,
             rowGap: 10,
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'domestic_agency_write'}/>
@@ -239,7 +249,15 @@ function DomesticAgencyWrite({copyPageInfo, getPropertyId}: any) {
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[4]} minSize={0}></Panel>
+                            <Panel defaultSize={sizes[4]} minSize={5}>
+                                <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
+                                         disabled={!userInfo['microsoftId']}>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     info={info} key={driveKey} type={'agency'}/>
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[5]} minSize={0}></Panel>
                         </PanelGroup>
                     </div>
                     : <></>}

@@ -20,21 +20,20 @@ const listType = 'overseasAgencyManagerList'
 
 function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
     const notificationAlert = useNotificationAlert();
+    const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
-    const groupRef = useRef<any>(null);
-
     const fileRef = useRef(null);
+
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_agency_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
-    const [driveKey, setDriveKey] = useState(0);
-    const [fileList, setFileList] = useState([]);
+
     const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -52,14 +51,18 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
     const getOAValidateInit = () => _.cloneDeep(OAInfo['write']['validate']);
     const [validate, setValidate] = useState(getOAValidateInit());
 
+    const [fileList, setFileList] = useState([]);
+    const [driveKey, setDriveKey] = useState(0);
+
     const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
         setLoading(true);
         setValidate(getOAValidateInit());
         setInfo(getOAInit());
-        setTableData([]);
+        setFileList([]);
         setDriveKey(prev => prev + 1);
+        setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setTableData(commonFunc.repeatObject(OAInfo['write']['defaultData'], 1000))
@@ -97,44 +100,41 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
         }
         info[listType] = filterTableList;
 
+        setLoading(true);
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList);
         commonManage.getUploadList(fileRef, formData);
-
-
-
-        // setLoading(true);
         await getData.post('agency/addOverseasAgency', formData).then(v => {
-            // if (v?.data?.code === 1) {
-            //     window.postMessage({message: 'reload', target: 'overseas_agency_read'}, window.location.origin);
-            //     notificationAlert('success', '💾 해외 매입처 등록완료',
-            //         <>
-            //             <div>코드(약칭) : {info['agencyCode']}</div>
-            //             <div>상호 : {info['agencyName']}</div>
-            //             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-            //         </>
-            //         ,
-            //         function () {
-            //             getPropertyId('overseas_agency_update', v?.data?.entity?.overseasAgencyId)
-            //         },
-            //         {cursor: 'pointer'}
-            //     )
-            //     clearAll();
-            //     getPropertyId('overseas_agency_update', v.data?.entity?.overseasAgencyId);
-            // } else if (v?.data?.code === -90009) {
-            //     message.error('코드(약칭)이(가) 중복되었습니다.');
-            // } else {
-            //     console.warn(v?.data?.message);
-            //     notificationAlert('error', '⚠️ 작업실패',
-            //         <>
-            //             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-            //         </>
-            //         , function () {
-            //             alert('작업 로그 페이지 참고')
-            //         },
-            //         {cursor: 'pointer'}
-            //     )
-            // }
+            if (v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'overseas_agency_read'}, window.location.origin);
+                notificationAlert('success', '💾 해외 매입처 등록완료',
+                    <>
+                        <div>코드(약칭) : {info['agencyCode']}</div>
+                        <div>상호 : {info['agencyName']}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,
+                    function () {
+                        getPropertyId('overseas_agency_update', v?.data?.entity?.overseasAgencyId)
+                    },
+                    {cursor: 'pointer'}
+                )
+                clearAll();
+                getPropertyId('overseas_agency_update', v.data?.entity?.overseasAgencyId);
+            } else if (v?.data?.code === -90009) {
+                message.error('코드(약칭)이(가) 중복되었습니다.');
+            } else {
+                console.warn(v?.data?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
+            }
         })
         .catch((err) => {
             notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
@@ -152,13 +152,14 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
     function clearAll() {
         setValidate(getOAValidateInit());
         setInfo(getOAInit());
+        setFileList([]);
         tableRef.current?.setData(commonFunc.repeatObject(OAInfo['write']['defaultData'], 1000));
     }
 
     return <Spin spinning={loading}>
         <div ref={infoRef} style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '365px' : '65px'} calc(100vh - ${mini ? 460 : 160}px)`,
+            gridTemplateRows: `${mini ? '415px' : '65px'} calc(100vh - ${mini ? 510 : 160}px)`,
             rowGap: 10
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'overseas_agency_write'}/>
@@ -257,12 +258,12 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-                                                         info={info} key={driveKey}/>
+                                                         info={info} key={driveKey} type={'agency'}/>
                                     </div>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[5]} minSize={0}></Panel>
+                            <Panel defaultSize={sizes[6]} minSize={0}></Panel>
                         </PanelGroup>
                     </div>
                     : <></>}

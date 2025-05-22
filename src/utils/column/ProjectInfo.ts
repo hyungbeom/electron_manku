@@ -901,6 +901,8 @@ export const DAInfo = {
         "margin": 0,                       // 마진
         "instructions": "",                // 지시사항
         "agencyManagerList": [],           // 담당자 리스트
+        "folderId": "",
+        "uploadType": 9
     }
 };
 
@@ -982,7 +984,9 @@ export const OAInfo = {
         "address": "",                    // 주소
         "ibanCode": "",                   // IBan Code
         "swiftCode": "",                  // Swift Code
-        "overseasAgencyManagerList": []   // 담당자 리스트
+        "overseasAgencyManagerList": [],  // 담당자 리스트
+        "folderId": "",
+        "uploadType": 9
     },
 };
 
@@ -1220,7 +1224,9 @@ export const OCInfo = {
         "mankuTradeManager": "",
         "remarks": "",
         "companyVerification": "",
-        "overseasCustomerManagerList": []
+        "overseasCustomerManagerList": [],
+        "folderId": "",
+        "uploadType": 9
     },
 };
 

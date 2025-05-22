@@ -32,15 +32,16 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
     const infoRef = useRef<any>(null);
     const tableRef = useRef(null);
     const fileRef = useRef(null);
+
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_agency_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-    const [driveKey, setDriveKey] = useState(0);
+
     const [loading, setLoading] = useState<any>(false)
     const [mini, setMini] = useState(true);
-    const [fileList, setFileList] = useState([]);
+
     const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -58,6 +59,9 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
     const getDAValidateInit = () => _.cloneDeep(DAInfo['write']['validate']);
     const [validate, setValidate] = useState(getDAValidateInit());
 
+    const [driveKey, setDriveKey] = useState(0);
+    const [fileList, setFileList] = useState([]);
+
     const [tableData, setTableData] = useState([]);
 
     async function getDataInfo() {
@@ -72,9 +76,9 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
         setLoading(true);
         setValidate(getDAValidateInit());
         setInfo(getDAInit());
-        setTableData([]);
         setFileList([]);
         setDriveKey(prev => prev + 1);
+        setTableData([]);
         getDataInfo().then(v => {
             const {agencyDetail, attachmentFileList} = v;
             setInfo({
@@ -102,7 +106,7 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
      * 데이터 관리 > 매입처 > 국내매입처
      */
     async function saveFunc() {
-
+        console.log(info, 'info:::');
         if (!commonManage.checkValidate(info, DAInfo['write']['validationList'], setValidate)) return;
 
         const tableList = tableRef.current?.getSourceData();
@@ -209,7 +213,7 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
     return <Spin spinning={loading}>
         <div ref={infoRef} style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '365px' : '65px'} calc(100vh - ${mini ? 460 : 160}px)`,
+            gridTemplateRows: `${mini ? '415px' : '65px'} calc(100vh - ${mini ? 510 : 160}px)`,
             rowGap: 10,
         }}>
             <PanelSizeUtil groupRef={groupRef} storage={'domestic_agency_update'}/>
@@ -296,15 +300,12 @@ function DomesticAgencyUpdate({updateKey, getCopyPage, layoutRef}: any) {
                             <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
                                          disabled={!userInfo['microsoftId']}>
-
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
-
-                                                     info={info} key={driveKey} type={'agency'} />
+                                                     info={info} key={driveKey} type={'agency'}/>
                                 </BoxCard>
                             </Panel>
-
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[4]} minSize={0}></Panel>
+                            <Panel defaultSize={sizes[5]} minSize={0}></Panel>
                         </PanelGroup>
                     </div>
                     : <></>}
