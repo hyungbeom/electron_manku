@@ -289,7 +289,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
     /**
      * @description 등록 페이지 > 발주서 조회 Modal
      * Return Function
-     * 발주서 조회 Modal에서 선택한 항목 가져오기
+     * 발주서 조회 Modal 에서 선택한 항목 가져오기
      * @param list
      */
     function modalSelected(list= []) {

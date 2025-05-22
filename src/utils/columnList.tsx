@@ -3444,9 +3444,7 @@ export const tableSourceUpdateColumns = [
         cellStyle: (params) => {
             const docNum = String(params.data?.documentNumber || '').toUpperCase();
             if (docNum.startsWith('STO')) {
-                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
-            } else {
-                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+                return {color: 'red'}; // 값이 100 이상이면 초록색
             }
         }
     },
@@ -3458,9 +3456,7 @@ export const tableSourceUpdateColumns = [
         cellStyle: (params) => {
             const docNum = String(params.data?.documentNumber || '').toUpperCase();
             if (docNum.startsWith('STO')) {
-                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
-            } else {
-                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+                return {color: 'red'}; // 값이 100 이상이면 초록색
             }
         }
     },
@@ -3471,9 +3467,7 @@ export const tableSourceUpdateColumns = [
         cellStyle: (params) => {
             const docNum = String(params.data?.documentNumber || '').toUpperCase();
             if (docNum.startsWith('STO')) {
-                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
-            } else {
-                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+                return {color: 'red'}; // 값이 100 이상이면 초록색
             }
         }
     },
@@ -3484,9 +3478,7 @@ export const tableSourceUpdateColumns = [
         cellStyle: (params) => {
             const docNum = String(params.data?.documentNumber || '').toUpperCase();
             if (docNum.startsWith('STO')) {
-                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
-            } else {
-                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+                return {color: 'red'}; // 값이 100 이상이면 초록색
             }
         }
     },
@@ -3496,9 +3488,7 @@ export const tableSourceUpdateColumns = [
         cellStyle: (params) => {
             const docNum = String(params.data?.documentNumber || '').toUpperCase();
             if (docNum.startsWith('STO')) {
-                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
-            } else {
-                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+                return {color: 'red'}; // 값이 100 이상이면 초록색
             }
         }
     },
@@ -3508,9 +3498,7 @@ export const tableSourceUpdateColumns = [
         cellStyle: (params) => {
             const docNum = String(params.data?.documentNumber || '').toUpperCase();
             if (docNum.startsWith('STO')) {
-                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
-            } else {
-                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+                return {color: 'red'}; // 값이 100 이상이면 초록색
             }
         }
     },
@@ -3520,9 +3508,7 @@ export const tableSourceUpdateColumns = [
         cellStyle: (params) => {
             const docNum = String(params.data?.documentNumber || '').toUpperCase();
             if (docNum.startsWith('STO')) {
-                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
-            } else {
-                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+                return {color: 'red'}; // 값이 100 이상이면 초록색
             }
         }
     },
@@ -3532,9 +3518,7 @@ export const tableSourceUpdateColumns = [
         cellStyle: (params) => {
             const docNum = String(params.data?.documentNumber || '').toUpperCase();
             if (docNum.startsWith('STO')) {
-                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
-            } else {
-                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+                return {color: 'red'}; // 값이 100 이상이면 초록색
             }
         }
     },
@@ -3544,9 +3528,7 @@ export const tableSourceUpdateColumns = [
         cellStyle: (params) => {
             const docNum = String(params.data?.documentNumber || '').toUpperCase();
             if (docNum.startsWith('STO')) {
-                return {color: 'red', textAlign: "center"}; // 값이 100 이상이면 초록색
-            } else {
-                return {textAlign: "center"}; // 값이 100 미만이면 빨간색
+                return {color: 'red'}; // 값이 100 이상이면 초록색
             }
         }
     }
@@ -3993,7 +3975,7 @@ export const projectReadColumn = [
 ];
 
 
-export const delilveryReadColumn = [
+export const deliveryReadColumn = [
     {
         headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
@@ -4005,7 +3987,7 @@ export const delilveryReadColumn = [
         filter: false
     },
     {
-        headerName: '출고일자.',
+        headerName: '출고일자',
         field: 'deliveryDate',
         pinned: 'left',
         maxWidth: 80
@@ -4018,7 +4000,7 @@ export const delilveryReadColumn = [
         headerName: '고객사명',
         field: 'customerName',
         minWidth: 150,
-        pinned: 'right'
+        pinned: 'left'
     }, {
         headerName: '받는분 성명',
         field: 'recipientName',
@@ -4069,6 +4051,11 @@ export const delilveryReadColumn = [
         headerName: 'item',
         field: 'item',
         minWidth: 150,
+    }, {
+        headerName: '출고 완료 여부',
+        field: 'isConfirm',
+        maxWidth: 100,
+        pinned: 'right'
     }, {
         headerName: '확인 여부',
         field: 'isConfirm',

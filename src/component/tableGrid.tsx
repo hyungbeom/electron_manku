@@ -470,6 +470,8 @@ const TableGrid = ({
                 </div>
 
                 <AgGridReact
+                    style={{height: '100%'}}
+                    domLayout="normal"  // 🔥 이게 핵심!
                     onRowClicked={onRowClicked}
                     onGridReady={onGridReady}
                     theme={tableTheme} ref={gridRef}
