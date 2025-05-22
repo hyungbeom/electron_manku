@@ -1,13 +1,13 @@
 import React, {memo, useRef, useState} from "react";
 import {searchOrderInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
-import {CopyOutlined} from "@ant-design/icons";
+import {CopyOutlined, RadiusSettingOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
 import {deleteDelivery, getDeliveryList} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {BoxCard, inputForm, MainCard, rangePickerForm, selectBoxForm} from "@/utils/commonForm";
 import TableGrid from "@/component/tableGrid";
-import {delilveryReadColumn} from "@/utils/columnList";
+import {deliveryReadColumn} from "@/utils/columnList";
 import {useRouter} from "next/router";
 import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
@@ -100,13 +100,23 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
         <>
             <div style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '250px' : '65px'} calc(100vh - ${mini ? 380 : 195}px)`,
+                gridTemplateRows: `${mini ? '310px' : '65px'} calc(100vh - ${mini ? 440 : 195}px)`,
                 columnGap: 5
             }}>
                 <MainCard title={'배송조회'}
-                          list={[{name: '조회', func: searchInfo, type: 'primary'},
-                              {name: '초기화', func: clearAll, type: 'danger'},
-                              {name: '신규생성', func: moveRouter}]}
+                          list={[
+                              {name: <div><SearchOutlined style={{paddingRight: 8}}/>조회</div>, func: searchInfo, type: 'primary'},
+                              {
+                                  name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
+                                  func: clearAll,
+                                  type: 'danger'
+                              },
+                              {
+                                  name: <div><SaveOutlined style={{paddingRight: 8}}/>신규작성</div>,
+                                  func: moveRouter,
+                                  type: ''
+                              }
+                          ]}
                           mini={mini} setMini={setMini}>
                     {mini ? <div>
                         <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5}}>
@@ -120,6 +130,13 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
                                         handleKeyPress: handleKeyPress,
                                         data: info
                                     })}
+                                    {inputForm({
+                                        title: '운송장번호',
+                                        id: 'searchTrackingNumber',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
@@ -127,6 +144,13 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
                                 <BoxCard title={'받는분 정보'}>
                                     {inputForm({
                                         title: '고객사명',
+                                        id: 'searchCustomerName',
+                                        onChange: onChange,
+                                        handleKeyPress: handleKeyPress,
+                                        data: info
+                                    })}
+                                    {inputForm({
+                                        title: '받는분 성명',
                                         id: 'searchCustomerName',
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
@@ -155,13 +179,17 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
                                             data: info
                                         })}
                                     </div>
-                                    {inputForm({
-                                        title: '운송장번호',
-                                        id: 'searchTrackingNumber',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
+                                    <div style={{paddingBottom: 0}}>
+                                        {selectBoxForm({
+                                            title: '출고완료여부', id: 'searchIsConfirm', list: [
+                                                {value: '', label: '전체'},
+                                                {value: 'O', label: 'O'},
+                                                {value: 'X', label: 'X'},
+                                            ],
+                                            onChange: onChange,
+                                            data: info
+                                        })}
+                                    </div>
                                 </BoxCard>
                             </Panel>
                         </PanelGroup>
@@ -176,7 +204,7 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
                         </Button>}
                     getPropertyId={getPropertyId}
                     gridRef={gridRef}
-                    columns={delilveryReadColumn}
+                    columns={deliveryReadColumn}
                     onGridReady={onGridReady}
                     funcButtons={['agPrint']}
                 />

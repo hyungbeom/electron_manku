@@ -52,7 +52,7 @@ const EstimatePaper = ({
             unit: list.length ? list[0][0]['unit'] : '',
             currencyUnit: list.length ? list[0][0]['currencyUnit'] : ''
         }
-        console.log(list, 'list:::')
+
         list.forEach((v: any, i: number) => {
             const result = v.reduce((acc, cur, idx) => {
                 const {quantity, net} = cur
