@@ -52,7 +52,7 @@ const EstimatePaper = ({
             unit: list.length ? list[0][0]['unit'] : '',
             currencyUnit: list.length ? list[0][0]['currencyUnit'] : ''
         }
-
+        console.log(list, 'list:::')
         list.forEach((v: any, i: number) => {
             const result = v.reduce((acc, cur, idx) => {
                 const {quantity, net} = cur
@@ -166,7 +166,7 @@ const EstimatePaper = ({
                          onClick={() => {
                              setToggle(true);
                          }}>
-                        <span>{!isNaN(info.net) ? '₩' : ''}</span>
+                        <span>{!isNaN(info.net) ? '₩' : ''} </span>
                         <span className={'netPrice'}>{amountFormat(info.net)}</span>
                     </div>
 
