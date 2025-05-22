@@ -318,7 +318,7 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
 
                                 <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
                                                  ref={uploadRef}
-                                                 info={info} key={driveKey} type={'tax'}/>
+                                                 info={info} key={driveKey} type={'customer'} />
                             </BoxCard>
                         </Panel>
 

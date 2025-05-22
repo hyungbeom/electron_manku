@@ -349,6 +349,7 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
     async function fileRemove(file): Promise<boolean> {
         // 수정페이지이고 folderId 가 있으면 쉐어포인트 직접삭제
         if (type && info?.folderId) {
+            console.log('####')
             setLoading(true);
             try {
                 const res = await getData.post('common/fileDelete', file);
@@ -403,6 +404,7 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
             formData.append('file', file?.originFileObj || file);
             formData.append('fileName', fileName);
 
+            console.log("????")
             try {
                 const uploadRes = await getFormData.post('common/fileAdd', formData);
                 if (uploadRes?.data?.code === 1) {
@@ -619,6 +621,7 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
                     }}
                     onRemove={async (file) => {
                         if (isExcluded()) return false;
+                        console.log('@@@@@@')
                         return await fileRemove(file);
                     }}
                     // onChange={fileChange} // 파일 리스트 업데이트
