@@ -335,6 +335,9 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
             case 8:
                 result = `${prefix}${info?.documentNumberFull || baseFileName}_ETC.${extension}`;
                 break;
+            case 9:
+                result = `${baseFileName || '제목없음'}_사업자등록증.${extension}`;
+                break;
             default:
                 result = `${prefix}${info?.documentNumberFull || baseFileName}.${extension}`;
         }
@@ -392,6 +395,7 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
         if (existFileIndex !== -1) return;
 
         setLoading(true);
+
         const fileName = generateFileName(file?.name, fileList, isEstimate);
         let uploadedInfo = {
             ...file,
@@ -696,6 +700,7 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
                             <option value={6}>{'매출자료'}</option>
                             <option value={7}>{'프로젝트자료'}</option>
                             <option value={8}>{'기타'}</option>
+                            <option value={9}>{'사업자등록증'}</option>
                         </select>
                     </div>
 

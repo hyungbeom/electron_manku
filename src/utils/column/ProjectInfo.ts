@@ -1141,7 +1141,9 @@ export const DCInfo = {
         "businessType": "",
         "businessItem": "",
         "key": 1,
-        "customerManagerList": []
+        "customerManagerList": [],
+        "folderId": '',
+        "uploadType": 9
     },
 };
 

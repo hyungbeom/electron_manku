@@ -29,7 +29,7 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_customer_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -91,49 +91,48 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
      * 데이터 관리 > 고객사 > 국내고객사
      */
     async function saveFunc() {
+        if (!commonManage.checkValidate(info, DCInfo['write']['validationList'], setValidate)) return;
 
-        // if (!commonManage.checkValidate(info, DCInfo['write']['validationList'], setValidate)) return;
-        //
         const tableList = tableRef.current?.getSourceData();
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['managerName'])
-        // if (!filterTableList.length) {
-        //     return message.warn('하위 담당자 데이터가 1개 이상 이여야 합니다.');
-        // }
-        // info[listType] = filterTableList;
-        //
-        // setLoading(true);
+        if (!filterTableList.length) {
+            return message.warn('하위 담당자 데이터가 1개 이상 이여야 합니다.');
+        }
+        info[listType] = filterTableList;
+
+        setLoading(true);
         const formData: any = new FormData();
         commonManage.setInfoFormData(info, formData, listType, filterTableList);
         commonManage.getUploadList(fileRef, formData);
         await getFormData.post('customer/addCustomer', formData).then(v => {
-            // if (v?.data?.code === 1) {
-            //     window.postMessage({message: 'reload', target: 'domestic_customer_read'}, window.location.origin);
-            //     notificationAlert('success', '💾 국내고객사 등록완료',
-            //         <>
-            //             <div>코드(약칭) : {info['customerCode'] ? info['customerCode'] : v?.data?.entity?.customerId}</div>
-            //             <div>상호 : {info['customerName']}</div>
-            //             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-            //         </>
-            //         ,
-            //         function () {
-            //             getPropertyId('domestic_customer_update', v.data?.entity?.customerId)
-            //         },
-            //         {cursor: 'pointer'}
-            //     )
-            //     clearAll();
-            //     getPropertyId('domestic_customer_update', v.data?.entity?.customerId);
-            // } else {
-            //     console.warn(v?.data?.message);
-            //     notificationAlert('error', '⚠️ 작업실패',
-            //         <>
-            //             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-            //         </>
-            //         , function () {
-            //             alert('작업 로그 페이지 참고')
-            //         },
-            //         {cursor: 'pointer'}
-            //     )
-            // }
+            if (v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'domestic_customer_read'}, window.location.origin);
+                notificationAlert('success', '💾 국내고객사 등록완료',
+                    <>
+                        <div>코드(약칭) : {info['customerCode'] ? info['customerCode'] : v?.data?.entity?.customerId}</div>
+                        <div>상호 : {info['customerName']}</div>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    ,
+                    function () {
+                        getPropertyId('domestic_customer_update', v.data?.entity?.customerId)
+                    },
+                    {cursor: 'pointer'}
+                )
+                clearAll();
+                getPropertyId('domestic_customer_update', v.data?.entity?.customerId);
+            } else {
+                console.warn(v?.data?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
+            }
         })
         .catch((err) => {
             notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
@@ -268,17 +267,17 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[5]} minSize={5}>
+                            <Panel defaultSize={sizes[4]} minSize={5}>
                                 <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
                                     {/*@ts-ignored*/}
                                     <div style={{overFlowY: "auto", maxHeight: 300}}>
                                         <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
-                                                         info={info} key={driveKey}/>
+                                                         info={info} type={'customer'} key={driveKey}/>
                                     </div>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[4]} minSize={0}></Panel>
+                            <Panel defaultSize={sizes[5]} minSize={0}></Panel>
                         </PanelGroup>
                     </div>
                     : <></>}
