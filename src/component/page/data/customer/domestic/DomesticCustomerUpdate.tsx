@@ -103,7 +103,6 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
      * 데이터 관리 > 고객사 > 국내고객사
      */
     async function saveFunc() {
-        console.log(info, 'info:::')
         if (!commonManage.checkValidate(info, DCInfo['write']['validationList'], setValidate)) return;
 
         const tableList = tableRef.current?.getSourceData();

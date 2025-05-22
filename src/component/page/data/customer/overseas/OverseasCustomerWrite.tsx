@@ -14,6 +14,7 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Spin from "antd/lib/spin";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'overseasCustomerManagerList'
 
@@ -22,7 +23,7 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
     const groupRef = useRef<any>(null)
     const infoRef = useRef<any>(null)
     const tableRef = useRef(null);
-
+    const fileRef = useRef(null);
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_customer_write');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
@@ -31,7 +32,8 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
 
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
-
+    const [driveKey, setDriveKey] = useState(0);
+    const [fileList, setFileList] = useState([]);
     const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -56,6 +58,7 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
         setValidate(getOCValidateInit());
         setInfo(getOCInit());
         setTableData([]);
+        setDriveKey(prev => prev + 1);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             setTableData(commonFunc.repeatObject(OCInfo['write']['defaultData'], 1000))
@@ -67,6 +70,7 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
                 ..._.cloneDeep(copyPageInfo)
             });
             setTableData(copyPageInfo[listType])
+            setFileList(copyPageInfo?.['attachmentFileList'] ?? []);
         }
         setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
@@ -216,6 +220,16 @@ function OverseasCustomerWrite({copyPageInfo, getPropertyId}: any) {
                             <BoxCard title={'고객사 정보'}>
                                 {textAreaForm({title: '업체확인사항', rows: 4, id: 'companyVerification', onChange: onChange, data: info})}
                                 {textAreaForm({title: '비고란', rows: 4, id: 'remarks', onChange: onChange, data: info})}
+                            </BoxCard>
+                        </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[5]} minSize={5}>
+                            <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
+                                {/*@ts-ignored*/}
+                                <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                    <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                     info={info} key={driveKey}/>
+                                </div>
                             </BoxCard>
                         </Panel>
                         <PanelResizeHandle/>
