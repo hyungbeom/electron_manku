@@ -185,7 +185,7 @@ function DeliveryWrite({copyPageInfo}:any) {
     function modalSelected(list= []) {
         if (!list?.length) return;
 
-        console.log(list[0]);
+        console.log(list);
 
         // customerName
         // yourPoNo
@@ -229,19 +229,44 @@ function DeliveryWrite({copyPageInfo}:any) {
                 case 'CJ':
                     bowl = {
                         deliveryType: 'CJ',
-                        cjTrackingNo: '',
+                        deliveryDate: '',
+                        customerName: '',
+                        customerOrderNo: '',
+                        trackingNumber: '',
+                        recipientName: '',
+                        recipientPhone: '',
+                        recipientAltPhone: '',
+                        recipientAddress: '',
+                        recipientPostalCode: '',
+                        productName: '',
+                        quantity: '',
                     };
                     break;
                 case 'DAESIN':
                     bowl = {
                         deliveryType: 'DAESIN',
-                        daesinField: '',
+                        deliveryDate: '',
+                        customerName: '',
+                        recipientName: '',
+                        recipientPhone: '',
+                        recipientAddress: '',
+                        destination: '',
+                        productName: '',
+                        quantity: '',
+                        packagingType: '',
+                        shippingType: '',
+                        paymentMethod: '',
                     };
                     break;
                 case 'QUICK':
                     bowl = {
                         deliveryType: 'QUICK',
-                        quickMemo: '',
+                        deliveryDate: '',
+                        customerName: '',
+                        recipientName: '',
+                        recipientPhone: '',
+                        recipientAddress: '',
+                        classification: '',
                     };
                     break;
                 default:

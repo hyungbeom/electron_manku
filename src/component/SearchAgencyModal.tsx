@@ -44,6 +44,7 @@ export default function SearchInfoModal({
                 case 'agencyCode' :
                 case 'customerName' :
                 case 'maker' :
+                case 'connectInquiryNoForDelivery' :
                 case 'connectInquiryNo' :
                 case 'connectInquiryNoForSource' :
                     searchFunc(firstTrueKey, dom.value);
@@ -341,6 +342,10 @@ export default function SearchInfoModal({
                                              }
                                          })
                                          break;
+                                     // 배송 등록/수정시 발주서 조회 후 클릭시
+                                     case 'connectInquiryNoForDelivery':
+                                         onRowClicked(e);
+                                         return;
                                      // 송금 등록/수정시 발주서 조회 후 클릭시
                                      case 'connectInquiryNo':
                                          onRowClicked(e);

@@ -26,7 +26,7 @@ export default function Deasin({info, setInfo, openModal}){
                 suffix: <span style={{cursor: 'pointer'}} onClick={
                     (e) => {
                         e.stopPropagation();
-                        openModal('connectInquiryNo');
+                        openModal('connectInquiryNoForDelivery');
                     }
                 }>🔍</span>,
             })}

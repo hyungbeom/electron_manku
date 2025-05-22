@@ -734,6 +734,15 @@ export const modalList = {
         list: 'orderList',
         placeholder: '문서번호 또는 고객사명을 입력하세요'
     },
+    connectInquiryNoForDelivery: {
+        // url: 'order/getOrderListForRemittance',
+        url: 'order/searchTextOrderJoinCustomerList',
+        title: '발주서 조회',
+        // column: subSecTableOrderReadColumns,
+        column: tableOrderReadColumns,
+        list: 'orderList',
+        placeholder: '문서번호 또는 고객사명, 매입처명을 입력하세요'
+    },
     connectInquiryNo: {
         // url: 'order/getOrderListForRemittance',
         url: 'order/searchTextOrderList',

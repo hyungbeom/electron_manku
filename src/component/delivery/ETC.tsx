@@ -26,7 +26,7 @@ export default function ETC({info, setInfo, openModal}) {
                 suffix: <span style={{cursor: 'pointer'}} onClick={
                     (e) => {
                         e.stopPropagation();
-                        openModal('connectInquiryNo');
+                        openModal('connectInquiryNoForDelivery');
                     }
                 }>🔍</span>,
             })}
@@ -34,7 +34,7 @@ export default function ETC({info, setInfo, openModal}) {
         </TopBoxCard>
 
         <PanelGroup direction="horizontal" style={{gap: 0.5, paddingTop: 10}}>
-            <Panel defaultSize={25} minSize={5}>
+            <Panel defaultSize={20} minSize={5}>
                 <BoxCard title={'받는분 정보'}>
                     {inputForm({title: '성명', id: 'recipientName', onChange: onChange, data: info})}
                     {inputForm({title: '연락처', id: 'recipientPhone', onChange: onChange, data: info})}
@@ -49,7 +49,7 @@ export default function ETC({info, setInfo, openModal}) {
                 </BoxCard>
             </Panel>
             <PanelResizeHandle/>
-            <Panel defaultSize={25} minSize={5}>
+            <Panel defaultSize={20} minSize={5}>
                 <BoxCard title={'화물정보'}>
                     {inputForm({title: '구분', id: 'classification', onChange: onChange, data: info})}
                     <div style={{paddingBottom: 10}}>

@@ -26,7 +26,7 @@ export default function Deahan({info, setInfo, openModal}) {
                 suffix: <span style={{cursor: 'pointer'}} onClick={
                     (e) => {
                         e.stopPropagation();
-                        openModal('connectInquiryNo');
+                        openModal('connectInquiryNoForDelivery');
                     }
                 }>🔍</span>,
             })}
