@@ -1,5 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {getData} from "@/manage/function/api";
+import {getData, getFormData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import moment from "moment/moment";
 import _ from "lodash";
@@ -14,6 +14,7 @@ import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Spin from "antd/lib/spin";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'customerManagerList'
 
@@ -22,6 +23,9 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
     const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null);
     const tableRef = useRef(null);
+    const fileRef = useRef(null);
+    const uploadRef = useRef(null);
+    const [driveKey, setDriveKey] = useState(0);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_customer_write');
@@ -31,7 +35,8 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
 
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
-
+    const [fileList, setFileList] = useState([]);
+    const [isFolderId, setIsFolderId] = useState(false);
     const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -55,6 +60,7 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
         setLoading(true);
         setValidate(getDCValidateInit());
         setInfo(getDCInit());
+        setDriveKey(prev => prev + 1);
         setTableData([]);
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
@@ -66,6 +72,8 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
                 ...getDCInit(),
                 ..._.cloneDeep(copyPageInfo),
             });
+            if(copyPageInfo?.['info']?.['connectDocumentNumberFull'] && copyPageInfo?.['info']?.['folderId']) setIsFolderId(true);
+            setFileList(copyPageInfo?.['attachmentFileList'] ?? []);
             setTableData(copyPageInfo[listType])
         }
         setLoading(false);
@@ -83,46 +91,49 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
      * 데이터 관리 > 고객사 > 국내고객사
      */
     async function saveFunc() {
-        console.log(info, 'info:::')
-        if (!commonManage.checkValidate(info, DCInfo['write']['validationList'], setValidate)) return;
 
+        // if (!commonManage.checkValidate(info, DCInfo['write']['validationList'], setValidate)) return;
+        //
         const tableList = tableRef.current?.getSourceData();
         const filterTableList = commonManage.filterEmptyObjects(tableList, ['managerName'])
-        if (!filterTableList.length) {
-            return message.warn('하위 담당자 데이터가 1개 이상 이여야 합니다.');
-        }
-        info[listType] = filterTableList;
-
-        setLoading(true);
-        await getData.post('customer/addCustomer', info).then(v => {
-            if (v?.data?.code === 1) {
-                window.postMessage({message: 'reload', target: 'domestic_customer_read'}, window.location.origin);
-                notificationAlert('success', '💾 국내고객사 등록완료',
-                    <>
-                        <div>코드(약칭) : {info['customerCode'] ? info['customerCode'] : v?.data?.entity?.customerId}</div>
-                        <div>상호 : {info['customerName']}</div>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    ,
-                    function () {
-                        getPropertyId('domestic_customer_update', v.data?.entity?.customerId)
-                    },
-                    {cursor: 'pointer'}
-                )
-                clearAll();
-                getPropertyId('domestic_customer_update', v.data?.entity?.customerId);
-            } else {
-                console.warn(v?.data?.message);
-                notificationAlert('error', '⚠️ 작업실패',
-                    <>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , function () {
-                        alert('작업 로그 페이지 참고')
-                    },
-                    {cursor: 'pointer'}
-                )
-            }
+        // if (!filterTableList.length) {
+        //     return message.warn('하위 담당자 데이터가 1개 이상 이여야 합니다.');
+        // }
+        // info[listType] = filterTableList;
+        //
+        // setLoading(true);
+        const formData: any = new FormData();
+        commonManage.setInfoFormData(info, formData, listType, filterTableList);
+        commonManage.getUploadList(fileRef, formData);
+        await getFormData.post('customer/addCustomer', formData).then(v => {
+            // if (v?.data?.code === 1) {
+            //     window.postMessage({message: 'reload', target: 'domestic_customer_read'}, window.location.origin);
+            //     notificationAlert('success', '💾 국내고객사 등록완료',
+            //         <>
+            //             <div>코드(약칭) : {info['customerCode'] ? info['customerCode'] : v?.data?.entity?.customerId}</div>
+            //             <div>상호 : {info['customerName']}</div>
+            //             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+            //         </>
+            //         ,
+            //         function () {
+            //             getPropertyId('domestic_customer_update', v.data?.entity?.customerId)
+            //         },
+            //         {cursor: 'pointer'}
+            //     )
+            //     clearAll();
+            //     getPropertyId('domestic_customer_update', v.data?.entity?.customerId);
+            // } else {
+            //     console.warn(v?.data?.message);
+            //     notificationAlert('error', '⚠️ 작업실패',
+            //         <>
+            //             <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+            //         </>
+            //         , function () {
+            //             alert('작업 로그 페이지 참고')
+            //         },
+            //         {cursor: 'pointer'}
+            //     )
+            // }
         })
         .catch((err) => {
             notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
@@ -254,6 +265,16 @@ function DomesticCustomerWrite({copyPageInfo, getPropertyId}: any) {
                                         })}
                                     </div>
                                     {inputForm({title: '만쿠담당자', id: 'mankuTradeManager', onChange: onChange, data: info})}
+                                </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[5]} minSize={5}>
+                                <BoxCard title={'드라이브 목록'} disabled={!userInfo['microsoftId']}>
+                                    {/*@ts-ignored*/}
+                                    <div style={{overFlowY: "auto", maxHeight: 300}}>
+                                        <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef} ref={uploadRef}
+                                                         info={info} key={driveKey}/>
+                                    </div>
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

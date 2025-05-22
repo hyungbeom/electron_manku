@@ -2,8 +2,16 @@ import React, {memo, useEffect, useRef, useState} from "react";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import moment from "moment/moment";
-import {BoxCard, datePickerForm, inputForm, MainCard, selectBoxForm, textAreaForm} from "@/utils/commonForm";
-import {commonFunc, commonManage} from "@/utils/commonManage";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    MainCard,
+    selectBoxForm,
+    textAreaForm,
+    tooltipInfo
+} from "@/utils/commonForm";
+import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import _ from "lodash";
 import Table from "@/component/util/Table";
 import {DCInfo} from "@/utils/column/ProjectInfo";
@@ -14,6 +22,7 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {CopyOutlined, DeleteOutlined, FormOutlined} from "@ant-design/icons";
 import {Actions} from "flexlayout-react";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
+import {DriveUploadComp} from "@/component/common/SharePointComp";
 
 const listType = 'customerManagerList'
 
@@ -22,16 +31,17 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
     const groupRef = useRef<any>(null);
     const infoRef = useRef<any>(null);
     const tableRef = useRef(null);
-
+    const uploadRef = useRef(null);
+    const fileRef = useRef(null);
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('domestic_customer_update');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-
+    const [driveKey, setDriveKey] = useState(0);
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
-
+    const [fileList, setFileList] = useState([]);
     const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
@@ -64,12 +74,15 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
         setValidate(getDCValidateInit());
         setInfo(getDCInit());
         setTableData([]);
+        setFileList([]);
+        setDriveKey(prev => prev + 1);
         getDataInfo().then(v => {
-            const {customerDetail} = v;
+            const {customerDetail, attachmentFileList} = v;
             setInfo({
                 ...getDCInit(),
                 ...customerDetail
             });
+            setFileList(fileManage.getFormatFiles(attachmentFileList));
             customerDetail[listType] = [...customerDetail[listType], ...commonFunc.repeatObject(DCInfo['write']['defaultData'], 1000 - customerDetail[listType].length)];
             setTableData(customerDetail[listType]);
         })
@@ -298,6 +311,17 @@ function DomesticCustomerUpdate({updateKey, getCopyPage, layoutRef}:any) {
                                 {inputForm({title: '만쿠담당자', id: 'mankuTradeManager', onChange: onChange, data: info})}
                             </BoxCard>
                         </Panel>
+                        <PanelResizeHandle/>
+                        <Panel defaultSize={sizes[4]} minSize={5}>
+                            <BoxCard title={'드라이브 목록'} tooltip={tooltipInfo('drive')}
+                                     disabled={!userInfo['microsoftId']}>
+
+                                <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
+                                                 ref={uploadRef}
+                                                 info={info} key={driveKey} type={'tax'}/>
+                            </BoxCard>
+                        </Panel>
+
                         <PanelResizeHandle/>
                         <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                     </PanelGroup>
