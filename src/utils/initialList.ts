@@ -141,8 +141,10 @@ export const overseasRemittanceSearchInitial = {
 export const taxInvoiceSearchInitial = {
     "documentNumberFull": "",                          // Inquiry No.
     "customerName": "",                                // 고객사명
+    "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),                                // 고객사명
+    "searchEndDate":  moment().format('YYYY-MM-DD'),                                // 고객사명
     "customerManagerName": "",                         // 담당자명
-    "invoiceDueDate": moment().format('YYYY-MM-DD'),   // 발행지정일자
+    "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
     "invoiceStatus": "",                               // 계산서 발행여부 O, X
     "page": 1,
     "limit": -1
@@ -586,6 +588,7 @@ export const orderReadInitial = {
     "searchCustomerName": "",           // 고객사명
     searchCreatedBy : '',
     searchManagerName : '',
+    "searchReplyStatus": "",                  // Maker
     "searchMaker": "",                  // Maker
     "searchModel": "",                  // Model
     "searchItem": "",                   // Item
@@ -726,6 +729,20 @@ export const printEstimateInitial = {
 export const ModalInitList = {agencyCode: false, customerName: false, maker: false, orderList: false}
 
 export const modalList = {
+    agencyCode_overSeas: {
+        url: 'agency/getAgencyListForOverSeas',
+        title: '해외대리점 코드 조회',
+        column: searchAgencyCodeColumn,
+        list: 'agencyList',
+        placeholder: '코드 또는 상호를 입력하세요'
+    },
+    agencyCode_domestic: {
+        url: 'agency/getAgencyListForDomestic',
+        title: '국내대리점 코드 조회',
+        column: searchAgencyCodeColumn,
+        list: 'agencyList',
+        placeholder: '코드 또는 상호를 입력하세요'
+    },
     agencyCode: {
         url: 'agency/getAgencyListForEstimate',
         title: '대리점 코드 조회',

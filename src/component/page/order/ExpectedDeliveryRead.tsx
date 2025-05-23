@@ -49,7 +49,7 @@ function ExpectedDeliveryRead({getPropertyId, getCopyPage}: any) {
         gridRef.current = params.api;
 
         await getData.post('order/getExpectedDeliveryList', orderReadInitial).then(v => {
-            gridManage.resetData(gridRef, v.data.entity);
+            // gridManage.resetData(gridRef, v.data.entity);
             params.api.applyTransaction({add: v?.data?.entity});
             setTotalRow(v?.data?.entity.length)
             setLoading(false)

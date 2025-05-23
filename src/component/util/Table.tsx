@@ -83,7 +83,6 @@ const Table = forwardRef(({
                 const currency = rowData?.currencyUnit ?? rowData?.currency;
                 const isKRW = (!currency || currency === 'KRW') && !('exchange' in rowData);
 
-                console.log(value, 'value:::')
                 const parsedValue = parseFloat(value);
                 if (value === 0 || isNaN(parsedValue)) {
                     td.textContent = "";

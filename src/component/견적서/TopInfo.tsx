@@ -112,16 +112,14 @@ export default function TopInfo({count, info, type, memberList, getTopInfoData})
 }
 
 
-export const TopPoInfo = ({info, hsCode, getTopInfoData}) => {
+export const TopPoInfo = ({info, hsCode, getTopInfoData, type}) => {
     const topInfoRef = useRef<any>(null);
     const [infoData, setInfoData] = useState({})
-    const [title, setTitle] = useState<any>(paperTopInfo['ko'])
+    const [title, setTitle] = useState<any>(paperTopInfo[type])
 
     useEffect(() => {
 
-        if (!info?.agencyCode.startsWith("K")) {
-            setTitle(paperTopInfo['en'])
-        }
+
 
         let copyData =_.cloneDeep(info)
 

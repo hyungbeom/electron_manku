@@ -37,11 +37,15 @@ export default function SearchInfoModal({
 
     useEffect(() => {
         if (open) {
+            console.log(open,'open');
+            console.log(open,'open');
             const firstTrueKey = Object.keys(open).find(key => open[key]);
             console.log(firstTrueKey)
             const dom = infoRef?.current?.querySelector(`#${firstTrueKey}`) ?? '';
             switch (firstTrueKey) {
                 case 'agencyCode' :
+                case 'agencyCode_domestic' :
+                case 'agencyCode_overSeas' :
                 case 'customerName' :
                 case 'maker' :
                 case 'connectInquiryNoForDelivery' :
