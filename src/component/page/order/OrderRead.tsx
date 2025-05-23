@@ -4,7 +4,7 @@ import {
     ExclamationCircleOutlined,
     RadiusSettingOutlined,
     SaveOutlined,
-    SearchOutlined
+    SearchOutlined, SendOutlined
 } from "@ant-design/icons";
 import Button from "antd/lib/button";
 import {tableOrderReadColumns} from "@/utils/columnList";
@@ -22,13 +22,15 @@ import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment/moment";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import {getData} from "@/manage/function/api";
+import {useAppSelector} from "@/utils/common/function/reduxHooks";
 
 
 function OrderRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
     const groupRef = useRef<any>(null)
     const gridRef = useRef(null);
-
+    const { userInfo, adminList } = useAppSelector((state) => state.user);
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_read');
         return savedSizes ? JSON.parse(savedSizes) : [25, 25, 25, 5]; // 기본값 [50, 50, 50]
@@ -144,6 +146,45 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
     }
 
 
+    function sendAlertMail(){
+        const list = gridRef.current.getSelectedRows();
+        function checkMail(managerAdminId) {
+            // 실제 구현에 맞게 수정
+            if (managerAdminId === 20) return "test20@example.com";
+            if (managerAdminId === 17) return "test17@example.com";
+            if (managerAdminId === 19) return "test19@example.com";
+            return "";
+        }
+
+
+// data는 위에서 주신 배열
+        const grouped = Object.values(
+            list.reduce((acc, cur) => {
+                const id = cur.managerAdminId;
+                if (!acc[id]) {
+                    const findMember = adminList.find(v=> v.adminId === id)
+
+                    acc[id] = {
+                        email: findMember?.email,
+                        managerAdminName: cur.managerAdminName,
+                        detailList: []
+                    };
+                }
+                acc[id].detailList.push(cur);
+                return acc;
+            }, {})
+        );
+
+
+        getData.post('order/updateCheckEmail', {data : grouped}).then(v=>{
+            if(v?.data?.code === 1){
+                message.success("요청메일 보내기가 완료되었습니다");
+                searchInfo(true);
+            }
+        })
+    }
+
+
     return <Spin spinning={loading} tip={'발주서 조회중...'}>
         <ReceiveComponent componentName={'order_read'} searchInfo={searchInfo}/>
         <PanelSizeUtil groupRef={groupRef} storage={'order_read'}/>
@@ -222,7 +263,7 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                                                     }}>M</Button>
                                         </div>
 
-                                        <div >
+                                        <div>
                                             {inputForm({
                                                 title: '문서번호',
                                                 id: 'searchDocumentNumber',
@@ -313,18 +354,18 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                                                 {value: 2, label: "확인완료"}
                                             ]
                                         })}
-                                        <div style={{paddingTop : 9}}>
-                                        {selectBoxForm({
-                                            title: '입고 여부',
-                                            id: 'searchStockStatus',
-                                            onChange: onChange,
-                                            data: info,
-                                            list: [
-                                                {value: '', label: '전체'},
-                                                {value: '입고', label: '입고'},
-                                                {value: '미입고', label: '미입고'}
-                                            ]
-                                        })}
+                                        <div style={{paddingTop: 9}}>
+                                            {selectBoxForm({
+                                                title: '입고 여부',
+                                                id: 'searchStockStatus',
+                                                onChange: onChange,
+                                                data: info,
+                                                list: [
+                                                    {value: '', label: '전체'},
+                                                    {value: '입고', label: '입고'},
+                                                    {value: '미입고', label: '미입고'}
+                                                ]
+                                            })}
                                         </div>
                                     </BoxCard>
                                 </Panel>
@@ -336,14 +377,24 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                 {/*@ts-ignored*/}
                 <TableGrid
                     deleteComp={
-                        <Popconfirm
-                            title="삭제하시겠습니까?"
-                            onConfirm={deleteList}
-                            icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                            <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
-                                <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
-                            </Button>
-                        </Popconfirm>
+                        <>
+                            <Popconfirm
+                                title="담당자에 알림 메일을 보내겠습니까?"
+                                onConfirm={sendAlertMail}
+                                icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                                <Button type={'primary'} size={'small'} style={{fontSize: 11}}>
+                                    <SendOutlined/>알림메일 보내기
+                                </Button>
+                            </Popconfirm>
+                            <Popconfirm
+                                title="삭제하시겠습니까?"
+                                onConfirm={deleteList}
+                                icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                                <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                                    <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                                </Button>
+                            </Popconfirm>
+                        </>
                     }
                     totalRow={totalRow}
                     getPropertyId={getPropertyId}

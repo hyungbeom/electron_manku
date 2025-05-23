@@ -20,7 +20,7 @@ import {
     DeleteOutlined,
     FileDoneOutlined,
     FormOutlined,
-    RollbackOutlined
+    RollbackOutlined, SettingOutlined
 } from "@ant-design/icons";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
@@ -374,6 +374,15 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         info.paymentTerms = !checked ? '발주시 50% / 납품시 50%' : 'By in advance T/T';
     };
 
+    function alertConfirm() {
+        getData.post('order/replyStatusConfirm', updateKey['order_update']).then(v => {
+            message.success({
+                content: '메일회신확인 완료',
+                duration: 2, // 3초 후 사라짐
+            })
+        })
+    }
+
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
         {(isModalOpen['agencyCode'] || isModalOpen['customerName']) &&
@@ -398,6 +407,10 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                 rowGap: 10,
             }}>
                 <MainCard title={'발주서 수정'} list={[
+                    {
+                        name: <div><SettingOutlined style={{paddingRight: 8}}/>요청확인</div>,
+                        func: alertConfirm
+                    },
                     {
                         name: <div><FileDoneOutlined style={{paddingRight: 8}}/>거래명세표 출력</div>,
                         func: printTransactionStatement,

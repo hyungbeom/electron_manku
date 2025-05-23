@@ -6,8 +6,8 @@ import message from "antd/lib/message";
 let lastClickedRowNode = null; // ✅ 마지막으로 클릭된 row 추적
 
 export const replyStatus = {
-    "1" : '요청중',
-    "2" : '확인완료'
+    "1": '요청중',
+    "2": '확인완료'
 }
 
 function handleCellClick(params) {
@@ -1144,7 +1144,7 @@ export const rfqReadColumns = [
         minWidth: 60,
         maxWidth: 120,
         valueFormatter: (params) => {
-            const { unitPrice, currencyUnit = 'KRW' } = params.data ?? {};
+            const {unitPrice, currencyUnit = 'KRW'} = params.data ?? {};
             const value = params.node.rowPinned
                 ? params.value
                 : unitPrice
@@ -1198,8 +1198,8 @@ export const rfqReadColumns = [
             min: '2023-01-01',
             max: '2028-12-31',
         }
-    },    {
-        headerName: 'replyStatus',
+    }, {
+        headerName: '담당자 요청상태',
         field: 'replyStatus',
         minWidth: 100,
         maxWidth: 120,
@@ -1279,7 +1279,7 @@ export const ExpectedOrderReadColumns = [
         headerName: '납품 예정일',
         field: 'sendTerms',
         maxWidth: 100
-    },  {
+    }, {
         headerName: 'Project No.',
         field: 'rfqNo',
         minWidth: 100,
@@ -1482,7 +1482,7 @@ export const tableOrderReadColumns = [
         field: 'rfqNo',
         maxWidth: 100, // 컬럼 너비
         pinned: 'left'
-    },    {
+    }, {
         headerName: '매입처명',
         field: 'agencyName',
         minWidth: 100,
@@ -1542,7 +1542,7 @@ export const tableOrderReadColumns = [
         align: 'center',
         minWidth: 40,
         valueFormatter: (params) => {
-            const { unitPrice, currency } = params.data ?? {};
+            const {unitPrice, currency} = params.data ?? {};
 
             const isPinned = params.node.rowPinned;
             let value = isPinned
@@ -1565,7 +1565,7 @@ export const tableOrderReadColumns = [
             return formatAmount(value, inferredCurrency);
         },
         cellStyle: {textAlign: 'right'}
-    },  {
+    }, {
         headerName: '매입 총액',
         field: 'totalAmount',
         editable: true,
@@ -1669,6 +1669,12 @@ export const tableOrderReadColumns = [
         key: 'estimateManager',
         align: 'center',
         minWidth: 70,
+    }, {
+        headerName: '담당자 요청상태',
+        field: 'replyStatus',
+        minWidth: 100,
+        maxWidth: 120,
+        valueFormatter: (params) => replyStatus[params.value]
     },
     {
         headerName: '비고란',
@@ -1778,7 +1784,7 @@ export const tableSelectOrderReadColumns = [
         field: 'unitPrice',
         align: 'center',
         valueFormatter: (params) => {
-            const { unitPrice, currency } = params.data ?? {};
+            const {unitPrice, currency} = params.data ?? {};
 
             const isPinned = params.node.rowPinned;
             let value = isPinned
@@ -1808,7 +1814,7 @@ export const tableSelectOrderReadColumns = [
         key: 'totalPrice',
         align: 'center',
         valueFormatter: (params) => {
-            const { quantity, unitPrice, currency } = params.data ?? {};
+            const {quantity, unitPrice, currency} = params.data ?? {};
 
             const isPinned = params.node.rowPinned;
             let value = isPinned
@@ -1847,7 +1853,7 @@ export const tableSelectOrderReadColumns = [
         key: 'net',
         align: 'center',
         valueFormatter: (params) => {
-            const { net } = params.data ?? {};
+            const {net} = params.data ?? {};
             const value = params.node.rowPinned
                 ? params.value
                 : net
@@ -1863,7 +1869,7 @@ export const tableSelectOrderReadColumns = [
         key: 'totalNet',
         align: 'center',
         valueFormatter: (params) => {
-            const { quantity, net } = params.data ?? {};
+            const {quantity, net} = params.data ?? {};
             const value = params.node.rowPinned
                 ? params.value
                 : quantity && net
@@ -2610,7 +2616,7 @@ export const tableCodeOverseasRemittanceReadColumn = [
         headerName: '공급가액',
         field: 'supplyAmount',
         valueFormatter: (params) => {
-            const { supplyAmount } = params.data ?? {};
+            const {supplyAmount} = params.data ?? {};
 
             const isPinned = params.node.rowPinned;
             let value = isPinned
@@ -2626,7 +2632,7 @@ export const tableCodeOverseasRemittanceReadColumn = [
         headerName: '수수료',
         field: 'fee',
         valueFormatter: (params) => {
-            const { fee } = params.data ?? {};
+            const {fee} = params.data ?? {};
 
             const isPinned = params.node.rowPinned;
             let value = isPinned
@@ -2642,7 +2648,7 @@ export const tableCodeOverseasRemittanceReadColumn = [
         headerName: '합계',
         field: 'total',
         valueFormatter: (params) => {
-            const { supplyAmount, fee } = params.data ?? {};
+            const {supplyAmount, fee} = params.data ?? {};
 
             const isPinned = params.node.rowPinned;
             let value = isPinned
