@@ -61,8 +61,8 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
         }
     }
     const [info, setInfo] = useState(getTaxInvoiceInit());
-    const [selectOrderList, setSelectOrderList] = useState([]);
 
+    const [selectOrderList, setSelectOrderList] = useState([]);
     const [totalRow, setTotalRow] = useState(0);
     const isGridLoad = useRef(false);
 
@@ -98,7 +98,6 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
         if(!isGridLoad.current) return;
         gridManage.resetData(gridRef, selectOrderList);
         setTotalRow(selectOrderList?.length ?? 0);
-        gridRef.current.selectAll();
     }, [selectOrderList]);
 
     /**

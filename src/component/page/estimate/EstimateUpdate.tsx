@@ -19,7 +19,7 @@ import {
 } from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {findCodeInfo, findDocumentInfo} from "@/utils/api/commonApi";
-import {getAttachmentFileList, updateEstimate} from "@/utils/api/mainApi";
+import {updateEstimate} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import Spin from "antd/lib/spin";
 import Modal from "antd/lib/modal/Modal";
@@ -261,28 +261,17 @@ function EstimateUpdate({
 
     async function returnFunc(v) {
         if (v.code === 1) {
-            await getAttachmentFileList({
-                data: {
-                    "relatedType": "ESTIMATE",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": updateKey['estimate_update']
-                }
-            }).then(v => {
-                // const list = fileManage.getFormatFiles(v);
-                // setFileList(list)
-                // setOriginFileList(list);
-
-                window.postMessage({message: 'reload', target: 'estimate_read'}, window.location.origin);
-                notificationAlert('success', '💾 견적서 수정완료',
-                    <>
-                        <div>Inquiry No. : {info.documentNumberFull}</div>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , function () {
-                        getPropertyId('estimate_update', updateKey['estimate_update'])
-                    },
-                    {cursor: 'pointer'}
-                )
-            })
+            window.postMessage({message: 'reload', target: 'estimate_read'}, window.location.origin);
+            notificationAlert('success', '💾 견적서 수정완료',
+                <>
+                    <div>Inquiry No. : {info.documentNumberFull}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                , function () {
+                    getPropertyId('estimate_update', updateKey['estimate_update'])
+                },
+                {cursor: 'pointer'}
+            )
         } else {
             notificationAlert('error', '⚠️ 작업실패',
                 <>

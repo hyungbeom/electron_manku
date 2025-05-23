@@ -13,7 +13,7 @@ import {
 } from "@/utils/commonForm";
 import {useRouter} from "next/router";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
-import {getAttachmentFileList, updateProject} from "@/utils/api/mainApi";
+import {updateProject} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
 import Spin from "antd/lib/spin";
@@ -229,28 +229,17 @@ function ProjectUpdate({
 
     async function returnFunc(code, msg) {
         if (code === 1) {
-            await getAttachmentFileList({
-                data: {
-                    "relatedType": "PROJECT",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": updateKey['project_update']
-                }
-            }).then(v => {
-                const list = fileManage.getFormatFiles(v);
-                setFileList(list)
-                setOriginFileList(v)
-
-                window.postMessage({message: 'reload', target: 'project_read'}, window.location.origin);
-                notificationAlert('success', '💾 프로젝트 수정완료',
-                    <>
-                        <div>Project No. : {info.documentNumberFull}</div>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , function () {
-                        getPropertyId('project_update', updateKey['project_update'])
-                    },
-                    {cursor: 'pointer'}
-                )
-            })
+            window.postMessage({message: 'reload', target: 'project_read'}, window.location.origin);
+            notificationAlert('success', '💾 프로젝트 수정완료',
+                <>
+                    <div>Project No. : {info.documentNumberFull}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                , function () {
+                    getPropertyId('project_update', updateKey['project_update'])
+                },
+                {cursor: 'pointer'}
+            )
         } else {
             notificationAlert('error', '⚠️ 작업실패',
                 <>

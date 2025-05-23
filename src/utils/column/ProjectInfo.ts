@@ -620,7 +620,7 @@ export const deliveryInfo = {
         destination: '',           // 배송지
         customerOrderNo: '',       // 고객 주문 번호
         trackingNumber: '',        // 운송장 번호
-        productName: '',           // 상품명
+        productName: '부품',           // 상품명
         quantity: '',              // 수량
         packagingType: '',         // 포장 유형 (예: B or P)
         shippingType: '',          // 배송 방식 (예: 택배, 화물)

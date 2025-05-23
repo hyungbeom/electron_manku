@@ -15,7 +15,7 @@ import {
 } from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {findCodeInfo} from "@/utils/api/commonApi";
-import {getAttachmentFileList, updateRfq} from "@/utils/api/mainApi";
+import {updateRfq} from "@/utils/api/mainApi";
 import {rfqWriteInitial} from "@/utils/initialList";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useRouter} from "next/router";
@@ -240,7 +240,6 @@ function RqfUpdate({
 
     async function returnFunc(v) {
         if (v.code === 1) {
-
             window.postMessage({message: 'reload', target: 'rfq_read'}, window.location.origin);
             notificationAlert('success', '💾 견적의뢰 수정완료',
                 <>
@@ -252,7 +251,6 @@ function RqfUpdate({
                 },
                 {cursor: 'pointer'}
             )
-
         } else {
             notificationAlert('error', '⚠️ 작업실패',
                 <>
