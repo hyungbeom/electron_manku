@@ -56,17 +56,17 @@ function DeliveryUpdate({updateKey}:any)
         {
             key: 'CJ',
             label: '대한통운',
-            children: <Deahan info={cjInfo} setInfo={setCjInfo}/>,
+            children: <Deahan info={cjInfo} setInfo={setCjInfo} openModal={undefined}/>,
         },
         {
             key: 'DAESIN',
             label: '대신택배',
-            children: <Deasin info={daesinInfo} setInfo={setDaesinInfo}/>,
+            children: <Deasin info={daesinInfo} setInfo={setDaesinInfo} openModal={undefined}/>,
         },
         {
             key: 'QUICK',
             label: '퀵/직납/대리점 출고',
-            children: <ETC info={quickInfo} setInfo={setQuickInfo}/>,
+            children: <ETC info={quickInfo} setInfo={setQuickInfo} openModal={undefined}/>,
         },
     ];
 
