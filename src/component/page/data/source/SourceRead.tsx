@@ -50,7 +50,7 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
             if (v?.data?.code === 1) {
                 const inventoryList = v?.data?.entity;
                 params.api.applyTransaction({add: inventoryList});
-                setTotalRow(inventoryList?.length ?? 0)
+                setTotalRow(v?.data?.length);
             } else {
                 message.warn(v?.data?.message);
             }
@@ -82,7 +82,7 @@ function SourceRead({getPropertyId, getCopyPage}: any) {
                 if (v?.data?.code === 1) {
                     const inventoryList = v?.data?.entity;
                     gridManage.resetData(gridRef, inventoryList);
-                    setTotalRow(inventoryList?.length ?? 0)
+                    setTotalRow(v?.data?.length);
                 } else {
                     message.warn(v?.data?.message);
                 }

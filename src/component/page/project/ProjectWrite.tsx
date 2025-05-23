@@ -92,13 +92,6 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef, getCopyPage}
     const [fileList, setFileList] = useState([]);
     const [tableData, setTableData] = useState([]);
 
-    const tempData = [
-        {calcCheck: false, connectInquiryNo: '', model: '111', item: '11111', maker: '1', unit: 'ea', quantity: '', currencyUnit: 'KRW', requestDeliveryDate: '', remarks: '비고 1'},
-        {calcCheck: false, connectInquiryNo: '', model: '222', item: '22222', maker: '2', unit: 'ea', quantity: '', currencyUnit: 'KRW', requestDeliveryDate: '', remarks: '비고 2'},
-        {calcCheck: false, connectInquiryNo: '', model: '333', item: '33333', maker: '3', unit: 'ea', quantity: '', currencyUnit: 'KRW', requestDeliveryDate: '', remarks: '비고 3'},
-        {calcCheck: false, connectInquiryNo: '', model: '444', item: '44444', maker: '4', unit: 'ea', quantity: '', currencyUnit: 'KRW', requestDeliveryDate: '', remarks: '비고 4'},
-        {calcCheck: false, connectInquiryNo: '', model: '555', item: '55555', maker: '5', unit: 'ea', quantity: '', currencyUnit: 'KRW', requestDeliveryDate: '', remarks: '비고 5'}
-    ]
 
     useEffect(() => {
         setLoading(true);
@@ -109,7 +102,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef, getCopyPage}
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
             // setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000))
-            setTableData([...tempData, ...commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000 - tempData.length)])
+            setTableData(commonFunc.repeatObject(projectInfo['write']['defaultData'], 1000 ))
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting

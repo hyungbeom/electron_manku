@@ -47,7 +47,7 @@ function CompanyAccount({getPropertyId, getCopyPage}: any) {
         gridRef.current = params.api;
         await searchCompanyAccount({data: info}).then(v => {
             params.api.applyTransaction({add: v?.data ?? []})
-            setTotalRow(v?.pageInfo?.totalRow ?? 0)
+            setTotalRow(v?.data?.length);
         })
         .finally(() => {
             setLoading(false);
@@ -74,7 +74,7 @@ function CompanyAccount({getPropertyId, getCopyPage}: any) {
             setLoading(true);
             await searchCompanyAccount({data: info}).then(v => {
                 gridManage.resetData(gridRef, v?.data ?? []);
-                setTotalRow(v?.pageInfo?.totalRow ?? 0)
+                setTotalRow(v?.data?.length);
             })
             .finally(() => {
                 setLoading(false);

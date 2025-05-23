@@ -48,7 +48,7 @@ function DomesticCustomerRead({getPropertyId, getCopyPage}: any) {
         gridRef.current = params.api;
         await searchDomesticCustomer({data: info}).then(v => {
             params.api.applyTransaction({add: v?.data ?? []});
-            setTotalRow(v?.data?.length)
+            setTotalRow(v?.data?.length);
         })
         .finally(() => {
             setLoading(false);

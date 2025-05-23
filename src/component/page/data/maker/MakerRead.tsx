@@ -48,7 +48,7 @@ function MakerRead({getPropertyId, getCopyPage}: any) {
         gridRef.current = params.api;
         await searchMaker({data: info}).then(v => {
             params.api.applyTransaction({add: v?.data ?? []});
-            setTotalRow(v?.pageInfo?.totalRow ?? 0)
+            setTotalRow(v?.data?.length);
         })
         .finally(() => {
             setLoading(false);
@@ -75,7 +75,7 @@ function MakerRead({getPropertyId, getCopyPage}: any) {
             setLoading(true);
             await searchMaker({data: info}).then(v => {
                 gridManage.resetData(gridRef, v?.data ?? []);
-                setTotalRow(v?.pageInfo?.totalRow ?? 0)
+                setTotalRow(v?.data?.length);
             })
             .finally(() => {
                 setLoading(false);

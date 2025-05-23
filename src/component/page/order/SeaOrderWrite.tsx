@@ -86,7 +86,7 @@ function SeaOrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         managerFaxNumber: userInfo['faxNumber'],
         managerEmail: userInfo['email'],
         estimateManager: userInfo['name'],
-        paymentTerms : 'T/T',
+        paymentTerms: 'T/T',
         createdId: 0,
         customerId: 0
     }
@@ -167,7 +167,7 @@ function SeaOrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                 const findManager = memberList.find(v => v.adminId === manager)
 
                                 let result = 1;
-                                if(estimateDetail?.connectDocumentNumberFull) {
+                                if (estimateDetail?.connectDocumentNumberFull) {
 
                                     const source = await getData.post('estimate/getEstimateRequestDetail', {
                                         estimateRequestId: '',
@@ -181,8 +181,7 @@ function SeaOrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                         .map(item => Number(item.deliveryDate))
                                         .filter(date => !isNaN(date) && date > 0);
 
-                                     result = validDates.length > 0 ? Math.max(...validDates) : 1;
-
+                                    result = validDates.length > 0 ? Math.max(...validDates) : 1;
                                 }
 
                                 setInfo({
@@ -384,7 +383,7 @@ function SeaOrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         <>
             {isModalOpen['event3'] &&
                 <PrintPo info={info} tableRef={tableRef} isModalOpen={isModalOpen}
-                         setIsModalOpen={setIsModalOpen}  type={'en'}/>}
+                         setIsModalOpen={setIsModalOpen} type={'en'}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
@@ -415,11 +414,11 @@ function SeaOrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     // 담당자 정보가 현재 작성자 정보가 나와야한다고 함
                                     const member = memberList.find(v => v.adminId === parseInt(e.target.value))
                                     const managerInfo = {
-                                        // managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
+                                        managerId: member?.englishName,
                                         managerAdminId: member?.adminId,
-                                        // managerPhoneNumber: member?.contactNumber,
-                                        // managerFaxNumber: member?.faxNumber,
-                                        // managerEmail: member?.email
+                                        managerPhoneNumber: member?.contactNumber,
+                                        managerFaxNumber: member?.faxNumber,
+                                        managerEmail: member?.email
                                     }
                                     setInfo(v => ({...v, ...managerInfo}))
                                 }} style={{
@@ -531,7 +530,8 @@ function SeaOrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>담당자 정보</span></div>}>
+                                <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>담당자 정보</span>
+                                </div>}>
                                     {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
                                     {inputForm({
                                         title: 'TEL',

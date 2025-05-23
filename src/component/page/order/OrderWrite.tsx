@@ -412,11 +412,11 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     // 담당자 정보가 현재 작성자 정보가 나와야한다고 함
                                     const member = memberList.find(v => v.adminId === parseInt(e.target.value))
                                     const managerInfo = {
-                                        // managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
+                                        managerId: member?.name,
                                         managerAdminId: member?.adminId,
-                                        // managerPhoneNumber: member?.contactNumber,
-                                        // managerFaxNumber: member?.faxNumber,
-                                        // managerEmail: member?.email
+                                        managerPhoneNumber: member?.contactNumber,
+                                        managerFaxNumber: member?.faxNumber,
+                                        managerEmail: member?.email
                                     }
                                     setInfo(v => ({...v, ...managerInfo}))
                                 }} style={{
