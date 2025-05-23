@@ -42,10 +42,10 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
 
     const { userInfo, adminList } = useAppSelector((state) => state.user);
     const adminParams = {
-        managerAdminId: userInfo['adminId'],
-        managerAdminName: userInfo['name'],
-        createdId: userInfo['adminId'],
-        createdBy: userInfo['name'],
+        // managerAdminId: userInfo['adminId'],
+        // managerAdminName: userInfo['name'],
+        // createdId: userInfo['adminId'],
+        // createdBy: userInfo['name'],
     }
     const getTaxInvoiceInit = () => {
         const copyInit = _.cloneDeep(TIInfo['defaultInfo'])
@@ -98,9 +98,13 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
                 return;
             }
             const { invoiceDetailInfo: selectOrderList, invoiceinfo: invoiceInfo = {} } = res?.data?.entity ?? {};
+            console.log(invoiceInfo,'invoiceinfo::::')
+            const findMember = adminList.find(v=> v.adminId === invoiceInfo.createdId);
+            console.log(findMember,'::')
             setInfo({
                 ...getTaxInvoiceInit(),
-                ...invoiceInfo
+                ...invoiceInfo,
+                createdBy : findMember?.name
             });
             modalSelected(selectOrderList, invoiceInfo?.['rfqNo']);
         } catch (err) {

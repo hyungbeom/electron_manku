@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {taxInvoiceSearchInitial} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
 import moment from "moment";
-import {BoxCard, datePickerForm, inputForm, MainCard, radioForm} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, MainCard, radioForm, rangePickerForm} from "@/utils/commonForm";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
 import {
@@ -118,6 +118,7 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
         setIsSearch(true);
     }
 
+    console.log(info,'::::')
     /**
      * @description 조회 페이지 > 신규생성 버튼
      * 송금 > 세금계산서 요청 조회
@@ -193,9 +194,9 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
                     <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
                         <Panel defaultSize={sizes[0]} minSize={5}>
                             <BoxCard title={''}>
-                                {datePickerForm({
+                                {rangePickerForm({
                                     title: '발행지정일자',
-                                    id: 'invoiceDueDate',
+                                    id: 'searchDate',
                                     onChange: onChange,
                                     data: info
                                 })}

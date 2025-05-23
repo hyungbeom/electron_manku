@@ -20,7 +20,7 @@ function PrintPo({
                      setIsModalOpen,
                      tableRef,
                      info,
-                     memberList = [],
+                     type,
                      count = 0,
                  }) {
 
@@ -241,8 +241,8 @@ function PrintPo({
 
     async function download() {
         const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData} bottomInfo={bottomInfo}
-                                            title={!topInfoData['agencyCode'].startsWith("K") ? paperTopInfo['en'] : paperTopInfo['ko']}
-                                            lang={!topInfoData['agencyCode'].startsWith("K") ? 'en' : 'ko'}
+                                            title={paperTopInfo[type]}
+                                            lang={type}
                                             key={Date.now()}/>).toBlob();
 
         const url = URL.createObjectURL(blob);
@@ -258,8 +258,8 @@ function PrintPo({
     const print = async () => {
 
         const blob = await pdf(<PrintPoForm data={data} topInfoData={topInfoData} totalData={totalData} bottomInfo={bottomInfo}
-                                            title={!topInfoData['agencyCode'].startsWith("K") ? paperTopInfo['en'] : paperTopInfo['ko']}
-                                            lang={!topInfoData['agencyCode'].startsWith("K") ? 'en' : 'ko'}
+                                            title={paperTopInfo[type]}
+                                            lang={type}
                                             key={Date.now()}/>).toBlob();
         const blobUrl = URL.createObjectURL(blob);
 
@@ -275,7 +275,7 @@ function PrintPo({
     return (
         <Modal
             title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
-                <div>발주서 출력</div>
+                <div>{type === 'ko' ? '국내발주서 출력' : '해외발주서 출력'}</div>
                 <div>
                     <button onClick={download} style={{
                         padding: "5px 10px",
@@ -322,7 +322,7 @@ function PrintPo({
             }}>
 
                 <PoHeader info={info}/>
-                <TopPoInfo info={info} hsCode={data[0][0]?.hsCode} getTopInfoData={getTopInfoData}/>
+                <TopPoInfo info={info} hsCode={data[0][0]?.hsCode} getTopInfoData={getTopInfoData} type={type}/>
                 <table style={{
                     width: '100%',
                     borderCollapse: 'collapse',

@@ -251,7 +251,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
             e.preventDefault();
             const model = layoutRef.current.props.model;
             const activeTab = model.getActiveTabset()?.getSelectedNode();
-            if (activeTab?.renderedName === '발주서 등록') {
+            if (activeTab?.renderedName === '국내발주서 등록') {
                 saveFunc();
             }
         }
@@ -294,7 +294,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     async function returnFunc(code, msg, data) {
         if (code === 1) {
             window.postMessage({message: 'reload', target: 'order_read'}, window.location.origin);
-            notificationAlert('success', '💾 발주서 등록완료',
+            notificationAlert('success', '💾 국내발주서 등록완료',
                 <>
                     <div>Inquiry No. : {info.documentNumberFull}</div>
                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
@@ -373,7 +373,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_write'}/>
-        {(isModalOpen['event1'] || isModalOpen['agencyCode'] || isModalOpen['event2'] || isModalOpen['customerName']) &&
+        {(isModalOpen['event1'] || isModalOpen['agencyCode_domestic'] || isModalOpen['event2'] || isModalOpen['customerName']) &&
             <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
                              open={isModalOpen}
 
@@ -381,15 +381,15 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         <>
             {isModalOpen['event3'] &&
                 <PrintPo info={info} tableRef={tableRef} isModalOpen={isModalOpen}
-                         setIsModalOpen={setIsModalOpen} memberList={memberList}/>}
+                         setIsModalOpen={setIsModalOpen}  type={'ko'}/>}
             <div ref={infoRef} style={{
                 display: 'grid',
                 gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
                 rowGap: 10,
             }}>
-                <MainCard title={'발주서 작성'} list={[
+                <MainCard title={'국내발주서 작성'} list={[
                     // {name: '거래명세표 출력', func: printTransactionStatement, type: 'default'},
-                    {name: '발주서 출력', func: printPo, type: 'default'},
+                    {name: '국내발주서 출력', func: printPo, type: 'default'},
                     {name: <div><SaveOutlined style={{paddingRight: 8}}/>저장</div>, func: saveFunc, type: 'primary'},
                     {
                         name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>,
@@ -470,7 +470,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                         suffix: <span style={{cursor: 'pointer'}} onClick={
                                             (e) => {
                                                 e.stopPropagation();
-                                                openModal('agencyCode');
+                                                openModal('agencyCode_domestic');
                                             }
                                         }>🔍</span>,
                                         onChange: onChange,
@@ -528,25 +528,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>담당자 정보</span><span><RollbackOutlined
-                                    style={{cursor: 'pointer'}}
-                                    onClick={() => {
-                                        // 담당자 정보가 현재 작성자 정보가 나와야한다고 함
-                                        // const member = memberList.find(v => v.adminId === parseInt(info.managerAdminId));
-                                        // const managerInfo = {
-                                        //     managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.englishName,
-                                        //     managerPhoneNumber: member?.contactNumber,
-                                        //     managerFaxNumber: member?.faxNumber,
-                                        //     managerEmail: member?.email
-                                        // }
-                                        // setInfo(v => ({...v, ...managerInfo}))
-                                        const member = memberList.find(v => v.adminId === parseInt(adminParams?.managerAdminId));
-                                        setInfo(v => ({
-                                            ...v,
-                                            managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.englishName
-                                        }))
-                                    }}
-                                /></span></div>}>
+                                <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>담당자 정보</span></div>}>
                                     {inputForm({title: '작성자', id: 'managerId', onChange: onChange, data: info})}
                                     {inputForm({
                                         title: 'TEL',
@@ -562,7 +544,6 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                             <Panel defaultSize={sizes[3]} minSize={5}>
                                 <BoxCard title={<div style={{display: 'flex', justifyContent: 'space-between'}}>
                                     <div>세부사항</div>
-                                    <div><Switch size={'small'} checked={check} onChange={switchChange}/></div>
                                 </div>}>
                                     <div style={{paddingBottom: 10}}>
                                         <SelectForm id={'paymentTerms'}
