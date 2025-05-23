@@ -79,6 +79,26 @@ export const rfqWriteInitial = {
 }
 
 
+
+// ========================================== 배송 ================================================
+export const deliverySearchInitial = {
+    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),
+    searchEndDate: moment().format('YYYY-MM-DD'),
+    searchConnectInquiryNo: "",
+    searchTrackingNumber: "",
+    searchCustomerName: "",
+    searchRecipientName: "",
+    searchRecipientPhone: "",
+    searchIsConfirm: "",
+    searchIsOutBound: "",
+    page : 1 ,
+    limit : -1
+}
+//
+
+
+
 // ================================== 송금 ============================================
 
 // 송금 > 국내송금 조회 > 검색 초기값 정보
@@ -760,21 +780,6 @@ export const modalList = {
         placeholder: '문서번호 또는 고객사명, 매입처명을 입력하세요'
     },
 }
-
-
-export const searchOrderInitial = {
-    searchConnectInquiryNo: "",
-    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),
-    searchEndDate: moment().format('YYYY-MM-DD'),
-    searchCustomerName: "",
-    searchRecipientPhone: "",
-    searchIsConfirm: "",
-    searchTrackingNumber: "",
-    page : 1 ,
-    limit : -1
-}
-
 
 export const projectWriteInitial = {
     createdBy: '',

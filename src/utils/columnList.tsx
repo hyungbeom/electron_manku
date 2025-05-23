@@ -4058,9 +4058,7 @@ export const deliveryReadColumn = [
     }, {
         headerName: '포장',
         field: 'packagingType',
-        cellEditor: 'agNumberCellEditor',
-        valueFormatter: params => commonManage.calcFloat(params, 2),
-        cellStyle: {textAlign: 'right'}
+        minWidth: 50
     }, {
         headerName: '수량',
         field: 'quantity',

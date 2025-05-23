@@ -1,4 +1,12 @@
-import {BoxCard, datePickerForm, inputForm, inputNumberForm, selectBoxForm, TopBoxCard} from "@/utils/commonForm";
+import {
+    BoxCard,
+    datePickerForm,
+    inputForm,
+    inputNumberForm,
+    selectBoxForm, SelectForm,
+    textAreaForm,
+    TopBoxCard
+} from "@/utils/commonForm";
 import React from "react";
 import {commonManage} from "@/utils/commonManage";
 import AddressSearch from "@/component/AddressSearch";
@@ -17,8 +25,7 @@ export default function Deasin({info, setInfo, openModal}){
     };
 
     return <>
-        <TopBoxCard  grid={'110px 120px 150px'}>
-            {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange:onChange, data : info})}
+        <TopBoxCard  grid={'120px 150px 110px'}>
             {inputForm({
                 title: '만쿠발주서 No.',
                 id: 'connectInquiryNo',
@@ -31,10 +38,23 @@ export default function Deasin({info, setInfo, openModal}){
                 }>🔍</span>,
             })}
             {inputForm({title: '고객사명', id: 'customerName', onChange:onChange, data : info})}
+            {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange:onChange, data : info})}
         </TopBoxCard>
 
         <PanelGroup direction="horizontal" style={{gap: 0.5, paddingTop: 10}}>
-            <Panel defaultSize={25} minSize={5}>
+            <Panel defaultSize={20} minSize={5}>
+                <BoxCard title={'발주서 정보'}>
+                    {inputForm({
+                        title: '발주서 No.',
+                        id: 'connectInquiryNo',
+                        onChange: onChange,
+                        data: info,
+                        disabled: true,
+                    })}
+                    {textAreaForm({title: '발주서 항목번호', rows: 4, id: 'orderDetailIds', onChange: onChange, data: info, disabled: true})}
+                </BoxCard>
+            </Panel>
+            <Panel defaultSize={20} minSize={5}>
                 <BoxCard title={'받는분 정보'}>
                     {inputForm({title: '성명', id: 'recipientName', onChange:onChange, data : info})}
                     {inputForm({title: '연락처', id: 'recipientPhone', onChange:onChange, data : info})}
@@ -50,30 +70,29 @@ export default function Deasin({info, setInfo, openModal}){
                 </BoxCard>
             </Panel>
             <PanelResizeHandle/>
-            <Panel defaultSize={25} minSize={5}>
+            <Panel defaultSize={20} minSize={5}>
                 <BoxCard title={'품목 정보'}>
                     {inputForm({ title: '품목명', id: 'productName', onChange:onChange, data : info})}
                     {inputNumberForm({ title: '수량', id: 'quantity', onChange: onChange, data: info })}
-                    {inputForm({ title: '포장', id: 'packagingType', onChange:onChange, data : info})}
+                    <SelectForm id={'packagingType'}
+                                list={
+                                    ['B', 'P']
+                                }
+                                title={'포장'}
+                                onChange={onChange}
+                                data={info}
+                    />
                 </BoxCard>
             </Panel>
             <PanelResizeHandle/>
-            <Panel defaultSize={25} minSize={5}>
+            <Panel defaultSize={20} minSize={5}>
                 <BoxCard title={'화물 정보'}>
                     <div style={{paddingBottom: 9}}>
                         {selectBoxForm({
-                            title: '택배/화물', id: 'shippingType', list: [
-                                {value: '택배', label: '택배'},
+                            title: '화물/택배', id: 'shippingType', list: [
                                 {value: '화물', label: '화물'},
-                            ], data: info,
-                            onChange: (e) => {
-                                const value = e?.target?.value ?? '';
-                                setInfo(prev => ({
-                                    ...prev,
-                                    shippingType: value,
-                                    destination: value === '화물' ? '평택 어언점' : '',
-                                }))
-                            }
+                                {value: '택배', label: '택배'},
+                            ],  onChange: onChange, data: info
                         })}
                     </div>
                     <div style={{paddingBottom: 11}}>
@@ -87,8 +106,8 @@ export default function Deasin({info, setInfo, openModal}){
                     <div style={{paddingBottom: 11}}>
                         {selectBoxForm({
                             title: '확인여부', id: 'isConfirm', list: [
-                                {value: 'X', label: 'X'},
                                 {value: 'O', label: 'O'},
+                                {value: 'X', label: 'X'},
                             ], onChange: onChange, data: info
                         })}
                     </div>

@@ -1,4 +1,4 @@
-import {BoxCard, datePickerForm, inputForm, selectBoxForm, TopBoxCard} from "@/utils/commonForm";
+import {BoxCard, datePickerForm, inputForm, selectBoxForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import React from "react";
 import {commonManage} from "@/utils/commonManage";
 import AddressSearch from "@/component/AddressSearch";
@@ -17,8 +17,7 @@ export default function ETC({info, setInfo, openModal}) {
     };
 
     return <>
-        <TopBoxCard  grid={'110px 120px 150px'}>
-            {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange: onChange, data: info})}
+        <TopBoxCard  grid={'120px 150px 110px'}>
             {inputForm({
                 title: '만쿠발주서 No.',
                 id: 'connectInquiryNo',
@@ -31,9 +30,22 @@ export default function ETC({info, setInfo, openModal}) {
                 }>🔍</span>,
             })}
             {inputForm({title: '고객사명', id: 'customerName', onChange: onChange, data: info})}
+            {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange: onChange, data: info})}
         </TopBoxCard>
 
         <PanelGroup direction="horizontal" style={{gap: 0.5, paddingTop: 10}}>
+            <Panel defaultSize={20} minSize={5}>
+                <BoxCard title={'발주서 정보'}>
+                    {inputForm({
+                        title: '발주서 No.',
+                        id: 'connectInquiryNo',
+                        onChange: onChange,
+                        data: info,
+                        disabled: true,
+                    })}
+                    {textAreaForm({title: '발주서 항목번호', rows: 4, id: 'orderDetailIds', onChange: onChange, data: info, disabled: true})}
+                </BoxCard>
+            </Panel>
             <Panel defaultSize={20} minSize={5}>
                 <BoxCard title={'받는분 정보'}>
                     {inputForm({title: '성명', id: 'recipientName', onChange: onChange, data: info})}

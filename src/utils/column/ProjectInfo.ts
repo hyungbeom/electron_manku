@@ -610,7 +610,8 @@ export const deliveryInfo = {
         deliveryId: '',            // 배송 ID (기본키, 자동 증가)
         deliveryType: '',          // 배송 유형 (예: QUICK, DAESIN, CJ)
         deliveryDate: '',          // 배송 예정일
-        connectInquiryNo: '',      // 문의 연결 번호
+        connectInquiryNo: '',      // 발주서 no 여러개
+        orderDetailIds: '',        // 발주서 항목번호 여러개 (orderDetailId)
         customerName: '',          // 고객 이름
         recipientName: '',         // 수령자 이름
         recipientPhone: '',        // 수령자 전화번호
@@ -620,11 +621,11 @@ export const deliveryInfo = {
         destination: '',           // 배송지
         customerOrderNo: '',       // 고객 주문 번호
         trackingNumber: '',        // 운송장 번호
-        productName: '부품',           // 상품명
+        productName: '부품',        // 상품명
         quantity: '',              // 수량
-        packagingType: '',         // 포장 유형 (예: B or P)
-        shippingType: '',          // 배송 방식 (예: 택배, 화물)
-        paymentMethod: '',         // 결제 수단
+        packagingType: 'B',        // 포장 유형 (예: B or P)
+        shippingType: '화물',          // 배송 방식 (예: 택배, 화물)
+        paymentMethod: '착불',         // 결제 수단
         classification: '',        // 상품 분류
         isConfirm: 'X',            // 배송 확인 여부 (예: O, X)
         isOutBound: 'X',           // 출고 완료 여부 (예: O, X)

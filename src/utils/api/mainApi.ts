@@ -209,13 +209,8 @@ export const deleteDelivery = async ({
     }
                                      }) => {
 
-    await getData.post('delivery/deleteDeliveries', data).then(v => {
-        if (v.data.code === 1) {
-            returnFunc()
-            msg.success('삭제되었습니다.')
-        } else {
-            msg.error('오류가 발생하였습니다. 다시 시도해주세요.')
-        }
+    return await getData.post('delivery/deleteDeliveries', data).then(v => {
+        return v.data
     }, err => msg.error(err))
 };
 

@@ -85,12 +85,6 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
         });
     }, [updateKey['tax_invoice_update']]);
 
-    useEffect(() => {
-        if(!isGridLoad.current) return;
-        gridManage.resetData(gridRef, selectOrderList);
-        setTotalRow(selectOrderList?.length ?? 0);
-    }, [selectOrderList]);
-
     async function getDataInfo() {
         try {
             const res = await getData.post('invoice/getInvoiceInfo', updateKey['tax_invoice_update']);
@@ -108,6 +102,12 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
             console.error('에러:', err);
         }
     }
+
+    useEffect(() => {
+        if(!isGridLoad.current) return;
+        gridManage.resetData(gridRef, selectOrderList);
+        setTotalRow(selectOrderList?.length ?? 0);
+    }, [selectOrderList]);
 
     /**
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정

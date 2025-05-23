@@ -263,13 +263,12 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
         </>
     }
 
-
     return <>
         <Modal
             title={<div style={{width: '100%', display: "flex", justifyContent: 'space-between', alignItems: 'center'}}>
                 <div>거래명세표 출력</div>
                 <div>
-                    <button onClick={() => commonManage.pdfDown(pdfRef, false, 'test')}
+                    <button onClick={() => commonManage.pdfDown(pdfRef, false, `${info?.documentNumberFull}_${info?.customerName}_거래명세서`)}
                             style={{
                                 padding: "5px 10px",
                                 backgroundColor: "#1890ff",
@@ -283,7 +282,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
                         <div><DownloadOutlined style={{paddingRight: 8}}/>다운로드</div>
                     </button>
                     {/*@ts-ignore*/}
-                    <button onClick={() => commonManage.pdfDown(pdfRef, true, 'test')}
+                    <button onClick={() => commonManage.pdfDown(pdfRef, true, `${info?.documentNumberFull}_${info?.customerName}_거래명세서`)}
                             style={{
                                 padding: "5px 10px",
                                 backgroundColor: "gray",
