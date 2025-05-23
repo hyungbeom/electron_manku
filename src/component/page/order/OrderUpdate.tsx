@@ -134,8 +134,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
             });
             orderDetail[listType] = [...addOrderList, ...commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000 - orderDetail[listType].length)]
             setTableData(orderDetail[listType]);
-            // 한국코드가 아니면 영어로 셋
-            if (!orderDetail?.agencyCode?.toUpperCase().startsWith('K')) setCheck(true);
+
         })
             .finally(() => {
                 setLoading(false);
@@ -156,7 +155,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                 case 'agencyCode' :
                 case 'customerName' :
                     await findCodeInfo(e, setInfo, openModal)
-                    setCheck(!info?.agencyCode?.toUpperCase().startsWith('K'))
+                    // setCheck(!info?.agencyCode?.toUpperCase().startsWith('K'))
                     break;
             }
         }
@@ -367,12 +366,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
      * @description 수정 페이지 > 결제 조건 토글 버튼
      * 발주서 > 발주서 수정
      */
-    const [check, setCheck] = useState(false)
 
-    const switchChange = (checked: boolean) => {
-        setCheck(checked)
-        info.paymentTerms = !checked ? '발주시 50% / 납품시 50%' : 'By in advance T/T';
-    };
+
 
     function alertConfirm() {
         getData.post('order/replyStatusConfirm', updateKey['order_update']).then(v => {
@@ -383,6 +378,10 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         })
     }
 
+    console.log((info?.agencyCode?.startsWith('K') || info?.agencyCode === 'SK'), ":::||:::")
+    console.log(info?.agencyCode === 'SK')
+
+    console.log('?!?!?')
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
         {(isModalOpen['agencyCode'] || isModalOpen['customerName']) &&
@@ -393,7 +392,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         <>
             {isModalOpen['event3'] &&
                 <PrintPo info={info} tableRef={tableRef} isModalOpen={isModalOpen}
-                         setIsModalOpen={setIsModalOpen} type={info?.agencyCode?.startsWith('K')? 'ko' : 'en'} count={count}/>}
+                         setIsModalOpen={setIsModalOpen} type={(info?.agencyCode?.startsWith('K') || info?.agencyCode === 'SK')? 'ko' : 'en'} count={count}/>}
             {isModalOpen['event1'] &&
                 <TransactionStatementHeader isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
                                             customerData={customerData}
@@ -558,14 +557,10 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                                 </div>}>
                                     <div style={{paddingBottom: 10}}>
                                         <SelectForm id={'paymentTerms'}
-                                                    list={!check ?
-                                                        ['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제'] :
-                                                        ['T/T', 'Credit Card', 'Order 30% Before Shipping 70%', 'Order 50% Before Shipping 50%']
-                                                    }
+                                                    list={['발주시 50% / 납품시 50%', '현금결제', '선수금', '정기결제','T/T', 'Credit Card', 'Order 30% Before Shipping 70%', 'Order 50% Before Shipping 50%']}
                                                     title={'결제조건'}
                                                     onChange={onChange}
                                                     data={info}
-                                                    key={info.paymentTerms}
                                         />
                                     </div>
                                     {/*{inputForm({title: '납기', id: 'delivery', onChange: onChange, data: info})}*/}

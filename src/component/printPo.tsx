@@ -321,7 +321,7 @@ function PrintPo({
                 padding: 20
             }}>
 
-                <PoHeader info={info}/>
+                <PoHeader info={info} type={type}/>
                 <TopPoInfo info={info} hsCode={data[0][0]?.hsCode} getTopInfoData={getTopInfoData} type={type}/>
                 <table style={{
                     width: '100%',
