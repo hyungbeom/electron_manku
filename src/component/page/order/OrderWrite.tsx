@@ -6,7 +6,7 @@ import {useRouter} from "next/router";
 import {BoxCard, datePickerForm, inputForm, MainCard, SelectForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import _ from "lodash";
-import {getAttachmentFileList, saveOrder} from "@/utils/api/mainApi";
+import {saveOrder} from "@/utils/api/mainApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {getData} from "@/manage/function/api";
 import Spin from "antd/lib/spin";
@@ -293,29 +293,19 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
 
     async function returnFunc(code, msg, data) {
         if (code === 1) {
-            await getAttachmentFileList({
-                data: {
-                    "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": data?.orderId
-                }
-            }).then(v => {
-                const list = fileManage.getFormatFiles(v);
-                setFileList(list);
-
-                window.postMessage({message: 'reload', target: 'order_read'}, window.location.origin);
-                notificationAlert('success', '💾 발주서 등록완료',
-                    <>
-                        <div>Inquiry No. : {info.documentNumberFull}</div>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , function () {
-                        getPropertyId('order_update', data?.orderId)
-                    },
-                    {cursor: 'pointer'}
-                )
-                clearAll();
-                getPropertyId('order_update', data?.orderId)
-            })
+            window.postMessage({message: 'reload', target: 'order_read'}, window.location.origin);
+            notificationAlert('success', '💾 발주서 등록완료',
+                <>
+                    <div>Inquiry No. : {info.documentNumberFull}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                , function () {
+                    getPropertyId('order_update', data?.orderId)
+                },
+                {cursor: 'pointer'}
+            )
+            clearAll();
+            getPropertyId('order_update', data?.orderId);
         } else if (code === -20001) {
             setValidate(v => {
                 return {...v, documentNumberFull: false}

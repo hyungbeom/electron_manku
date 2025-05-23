@@ -1,4 +1,4 @@
-import React, {memo, useRef, useState} from "react";
+import React, {memo, useEffect, useRef, useState} from "react";
 import {deliveryDaehanInitial, ModalInitList,} from "@/utils/initialList";
 import {getData} from "@/manage/function/api";
 import {MainCard} from "@/utils/commonForm";
@@ -8,7 +8,13 @@ import {TabsProps} from "antd";
 import Tabs from "antd/lib/tabs";
 import ETC from "@/component/delivery/ETC";
 import message from "antd/lib/message";
-import {DeleteOutlined, ExclamationCircleOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    ExclamationCircleOutlined,
+    FileDoneOutlined,
+    RadiusSettingOutlined,
+    SaveOutlined
+} from "@ant-design/icons";
 import _ from "lodash";
 import TableGrid from "@/component/tableGrid";
 import Popconfirm from "antd/lib/popconfirm";
@@ -18,7 +24,7 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment";
 import Spin from "antd/lib/spin";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {commonManage} from "@/utils/commonManage";
+import {commonManage, gridManage} from "@/utils/commonManage";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {deliveryInfo, DRInfo} from "@/utils/column/ProjectInfo";
 
@@ -45,8 +51,16 @@ function DeliveryWrite({copyPageInfo}:any) {
         }
     }
     const [info, setInfo] = useState(getDeliveryInit());
+
     const [selectOrderList, setSelectOrderList] = useState([]);
     const [totalRow, setTotalRow] = useState(0);
+    const isGridLoad = useRef(false);
+
+    useEffect(() => {
+        if(!isGridLoad.current) return;
+        gridManage.resetData(gridRef, selectOrderList);
+        setTotalRow(selectOrderList?.length ?? 0);
+    }, [selectOrderList]);
 
     /**
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
@@ -56,6 +70,7 @@ function DeliveryWrite({copyPageInfo}:any) {
         gridRef.current = params.api;
         params.api.applyTransaction({add: []});
         setTotalRow(0);
+        isGridLoad.current = true;
     };
 
     /**
@@ -185,88 +200,70 @@ function DeliveryWrite({copyPageInfo}:any) {
     function modalSelected(list= []) {
         if (!list?.length) return;
 
-        console.log(list);
-
-        // customerName
-        // yourPoNo
-        // customerManagerName
-        // customerManagerPhoneNumber
-
         setSelectOrderList(prevList => {
             // 발주서 Modal에서 같은 발주서 항목 필터
             const newItems = list.filter(
                 newItem => !prevList.some(existing => existing.orderDetailId === newItem.orderDetailId)
             );
             const updatedList = [...prevList, ...newItems];
-
-            // Inquiry No. 정리
-            const connectInquiryNos = [];
-            for (const item of updatedList || []) {
-                const inquiryNo = item.documentNumberFull;
-                if (inquiryNo && !connectInquiryNos.includes(inquiryNo)) {
-                    connectInquiryNos.push(inquiryNo);
-                }
-            }
-
-            setInfo(prevInfo => {
-                return {
-                    ...prevInfo,
-                    customerName: updatedList?.[0]?.customerName || '',
-                    agencyName: updatedList?.[0]?.agencyName || '',
-                    connectInquiryNo: connectInquiryNos.join(', '),
-                    // orderDetailIds,
-                }
-            });
             return updatedList;
         });
     }
 
     const getInfoByType = (type, detail = {}) => {
         const isEmpty = !detail || Object.keys(detail).length === 0;
+        if (isEmpty) return;
+
+        let shippingType = '';
+        let paymentMethod = '';
+        if (!detail?.['freightCharge']) {
+            shippingType = detail?.['freightCharge'].startsWith('택배') ? '택배' : '화물';
+            paymentMethod = detail?.['freightCharge'].endsWith('선불') ? '선불' : '후불';
+        }
         setInfo(prev => {
             let bowl = {};
             switch (type) {
                 case 'CJ':
                     bowl = {
                         deliveryType: 'CJ',
-                        deliveryDate: '',
-                        customerName: '',
-                        customerOrderNo: '',
-                        trackingNumber: '',
-                        recipientName: '',
-                        recipientPhone: '',
-                        recipientAltPhone: '',
-                        recipientAddress: '',
-                        recipientPostalCode: '',
-                        productName: '',
-                        quantity: '',
+                        deliveryDate: detail?.['deliveryDate'] || moment().format('YYYY-MM-DD'),
+                        customerName: detail?.['customerName'] || '',
+                        customerOrderNo: detail?.['customerOrderNo'] || detail?.['yourPoNo'] || '',
+                        trackingNumber: detail?.['trackingNumber'] || '',
+                        recipientName: detail?.['recipientName'] || detail?.['customerManagerName'],
+                        recipientPhone: detail?.['recipientPhone'] || detail?.['customerManagerPhoneNumber'],
+                        recipientAltPhone: detail?.['recipientAltPhone'] || '',
+                        recipientAddress: detail?.['recipientAddress'] || detail?.['address'],
+                        recipientPostalCode: detail?.['recipientPostalCode'] || '',
+                        productName: detail?.['productName'] || '부품',
+                        quantity: detail?.['quantity'] || '',
                     };
                     break;
                 case 'DAESIN':
                     bowl = {
                         deliveryType: 'DAESIN',
-                        deliveryDate: '',
-                        customerName: '',
-                        recipientName: '',
-                        recipientPhone: '',
-                        recipientAddress: '',
-                        destination: '',
-                        productName: '',
-                        quantity: '',
-                        packagingType: '',
-                        shippingType: '',
-                        paymentMethod: '',
+                        deliveryDate: detail?.['deliveryDate'] || moment().format('YYYY-MM-DD'),
+                        customerName: detail?.['customerName'] || '',
+                        recipientName: detail?.['recipientName'] || detail?.['customerManagerName'],
+                        recipientPhone: detail?.['recipientPhone'] || detail?.['customerManagerPhoneNumber'],
+                        recipientAddress: detail?.['recipientAddress'] || detail?.['address'],
+                        destination: detail?.['freightBranch'] || '',
+                        productName: detail?.['productName'] || '부품',
+                        quantity: detail?.['quantity'] || '',
+                        packagingType: detail?.['packagingType'] || '',
+                        shippingType: detail?.['shippingType'] || '',
+                        paymentMethod: detail?.['paymentMethod'] || '',
                     };
                     break;
                 case 'QUICK':
                     bowl = {
                         deliveryType: 'QUICK',
-                        deliveryDate: '',
-                        customerName: '',
-                        recipientName: '',
-                        recipientPhone: '',
-                        recipientAddress: '',
-                        classification: '',
+                        deliveryDate: detail?.['deliveryDate'] || moment().format('YYYY-MM-DD'),
+                        customerName: detail?.['customerName'] || '',
+                        recipientName: detail?.['recipientName'] || detail?.['customerManagerName'],
+                        recipientPhone: detail?.['recipientPhone'] || detail?.['customerManagerPhoneNumber'],
+                        recipientAddress: detail?.['recipientAddress'] || detail?.['address'],
+                        classification: detail?.['recipientAddress'] || '',
                     };
                     break;
                 default:
@@ -278,6 +275,13 @@ function DeliveryWrite({copyPageInfo}:any) {
             };
         });
     };
+
+    function getDeliveryInfo() {
+        const list = gridRef.current.getSelectedRows();
+        if (!list?.length) return message.warn('불러올 발주서 내역을 선택해주세요.');
+
+        getInfoByType(tabNumb, list?.[0]);
+    }
 
     return <Spin spinning={loading}>
         <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
@@ -304,19 +308,24 @@ function DeliveryWrite({copyPageInfo}:any) {
             }}>
                 <TableGrid
                     deleteComp={
-                        <Popconfirm
-                            title="삭제하시겠습니까?"
-                            onConfirm={confirm}
-                            icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                            <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
-                                <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                        <>
+                            <Button type={'primary'} size={'small'} style={{fontSize : 11}} onClick={getDeliveryInfo}>
+                                <div><FileDoneOutlined style={{paddingRight: 8}}/>배송 정보 불러오기</div>
                             </Button>
-                        </Popconfirm>
+                            <Popconfirm
+                                title="삭제하시겠습니까?"
+                                onConfirm={confirm}
+                                icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                                <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                                    <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                                </Button>
+                            </Popconfirm>
+                        </>
                     }
                     totalRow={totalRow}
                     gridRef={gridRef}
                     columns={tableSelectOrderReadColumns}
-                    customType={'deliveryRead'}
+                    customType={'delivery'}
                     onGridReady={onGridReady}
                     funcButtons={['agPrint']}
                 />

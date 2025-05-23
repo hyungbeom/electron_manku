@@ -251,7 +251,7 @@ const TableGrid = ({
      * (사용처: 견적의뢰, 견적서, 발주서 등)
      */
     const includeKeys = ['estimateRequestId', 'estimateId', 'orderId', 'orderStatusId'];
-    const excludedTypes = ['Remittance', 'Tax', 'SourceWrite', 'SourceUpdate'];
+    const excludedTypes = ['delivery', 'Remittance', 'Tax', 'SourceWrite', 'SourceUpdate'];
     const containsIncludeKey = (list) => {
         const firstRow = list?.[0];
         if (!firstRow) return false;

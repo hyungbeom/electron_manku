@@ -6,7 +6,7 @@ import {useRouter} from "next/router";
 import {BoxCard, datePickerForm, inputForm, MainCard, SelectForm, textAreaForm, TopBoxCard} from "@/utils/commonForm";
 import PrintPo from "@/component/printPo";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
-import {getAttachmentFileList, updateOrder} from "@/utils/api/mainApi";
+import {updateOrder} from "@/utils/api/mainApi";
 import {findCodeInfo} from "@/utils/api/commonApi";
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
@@ -244,25 +244,14 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
 
     async function returnFunc(code, msg, data) {
         if (code === 1) {
-            await getAttachmentFileList({
-                data: {
-                    "relatedType": "ORDER",   // ESTIMATE, ESTIMATE_REQUEST, ORDER, PROJECT, REMITTANCE
-                    "relatedId": info['orderId']
-                }
-            }).then(v => {
-                // const list = fileManage.getFormatFiles(v);
-                // setFileList(list)
-                // setOriginFileList(list)
-
-                window.postMessage({message: 'reload', target: 'order_read'}, window.location.origin);
-                notificationAlert('success', '💾 발주서 수정완료',
-                    <>
-                        <div>Inquiry No. : {info.documentNumberFull}</div>
-                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
-                    </>
-                    , null, null, 2
-                )
-            })
+            window.postMessage({message: 'reload', target: 'order_read'}, window.location.origin);
+            notificationAlert('success', '💾 발주서 수정완료',
+                <>
+                    <div>Inquiry No. : {info.documentNumberFull}</div>
+                    <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                </>
+                , null, null, 2
+            )
         } else {
             console.warn(msg);
             notificationAlert('error', '⚠️ 작업실패',

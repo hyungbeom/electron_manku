@@ -1537,7 +1537,29 @@ export const tableOrderReadColumns = [
         field: 'unitPrice',
         align: 'center',
         minWidth: 40,
-        valueFormatter: numberFormat,
+        valueFormatter: (params) => {
+            const { unitPrice, currency } = params.data ?? {};
+
+            const isPinned = params.node.rowPinned;
+            let value = isPinned
+                ? params.value
+                : unitPrice
+                    ? unitPrice
+                    : null;
+
+            const inferredCurrency = isPinned
+                ? (() => {
+                    let hasKRW = false;
+                    params.api.forEachNode((node) => {
+                        const c = node.data?.currency;
+                        if (!c || c === 'KRW') hasKRW = true;
+                    });
+                    return hasKRW ? 'KRW' : 'USD';
+                })()
+                : (currency ?? 'KRW');
+
+            return formatAmount(value, inferredCurrency);
+        },
         cellStyle: {textAlign: 'right'}
     },
     {
