@@ -222,37 +222,28 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                                                     }}>M</Button>
                                         </div>
 
-                                        <div style={{paddingBottom: 9}}>
-                                            {selectBoxForm({
-                                                title: '입고 여부',
-                                                id: 'searchStockStatus',
+                                        <div >
+                                            {inputForm({
+                                                title: '문서번호',
+                                                id: 'searchDocumentNumber',
                                                 onChange: onChange,
-                                                data: info,
-                                                list: [
-                                                    {value: '', label: '전체'},
-                                                    {value: '입고', label: '입고'},
-                                                    {value: '미입고', label: '미입고'}
-                                                ]
+                                                handleKeyPress: handleKeyPress,
+                                                data: info
                                             })}
                                         </div>
                                         {inputForm({
-                                            title: '등록직원명', id: 'searchCreatedBy',
+                                            title: 'Project No.', id: 'searchRfqNo',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
+
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[1]} minSize={5}>
                                     <BoxCard title={''}>
-                                        {inputForm({
-                                            title: '문서번호',
-                                            id: 'searchDocumentNumber',
-                                            onChange: onChange,
-                                            handleKeyPress: handleKeyPress,
-                                            data: info
-                                        })}
+
                                         {inputForm({
                                             title: '고객사명',
                                             id: 'searchCustomerName',
@@ -268,7 +259,12 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                                             handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
-
+                                        {inputForm({
+                                            title: '등록직원명', id: 'searchCreatedBy',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
                                     </BoxCard>
                                 </Panel>
 
@@ -303,12 +299,33 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[3]} minSize={5}>
                                     <BoxCard title={''}>
-                                        {inputForm({
-                                            title: 'Project No.', id: 'searchRfqNo',
+
+                                        {selectBoxForm({
+                                            title: '담당자 요청상태',
+                                            id: 'searchReplyStatus',
                                             onChange: onChange,
-                                            handleKeyPress: handleKeyPress,
-                                            data: info
+                                            data: info,
+                                            list: [
+
+                                                {value: "", label: "전체"},
+                                                {value: 0, label: "미요청"},
+                                                {value: 1, label: "요청중"},
+                                                {value: 2, label: "확인완료"}
+                                            ]
                                         })}
+                                        <div style={{paddingTop : 9}}>
+                                        {selectBoxForm({
+                                            title: '입고 여부',
+                                            id: 'searchStockStatus',
+                                            onChange: onChange,
+                                            data: info,
+                                            list: [
+                                                {value: '', label: '전체'},
+                                                {value: '입고', label: '입고'},
+                                                {value: '미입고', label: '미입고'}
+                                            ]
+                                        })}
+                                        </div>
                                     </BoxCard>
                                 </Panel>
 

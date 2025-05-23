@@ -568,6 +568,7 @@ export const orderReadInitial = {
     "searchCustomerName": "",           // 고객사명
     searchCreatedBy : '',
     searchManagerName : '',
+    "searchReplyStatus": "",                  // Maker
     "searchMaker": "",                  // Maker
     "searchModel": "",                  // Model
     "searchItem": "",                   // Item
