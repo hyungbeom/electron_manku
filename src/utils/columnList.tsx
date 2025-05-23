@@ -1568,6 +1568,7 @@ export const tableOrderReadColumns = [
     }, {
         headerName: '매입 총액',
         field: 'totalAmount',
+        cellStyle: {textAlign: 'right'},
         editable: true,
         valueFormatter: (params) => {
             if (params.node.rowPinned) {

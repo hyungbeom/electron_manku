@@ -86,7 +86,7 @@ function SeaOrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         managerFaxNumber: userInfo['faxNumber'],
         managerEmail: userInfo['email'],
         estimateManager: userInfo['name'],
-        paymentTerms : 'By in advance T/T',
+        paymentTerms : 'T/T',
         createdId: 0,
         customerId: 0
     }
@@ -201,6 +201,7 @@ function SeaOrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     managerAdminId: adminParams['managerAdminId'],
                                     managerAdminName: adminParams['managerAdminName'],
                                     createdBy: adminParams['createdBy'],
+                                    paymentTerms: 'T/T',
                                     writtenDate: moment().format('YYYY-MM-DD'),
                                     managerId: adminParams['managerId'],
                                     managerPhoneNumber: adminParams['managerPhoneNumber'],
