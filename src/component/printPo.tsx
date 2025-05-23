@@ -445,7 +445,7 @@ function PrintPo({
                         justifyContent: 'space-between',
                         padding: 20
                     }}>
-                        <PoHeader info={info}/>
+                        <PoHeader info={info} type={type}/>
                         <table style={{
                             width: '100%',
                             borderCollapse: 'collapse',

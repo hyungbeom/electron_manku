@@ -33,7 +33,7 @@ export default function EstimateHeader(){
 
 export function PoHeader({info, type}){
 
-
+    console.log(type,':::')
 
     return <>
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -42,7 +42,7 @@ export function PoHeader({info, type}){
                      alt=""/>
                 <div style={{float: 'left', fontSize: 11, paddingLeft: 20}}>
 
-                    {(info?.agencyCode?.startsWith('K') || info?.agencyCode === 'SK') ? <>
+                    {type === 'ko' ? <>
                         <div>(주) 만쿠무역</div>
                         <div>Manku Trading Co., Ltd</div>
                         <div>서울시 송파구 충민로 52 가든파이브웍스</div>
@@ -63,7 +63,7 @@ export function PoHeader({info, type}){
                 fontSize: 38,
                 fontWeight: 700,
                 textAlign: 'center'
-            }}>{(info?.agencyCode?.startsWith('K') || info?.agencyCode === 'SK') ? <>발&nbsp;&nbsp;&nbsp;&nbsp;주&nbsp;&nbsp;&nbsp;&nbsp;서</> : <>PURCHASE
+            }}>{type === 'ko' ? <>발&nbsp;&nbsp;&nbsp;&nbsp;주&nbsp;&nbsp;&nbsp;&nbsp;서</> : <>PURCHASE
                 ORDER</>} </div>
             <div style={{width: '40%'}}>
                 <img src={'/manku_stamp_ko.png'} style={{float: 'right'}} width={180} alt=""/>
