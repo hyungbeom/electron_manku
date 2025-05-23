@@ -107,6 +107,7 @@ function RqfUpdate({
         setDriveKey(prev => prev + 1);
         setOriginFileList([]);
         setTableData([]);
+
         getDataInfo().then(v => {
             if (v) {
                 const {estimateRequestDetail, attachmentFileList} = v;
@@ -127,6 +128,7 @@ function RqfUpdate({
                 });
                 //
                 setFileList(fileManage.getFormatFiles(attachmentFileList));
+                console.log('렌더 두번?!')
                 setOriginFileList(attachmentFileList);
                 estimateRequestDetail[listType] = [...estimateRequestDetail[listType], ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - estimateRequestDetail[listType].length)]
                 setTableData(estimateRequestDetail[listType]);

@@ -1543,6 +1543,18 @@ export const tableOrderReadColumns = [
         minWidth: 40,
         valueFormatter: numberFormat,
         cellStyle: {textAlign: 'right'}
+    },  {
+        headerName: '매입 총액',
+        field: 'totalAmount',
+        editable: true,
+        valueFormatter: (params) => {
+            if (params.node.rowPinned) {
+                // 고정 행 (푸터)에서는 원래 값을 그대로 반환
+                return params.value !== undefined ? params.value.toLocaleString() : '0';
+            }
+            const {quantity, unitPrice} = params.data;
+            return Math.floor(quantity * unitPrice).toLocaleString();
+        }
     },
     {
         headerName: '수량',

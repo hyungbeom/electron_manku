@@ -46,15 +46,15 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
     const onGridReady = async (params) => {
         gridRef.current = params.api;
         await searchRfq({data: subRfqReadInitial}).then(v => {
-            const {data, pageInfo} = v;
-            setTotalRow(pageInfo.totalRow)
+            const {data} = v;
+            setTotalRow(data?.length)
 
             params.api.applyTransaction({add: data});
         })
     };
 
     useEffect(() => {
-        searchInfo()
+        // searchInfo()
     }, []);
 
 
@@ -83,12 +83,6 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
     }
 
 
-    useEffect(() => {
-        getData.post('common/getFileId').then(v => {
-            console.log(v, ':::::')
-        })
-    }, []);
-
     async function searchInfo() {
         let copyData: any = {...info}
         setLoading(true);
@@ -97,8 +91,8 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
             data: copyData
         }).then(v => {
             countRef.current = 1;
-            const {data, pageInfo} = v;
-            setTotalRow(pageInfo.totalRow)
+            const {data} = v;
+            setTotalRow(data?.length)
             gridManage.resetData(gridRef, data);
             setLoading(false)
             gridRef.current.ensureIndexVisible(0)
