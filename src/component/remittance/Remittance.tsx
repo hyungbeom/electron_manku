@@ -36,7 +36,8 @@ function Remittance({
             ? <Table data={tableData} column={ORInfo['write']} funcButtons={['print']} ref={tableRef}
                      type={'overseas_remittance_write_column'} customFunc={partialRemittance} />
             : <Table data={tableData} column={DRInfo['write']} funcButtons={['print']} ref={tableRef}
-                    type={'domestic_remittance_write_column'} customFunc={partialRemittance} />
+                    type={'domestic_remittance_write_column'}
+                     customFunc={partialRemittance} />
     );
 }
 

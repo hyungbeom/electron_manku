@@ -146,23 +146,65 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
     }
 
 
-    function sendAlertMail(){
+    function sendAlert(){
+
         const list = gridRef.current.getSelectedRows();
-        function checkMail(managerAdminId) {
-            // 실제 구현에 맞게 수정
-            if (managerAdminId === 20) return "test20@example.com";
-            if (managerAdminId === 17) return "test17@example.com";
-            if (managerAdminId === 19) return "test19@example.com";
-            return "";
-        }
+
+        const grouped = {};
+
+        list.forEach(item => {
+            const key = item.managerAdminId;
+            if (!grouped[key]) {
+                grouped[key] = {
+                    managerAdminId: key,
+                    managerAdminName: item.managerAdminName,
+                    children: []
+                };
+            }
+            // 중복 체크용 key
+            const childKey = item.documentNumberFull + '|' + item.agencyName;
+            if (!grouped[key]._childSet) grouped[key]._childSet = new Set();
+            if (!grouped[key]._childSet.has(childKey)) {
+                grouped[key].children.push({
+                    documentNumberFull: item.documentNumberFull,
+                    agencyName: item.agencyName,
+                    estimateRequestId: item.estimateRequestId,
+                });
+                grouped[key]._childSet.add(childKey);
+            }
+        });
+
+// _childSet은 결과에서 제거
+        const result = Object.values(grouped).map(g => {
+            // @ts-ignore
+            delete g._childSet;
+            return g;
+        });
+
+        // console.log(result);
+        result.forEach((v:any)=>{
+            const childrenStr = v.children
+                .map(child => `문서번호 : ${child.documentNumberFull} / 매입처 : ${child.agencyName}`)
+                .join('\n');
+            const findMember = adminList.find(v=> v.adminId === v.managerAdminId);
 
 
-// data는 위에서 주신 배열
+            getData.post('socket/send',{receiverId : v.managerAdminId,receiverName : findMember?.name,   title :'견적의뢰 알림', message :childrenStr, pk : v.children[0]?.estimateRequestId})
+        })
+
+        sendMail(list)
+
+    }
+    
+    function sendAlertMail(){
+
+        const list = gridRef.current.getSelectedRows();
+
         const grouped = Object.values(
             list.reduce((acc, cur) => {
                 const id = cur.managerAdminId;
                 if (!acc[id]) {
-                   const findMember = adminList.find(v=> v.adminId === id)
+                    const findMember = adminList.find(v=> v.adminId === id)
 
                     acc[id] = {
                         email: findMember?.email,
@@ -175,15 +217,23 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
             }, {})
         );
 
+        console.log(grouped,'grouped:')
+
+
 
         getData.post('estimate/updateCheckEmail', {data : grouped}).then(v=>{
-         if(v?.data?.code === 1){
-             message.success("요청메일 보내기가 완료되었습니다");
-             searchInfo();
-         }
+            if(v?.data?.code === 1){
+                message.success("요청메일 보내기가 완료되었습니다");
+                searchInfo();
+            }
         })
+        
     }
 
+    
+    function sendMail(list){
+       
+    }
     return <>
         <Spin spinning={loading} tip={'견적의뢰 조회중...'}>
             <ReceiveComponent componentName={'rfq_read'} searchInfo={searchInfo}/>
@@ -365,6 +415,14 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                     {/*@ts-ignored*/}
 
                     <TableGrid deleteComp={<>
+                        <Popconfirm
+                            title="담당자에 알림을 보내겠습니까?"
+                            onConfirm={sendAlert}
+                            icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                            <Button type={'primary'} danger  size={'small'} style={{fontSize: 11}}>
+                                <SendOutlined />(소켓) 알림 보내기
+                            </Button>
+                        </Popconfirm>
                         <Popconfirm
                             title="담당자에 알림 메일을 보내겠습니까?"
                             onConfirm={sendAlertMail}

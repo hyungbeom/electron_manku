@@ -275,6 +275,7 @@ function DeliveryWrite({copyPageInfo, getPropertyId}:any) {
         const list = gridRef.current.getSelectedRows();
         if (!list?.length) return message.warn('불러올 발주서 정보를 선택해주세요.');
 
+        console.log(list,'list::')
         getDeliveryInfoByType(tabNumb, list?.[0]);
     }
 

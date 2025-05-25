@@ -517,15 +517,14 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
     let bowl = data;
 
     return <div style={{fontSize: 12, paddingBottom: 10}}>
-        <div style={{paddingBottom: 6}}>{title}</div>
+        <div style={{paddingBottom: 6, fontWeight: 700}}>{title}</div>
         <Radio.Group id={id} value={bowl[id]} disabled={disabled}
                      // style={{width: '100%', display: 'flex', flexWrap:'wrap', gap: '25px', alignItems: 'center'}}
                      style={{
                          width: '100%',
                          display: 'flex',
                          flexWrap: 'nowrap', // 줄바꿈 안되게
-                         justifyContent: 'center', // 가운데 정렬
-                         columnGap: '20px', // 적당한 간격
+                         justifyContent: 'left', // 가운데 정렬
                          alignItems: 'center',
                      }}
                      onChange={e => {
@@ -533,7 +532,7 @@ export const radioForm = ({title, id, disabled = false, data, onChange, list}) =
                          onChange(e);
                      }}>
             {list.map(v => {
-                return <Radio value={v.value}>{v.title}</Radio>
+                return <Radio value={v.value} style={{fontSize : 12}}>{v.title}</Radio>
             })}
         </Radio.Group>
     </div>

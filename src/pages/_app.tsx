@@ -17,8 +17,10 @@ function App({Component, pageProps = {title: ''}, ...rest}: any) {
     const router = useRouter();
 
     useEffect(() => {
+        // @ts-ignored
         if (window.electron && window.electron.onNavigate) {
             // Electron에서 보낸 'navigate-to' 이벤트를 수신하고 라우팅 수행
+            // @ts-ignored
             window.electron.onNavigate((event, route) => {
                 router.push(route); // Next.js 라우터를 통해 페이지 이동
             });

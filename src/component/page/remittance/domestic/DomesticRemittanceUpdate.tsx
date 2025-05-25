@@ -101,6 +101,9 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef, getCopy
             const findCreator = adminList.find(m => m.adminId === restDetail.createdId);
             const findManager = adminList.find(m => m.adminId === restDetail.managerAdminId);
 
+            console.log(findCreator,'findCreator:')
+            console.log(findManager,'findManager:')
+
             // 부분송금액 (송금내역 총액) 계산
             const partialRemittance = remittanceDetail.reduce((sum, row) => sum + ((Number(row.supplyAmount) || 0) + (Number(row.tax) || 0)), 0);
 
@@ -156,9 +159,6 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef, getCopy
                 tax
             }
         })
-        console.log(info, 'info:::')
-        console.log(selectOrderList, 'selectOrderList:::')
-        console.log(remittanceList, 'remittanceList:::')
 
         setLoading(true);
 
@@ -384,6 +384,8 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef, getCopy
                 // overflowY: 'hidden',
                 rowGap: 10,
             }}>
+
+
                 <MainCard title={'국내 송금 수정'} list={[
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'}
@@ -462,7 +464,7 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef, getCopy
                                                    id={'totalAmount'}
                                                    value={info ? info['totalAmount'] : null}
                                                    onKeyDown={(e) => {
-                                                       if(e.key === 'Enter') {
+                                                       if (e.key === 'Enter') {
                                                            e.currentTarget.blur();
                                                        }
                                                    }}
@@ -519,7 +521,13 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef, getCopy
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={'확인 정보'}>
-                                    {textAreaForm({title: '비고란', rows: 13, id: 'remarks', onChange: onChange, data: info})}
+                                    {textAreaForm({
+                                        title: '비고란',
+                                        rows: 13,
+                                        id: 'remarks',
+                                        onChange: onChange,
+                                        data: info
+                                    })}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>
@@ -529,10 +537,15 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef, getCopy
                                         <div>드라이브 목록</div>
                                         {
                                             orderInfo['folderId'] ?
-                                                <span style={{fontSize: 10, display: 'inline-flex', alignItems: 'center'}}>
-                                                    <FolderOpenOutlined style={{paddingRight: 4}}/>{`${orderInfo['documentNumberFull']}`}
+                                                <span style={{
+                                                    fontSize: 10,
+                                                    display: 'inline-flex',
+                                                    alignItems: 'center'
+                                                }}>
+                                                    <FolderOpenOutlined
+                                                        style={{paddingRight: 4}}/>{`${orderInfo['documentNumberFull']}`}
                                                 </span>
-                                            : <></>
+                                                : <></>
                                         }
                                     </div>
                                 } disabled={!userInfo['microsoftId'] || !orderInfo?.folderId}>

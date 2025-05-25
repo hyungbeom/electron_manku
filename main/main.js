@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Menu, dialog, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, Menu, dialog, Tray, Notification } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import * as regedit from "regedit";
@@ -6,6 +6,7 @@ import {execFile} from "node:child_process";
 
 // ✅ electron-updater 동적 import (ESM 환경 대응)
 let autoUpdater;
+app.setAppUserModelId('MANKU_ERP');
 app.whenReady().then(async () => {
     const updaterModule = await import('electron-updater');
     autoUpdater = updaterModule.autoUpdater;
@@ -48,7 +49,7 @@ app.whenReady().then(() => {
     });
     mainWindow.loadURL('http://localhost:3000'); // Next.js dev server
     mainWindow.setMenu(null);
-
+    mainWindow.webContents.openDevTools();
 
     // ✅ 여기가 중요: app.whenReady() 안에서 Tray 생성
     tray = new Tray(path.join(__dirname, 'main.ico'));
@@ -254,7 +255,17 @@ ipcMain.handle('resize-window', (event, width, height) => {
 });
 
 
-
+ipcMain.on('notify', (event, { title, body }) => {
+    const notification = new Notification({ title, body,  icon : path.join(__dirname, 'main.ico') });
+    notification.on('click', () => {
+        // 알림 클릭 시, 렌더러로 메시지 보내기
+        const win = BrowserWindow.getAllWindows()[0]; // 메인 윈도우 가져오기
+        if (win) {
+            win.webContents.send('notification-clicked', { title, body });
+        }
+    });
+    notification.show();
+});
 // 👇 버튼 클릭 시 Outlook 실행
 ipcMain.on('launch-outlook', (event, params) => {
     if (outlookPath) {

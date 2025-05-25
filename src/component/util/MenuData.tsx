@@ -111,7 +111,13 @@ export const treeData = [
 
             {title: "HS CODE 조회", key: "hscode_read"},
         ],
-    },
+    }, {
+        title: "기타",
+        key: "etc",
+        children: [
+            {title: "알림요청 조회", key: "alert_read"},
+        ],
+    }
 ];
 
 
@@ -135,13 +141,19 @@ export const introMenulist = [
         icon: <CopyFilled/>,
         color: 'yellowgreen',
         title: '견적서',
-        children: [{name: '견적서 등록', key: 'estimate_write'}, {name: '견적서 조회', key: 'estimate_read'}, {name: '통합견적서',key: ''}]
+        children: [{name: '견적서 등록', key: 'estimate_write'}, {name: '견적서 조회', key: 'estimate_read'}, {
+            name: '통합견적서',
+            key: ''
+        }]
     },
     {
         icon: <WalletFilled/>,
         color: 'darkolivegreen',
         title: '발주서',
-        children: [{name: '국내발주서 등록', key: 'order_write'},{name: '해외발주서 등록', key: 'seaOrder_write'}, {name: '발주서 조회', key: 'order_read'},{name: '입고예정 조회', key: 'expected_delivery_read'}]
+        children: [{name: '국내발주서 등록', key: 'order_write'}, {name: '해외발주서 등록', key: 'seaOrder_write'}, {
+            name: '발주서 조회',
+            key: 'order_read'
+        }, {name: '입고예정 조회', key: 'expected_delivery_read'}]
     },
     {
         icon: <DropboxSquareFilled/>,

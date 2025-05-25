@@ -10,26 +10,129 @@ import {introMenulist, treeData} from "@/component/util/MenuData";
 import {useAppDispatch, useAppSelector} from "@/utils/common/function/reduxHooks";
 import {useRouter} from "next/router";
 import {tabComponents, tabShortcutMap} from "@/utils/commonForm";
-import {getData} from "@/manage/function/api";
 
+import SockJS from 'sockjs-client';
+import {Client} from '@stomp/stompjs';
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
+import {getData} from "@/manage/function/api";
+import {getCookie} from "@/manage/function/cookie";
+
+function summarizeNotifications(notifications) {
+    const grouped = {};
+
+    // 1. title 기준으로 그룹화
+    notifications.forEach((item) => {
+        if (!grouped[item.title]) {
+            grouped[item.title] = [];
+        }
+        grouped[item.title].push(item);
+    });
+
+    // 2. 그룹별 요약 생성
+    const summarized = Object.entries(grouped).map(([title, group]:any) => {
+        const count = group.length;
+        const displayTitle = count > 1 ? `${title} 외 ${count - 1}건` : title;
+        const first = group[0];
+
+        return {
+            title: displayTitle,
+            message: first.message,
+            pk: first.pk
+        };
+    });
+
+    return summarized;
+}
 
 export default function Main() {
-
-    const { userInfo, adminList} = useAppSelector((state) => state.user);
+    const notificationAlert = useNotificationAlert();
+    const {userInfo, adminList} = useAppSelector((state) => state.user);
 
     // 만쿠 관리자 리스트 store에 추가
     const dispatch = useAppDispatch();
+    const [notification, setNotification] = useState('');
+
     useEffect(() => {
-        if (!adminList?.length) {
-            getData.post('admin/getAdminList', {
-                "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-                "searchAuthority": null,    // 1: 일반, 0: 관리자
-                "page": 1,
-                "limit": -1
-            }).then(v => {
-                dispatch(setAdminList(v?.data?.entity?.adminList));
+
+        getData.post('socket/getQueue').then(v=>{
+            const summary = summarizeNotifications(v?.data);
+            summary.forEach(data=>{
+                notificationAlert('success', "🔔" + data.title,
+                    <>
+                        {data.message}
+                    </>
+
+                    , function () {
+                        if (data.title.includes('견적의뢰 알림')){
+                            getPropertyId('rfq_update', data?.pk)
+                        }
+                    },
+
+                    {cursor: 'pointer'},
+                    null
+                )
             })
+        })
+
+        const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
+
+
+
+        // STOMP 클라이언트 생성 및 설정
+        const client = new Client({
+            webSocketFactory: () => socket,
+            reconnectDelay: 5000,
+            onConnect: () => {
+
+                console.log('[WebSocket 연결 성공]');
+                client.subscribe('/user/queue/notifications', (msg) => {
+                    const data = JSON.parse(msg.body);
+                    console.log('[알림 수신]', data);
+                    // OS 알림 띄우기 (preload에서 노출한 API 호출)
+                    const findMember = adminList.find(v => v.adminId === data.senderId)
+
+                    console.log(findMember,'member')
+                    notificationAlert('success', "🔔" + data.title + `  요청자 : ${findMember?.name}`,
+                        <>
+                            {data.message}
+                        </>
+                        , function () {
+                            if (data.title === '견적의뢰 알림') {
+                                getPropertyId('rfq_update', data?.pk)
+                            }
+                        },
+                        {cursor: 'pointer'},
+                        null
+                    )
+                    // @ts-ignore
+                    if (window.electron && window.electron.notify) {
+                        // @ts-ignore
+                        window.electron.notify(data.title + `  요청자 : ${findMember.name}`, data.message);
+                    }
+                });
+            },
+            onStompError: (frame) => {
+                console.error('STOMP Error: ', frame.headers['message']);
+            },
+        });
+
+        console.log('socket')
+        client.activate();
+        // @ts-ignore
+        if(window?.electron) {
+            // @ts-ignore
+            window.electron.onNotificationClicked(({title, body}) => {
+                console.log('Notification clicked:', title, body);
+                // 여기서 원하는 동작 실행
+                alert(`알림 클릭됨: ${title}`);
+                // 또는 React 상태 업데이트, 라우팅 등
+            });
         }
+
+
+        return () => {
+            client.deactivate();
+        };
     }, []);
 
     const modelRef = useRef(Model.fromJson({
@@ -300,7 +403,19 @@ export default function Main() {
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+    const {userInfo, codeInfo, adminList} = await initialServerRouter(ctx, store);
+
+    getData.defaults.headers["authorization"] = `Bearer ${getCookie(ctx, 'token')}`;
+    getData.defaults.headers["refresh_token"] = getCookie(ctx, "refreshToken");
+    await getData.post('admin/getAdminList', {
+        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
+        "searchAuthority": null,    // 1: 일반, 0: 관리자
+        "page": 1,
+        "limit": -1
+    }).then(v => {
+        console.log(v?.data?.entity?.adminList,'v?.data?.entity?.adminList')
+        store.dispatch(setAdminList(v?.data?.entity?.adminList));
+    })
 
     const {first} = ctx.query;
 
@@ -313,6 +428,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         };
     } else {
         store.dispatch(setUserInfo(userInfo));
+
     }
 
     return {props: {alarm: first === 'true'}}
