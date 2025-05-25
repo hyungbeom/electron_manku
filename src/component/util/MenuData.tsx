@@ -111,12 +111,6 @@ export const treeData = [
 
             {title: "HS CODE 조회", key: "hscode_read"},
         ],
-    }, {
-        title: "기타",
-        key: "etc",
-        children: [
-            {title: "알림요청 조회", key: "alert_read"},
-        ],
     }
 ];
 

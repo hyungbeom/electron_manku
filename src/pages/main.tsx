@@ -16,6 +16,8 @@ import {Client} from '@stomp/stompjs';
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {getData} from "@/manage/function/api";
 import {getCookie} from "@/manage/function/cookie";
+import Drawer from "antd/lib/drawer";
+import AlertHistoryRead from "@/component/page/etc/AlertHistoryRead";
 
 function summarizeNotifications(notifications) {
     const grouped = {};
@@ -29,7 +31,7 @@ function summarizeNotifications(notifications) {
     });
 
     // 2. 그룹별 요약 생성
-    const summarized = Object.entries(grouped).map(([title, group]:any) => {
+    const summarized = Object.entries(grouped).map(([title, group]: any) => {
         const count = group.length;
         const displayTitle = count > 1 ? `${title} 외 ${count - 1}건` : title;
         const first = group[0];
@@ -50,11 +52,9 @@ export default function Main() {
 
     // 만쿠 관리자 리스트 store에 추가
     const dispatch = useAppDispatch();
-    const [notification, setNotification] = useState('');
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
-        let client: Client; // ← 여기서 먼저 선언만 하고
 
         getData.post('socket/getQueue').then(v => {
             const summary = summarizeNotifications(v?.data);
@@ -62,46 +62,54 @@ export default function Main() {
                 notificationAlert('success', "🔔" + data.title,
                     <>
                         {data.message}
-                    </>,
-                    function () {
+                    </>
+
+                    , function () {
                         if (data.title.includes('견적의뢰 알림')) {
-                            getPropertyId('rfq_update', data?.pk);
+                            getPropertyId('rfq_update', data?.pk)
                         }
                     },
-                    { cursor: 'pointer' },
-                    null
-                );
-            });
-        });
 
-        // STOMP 클라이언트 생성
-        client = new Client({
+                    {cursor: 'pointer'},
+                    null
+                )
+            })
+        })
+
+
+        const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
+
+
+        // STOMP 클라이언트 생성 및 설정
+        const client = new Client({
             webSocketFactory: () => socket,
             reconnectDelay: 5000,
             onConnect: () => {
+
                 console.log('[WebSocket 연결 성공]');
                 client.subscribe('/user/queue/notifications', (msg) => {
                     const data = JSON.parse(msg.body);
-                    const findMember = adminList.find(v => v.adminId === data.senderId);
+                    console.log('[알림 수신]', data);
+                    // OS 알림 띄우기 (preload에서 노출한 API 호출)
+                    const findMember = adminList.find(v => v.adminId === data.senderId)
 
-                    console.log(findMember, 'member');
+                    console.log(findMember, 'member')
                     notificationAlert('success', "🔔" + data.title + `  요청자 : ${findMember?.name}`,
                         <>
                             {data.message}
-                        </>,
-                        function () {
+                        </>
+                        , function () {
                             if (data.title === '견적의뢰 알림') {
-                                getPropertyId('rfq_update', data?.pk);
+                                getPropertyId('rfq_update', data?.pk)
                             }
                         },
-                        { cursor: 'pointer' },
+                        {cursor: 'pointer'},
                         null
-                    );
-
+                    )
                     // @ts-ignore
                     if (window.electron && window.electron.notify) {
                         // @ts-ignore
-                        window.electron.notify(data.title + `  요청자 : ${findMember?.name}`, data.message);
+                        window.electron.notify(data.title + `  요청자 : ${findMember.name}`, data.message);
                     }
                 });
             },
@@ -110,19 +118,20 @@ export default function Main() {
             },
         });
 
-        client.activate();
 
-        // 알림 클릭 이벤트 리스너
+        client.activate();
         // @ts-ignore
         if (window?.electron) {
             // @ts-ignore
-            window.electron.onNotificationClicked(({ title, body }) => {
+            window.electron.onNotificationClicked(({title, body}) => {
                 console.log('Notification clicked:', title, body);
+                // 여기서 원하는 동작 실행
                 alert(`알림 클릭됨: ${title}`);
+                // 또는 React 상태 업데이트, 라우팅 등
             });
         }
 
-        // Cleanup
+
         return () => {
             client.deactivate();
         };
@@ -291,8 +300,9 @@ export default function Main() {
             children: node.children ? transformTreeData(node.children) : undefined,
         }));
 
+    // @ts-ignore
     return (
-        <LayoutComponent>
+        <LayoutComponent setOpen={setOpen}>
             <div style={{display: "grid", gridTemplateColumns: "205px auto"}}>
                 <div style={{
                     borderRight: "1px solid lightGray",
@@ -388,7 +398,7 @@ export default function Main() {
                 />
 
             </div>
-
+       <AlertHistoryRead open={open} setOpen={setOpen} getPropertyId={getPropertyId}/>
         </LayoutComponent>
     );
 }
@@ -406,7 +416,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
         "page": 1,
         "limit": -1
     }).then(v => {
-        console.log(v?.data?.entity?.adminList,'v?.data?.entity?.adminList')
+        console.log(v?.data?.entity?.adminList, 'v?.data?.entity?.adminList')
         store.dispatch(setAdminList(v?.data?.entity?.adminList));
     })
 

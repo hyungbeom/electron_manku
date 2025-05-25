@@ -47,6 +47,7 @@ app.whenReady().then(() => {
             preload: path.join(__dirname, 'preload.js')
         }
     });
+    // mainWindow.loadURL('https://manku.progist.co.kr'); // Next.js dev server
     mainWindow.loadURL('http://localhost:3000'); // Next.js dev server
     mainWindow.setMenu(null);
     mainWindow.webContents.openDevTools();

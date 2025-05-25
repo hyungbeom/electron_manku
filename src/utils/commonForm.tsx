@@ -73,6 +73,7 @@ import SourceUpdate from "@/component/page/data/source/SourceUpdate";
 import ExpectedDeliveryRead from "@/component/page/order/ExpectedDeliveryRead";
 import SeaOrderWrite from "@/component/page/order/SeaOrderWrite";
 
+
 const {RangePicker} = DatePicker
 const {Option} = Select
 
@@ -862,7 +863,7 @@ export const tabComponents = {
     source_write: {
         name: "재고관리 등록",
         component: <SourceWrite/>
-    },
+    }
 };
 
 

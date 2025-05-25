@@ -7,7 +7,7 @@
   "description": "manku erp project",
   "scripts": {
     "dev": "concurrently -n \"NEXT,ELECTRON\" -c \"yellow,blue\" --kill-others \"next dev\" \"electron .\"",
-    "build": "next build",
+    "build": "electron-builder",
     "start": "next start",
     "lint": "next lint"
   },

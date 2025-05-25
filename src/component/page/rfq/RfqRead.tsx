@@ -239,6 +239,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
             <ReceiveComponent componentName={'rfq_read'} searchInfo={searchInfo}/>
             <PanelSizeUtil groupRef={groupRef} storage={'rfq_read'}/>
             <>
+
                 <div style={{
                     display: 'grid',
                     gridTemplateRows: `${mini ? 270 : 65}px calc(100vh - ${mini ? 400 : 195}px)`,

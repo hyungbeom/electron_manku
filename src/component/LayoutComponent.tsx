@@ -1,13 +1,13 @@
 import React from "react";
 import {Content} from "antd/lib/layout/layout";
 import Dropdown from "antd/lib/dropdown";
-import {LogoutOutlined, SettingOutlined,} from '@ant-design/icons';
+import {AlertFilled, BellFilled, LogoutOutlined, SettingOutlined,} from '@ant-design/icons';
 import {useRouter} from "next/router";
 import {removeCookie} from "@/manage/function/cookie";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Space from "antd/lib/space";
 
-export default function LayoutComponent({children}) {
+export default function LayoutComponent({children, setOpen = null}) {
 
     const router = useRouter();
     return <>
@@ -26,6 +26,7 @@ export default function LayoutComponent({children}) {
                     <div style={{fontSize: 20, fontWeight: 500, paddingLeft: 5}}>MANKU</div>
                 </div>
                 <div style={{display: 'flex'}}>
+                    <BellFilled style={{fontSize : 18, paddingRight : 10, cursor : 'pointer'}} onClick={()=> setOpen(true)} />
                     <div style={{alignItems: 'center', display: 'flex', gap: 20, paddingRight: 20}}>
                         <svg style={{cursor: 'pointer'}} onClick={() => window.open('/erp_rule', '_blank')}
                              viewBox="64 64 896 896" focusable="false" data-icon="question-circle" width="1em"
@@ -114,6 +115,7 @@ export function UserMenu() {
 
     return <Dropdown menu={{items}}>
         <Space>
+
             <div style={{display: 'flex',}}>
                 <img src='https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png' width={25}
                      alt=""/>

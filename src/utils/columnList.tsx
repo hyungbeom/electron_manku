@@ -4387,3 +4387,37 @@ export const storeReadColumn = [
         minWidth: 150
     }
 ];
+
+
+
+export const historyReadColumn = [
+    {
+        headerName: "", // 컬럼 제목
+        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
+        checkboxSelection: true, // 각 행에 체크박스 추가
+        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
+        cellStyle: {textAlign: "center"}, // 스타일 설정
+        maxWidth: 60, // 컬럼 너비
+        pinned: "left", // 왼쪽에 고정
+        filter: false
+    }, {
+        headerName: '알림일자',
+        field: 'blNo',
+        maxWidth: 100,
+        pinned: 'left'
+    }, {
+        headerName: '요청자',
+        field: 'orderDocumentNumberFull',
+        maxWidth: 120,
+
+        pinned: 'left'
+    }, {
+        headerName: '카테고리',
+        field: 'itemDetailNo',
+        maxWidth: 150,
+    }, {
+        headerName: '내용',
+        field: 'customerName',
+        minWidth: 100,
+    }
+];
