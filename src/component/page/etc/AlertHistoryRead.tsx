@@ -24,16 +24,19 @@ function AlertHistoryRead({open, setOpen, getPropertyId}) {
             const rawData = v?.data
 
 // 날짜 기준으로 묶기
-            const groupedByDate = rawData.reduce((acc, curr) => {
-                const date = curr.writtenDate;
-                if (!acc[date]) {
-                    acc[date] = [];
-                }
-                acc[date].push(curr);
-                return acc;
-            }, {});
 
-            setList(groupedByDate);
+            if(rawData?.length) {
+                const groupedByDate = rawData?.reduce((acc, curr) => {
+                    const date = curr.writtenDate;
+                    if (!acc[date]) {
+                        acc[date] = [];
+                    }
+                    acc[date].push(curr);
+                    return acc;
+                }, {});
+
+                setList(groupedByDate);
+            }
         })
     }
 
