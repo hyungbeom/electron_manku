@@ -74,8 +74,8 @@ export default function Main() {
             })
         })
 
-        const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
-
+        const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
+        https://manku.progist.co.kr/api
 
 
         // STOMP 클라이언트 생성 및 설정
