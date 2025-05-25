@@ -53,61 +53,55 @@ export default function Main() {
     const [notification, setNotification] = useState('');
 
     useEffect(() => {
+        const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
+        let client: Client; // ← 여기서 먼저 선언만 하고
 
-        getData.post('socket/getQueue').then(v=>{
+        getData.post('socket/getQueue').then(v => {
             const summary = summarizeNotifications(v?.data);
-            summary.forEach(data=>{
+            summary.forEach(data => {
                 notificationAlert('success', "🔔" + data.title,
                     <>
                         {data.message}
-                    </>
-
-                    , function () {
-                        if (data.title.includes('견적의뢰 알림')){
-                            getPropertyId('rfq_update', data?.pk)
+                    </>,
+                    function () {
+                        if (data.title.includes('견적의뢰 알림')) {
+                            getPropertyId('rfq_update', data?.pk);
                         }
                     },
-
-                    {cursor: 'pointer'},
+                    { cursor: 'pointer' },
                     null
-                )
-            })
-        })
+                );
+            });
+        });
 
-        const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
-        https://manku.progist.co.kr/api
-
-
-        // STOMP 클라이언트 생성 및 설정
-        const client = new Client({
+        // STOMP 클라이언트 생성
+        client = new Client({
             webSocketFactory: () => socket,
             reconnectDelay: 5000,
             onConnect: () => {
-
                 console.log('[WebSocket 연결 성공]');
                 client.subscribe('/user/queue/notifications', (msg) => {
                     const data = JSON.parse(msg.body);
-                    console.log('[알림 수신]', data);
-                    // OS 알림 띄우기 (preload에서 노출한 API 호출)
-                    const findMember = adminList.find(v => v.adminId === data.senderId)
+                    const findMember = adminList.find(v => v.adminId === data.senderId);
 
-                    console.log(findMember,'member')
+                    console.log(findMember, 'member');
                     notificationAlert('success', "🔔" + data.title + `  요청자 : ${findMember?.name}`,
                         <>
                             {data.message}
-                        </>
-                        , function () {
+                        </>,
+                        function () {
                             if (data.title === '견적의뢰 알림') {
-                                getPropertyId('rfq_update', data?.pk)
+                                getPropertyId('rfq_update', data?.pk);
                             }
                         },
-                        {cursor: 'pointer'},
+                        { cursor: 'pointer' },
                         null
-                    )
+                    );
+
                     // @ts-ignore
                     if (window.electron && window.electron.notify) {
                         // @ts-ignore
-                        window.electron.notify(data.title + `  요청자 : ${findMember.name}`, data.message);
+                        window.electron.notify(data.title + `  요청자 : ${findMember?.name}`, data.message);
                     }
                 });
             },
@@ -116,20 +110,19 @@ export default function Main() {
             },
         });
 
-        console.log('socket')
         client.activate();
+
+        // 알림 클릭 이벤트 리스너
         // @ts-ignore
-        if(window?.electron) {
+        if (window?.electron) {
             // @ts-ignore
-            window.electron.onNotificationClicked(({title, body}) => {
+            window.electron.onNotificationClicked(({ title, body }) => {
                 console.log('Notification clicked:', title, body);
-                // 여기서 원하는 동작 실행
                 alert(`알림 클릭됨: ${title}`);
-                // 또는 React 상태 업데이트, 라우팅 등
             });
         }
 
-
+        // Cleanup
         return () => {
             client.deactivate();
         };
