@@ -32,8 +32,7 @@ export default function LayoutComponent({children, setOpen = null}) {
                 alignItems: 'center',
                 padding: '0px 30px 0px 10px'
             }}>
-                <div style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}
-                     onClick={() => router.push('/main')}>
+                <div style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
                     <img src="/installer-icon.ico" width={35} alt=""/>
                     <div style={{fontSize: 20, fontWeight: 500, paddingLeft: 5}}>MANKU</div>
                 </div>

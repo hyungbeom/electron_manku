@@ -6,6 +6,7 @@ import {getData} from "@/manage/function/api";
 import {Timeline} from "antd";
 import {useAppDispatch, useAppSelector} from "@/utils/common/function/reduxHooks";
 import {setHistoryList} from "@/store/history/historySlice";
+import moment from "moment";
 
 
 function AlertHistoryRead({open, setOpen, getPropertyId}) {
@@ -82,7 +83,11 @@ function AlertHistoryRead({open, setOpen, getPropertyId}) {
                     {items.map((v, idx) => {
                         const findMember = adminList?.find(src => src.adminId === v.senderId);
                         return <>
-                            <div key={v?.historyId || idx} style={{textAlign :"right", fontSize : 12}}>{v?.confirm === 'FALSE' ? <span style={{color : 'blueviolet', cursor : 'pointer'}} onClick={()=>confirmClick(v.historyId)}>확인</span> : <></> }</div>
+                           <div style={{display : 'flex', justifyContent : 'space-between', paddingTop : 10, marginBottom : -8}}>
+                               <div style={{fontSize : 12}}>TIME : {moment(v.createdDate).format('HH:MM:SS')}</div>
+                               <div key={v?.historyId || idx} style={{textAlign :"right", fontSize : 12}}>{v?.confirm === 'FALSE' ? <span style={{color : 'blueviolet', cursor : 'pointer'}} onClick={()=>confirmClick(v.historyId)}>확인</span> : <></>}</div>
+
+                           </div>
                             <div style={{padding: 5, border: '1px solid lightGray', borderRadius: 5, marginTop: 5}}>
                             <div><span style={{fontWeight: 800}}>요청자</span> : {findMember?.name} &nbsp;&nbsp;&nbsp;
                                 <span
