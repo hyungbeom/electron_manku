@@ -13,12 +13,12 @@ export default function LayoutComponent({children, setOpen = null}) {
     const status = useMemo(() => {
 
 
-        const hasUnconfirmed = Object.values(historyList).some((items: any) =>
+
+        const hasUnconfirmed = Object.values(historyList)?.some((items: any) =>
 
             items.some(item => item.confirm?.toString().toUpperCase() === 'FALSE')
         );
 
-        console.log(hasUnconfirmed,'hasUnconfirmed::')
         return hasUnconfirmed
     }, [historyList]);
     const router = useRouter();

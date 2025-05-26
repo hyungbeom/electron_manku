@@ -36,11 +36,10 @@ function AlertHistoryRead({open, setOpen, getPropertyId}) {
             }
         })
     }
-
-    // @ts-ignore
-    useEffect(async () => {
+    useEffect(() => {
         getInfo()
     }, []);
+
 
     async function getHistoryList() {
 //         await getData.post('history/getHistoryReceiveList').then(v => {
@@ -80,21 +79,21 @@ function AlertHistoryRead({open, setOpen, getPropertyId}) {
             {Object.entries(historyList).map(([date, items]:any) => (
                 <div key={date}>
                     <h3>{date}</h3>
-                    {items.map((v) => {
-                        const findMember = adminList.find(src => src.adminId === v.senderId);
+                    {items.map((v, idx) => {
+                        const findMember = adminList?.find(src => src.adminId === v.senderId);
                         return <>
-                            <div style={{textAlign :"right", fontSize : 12}}>{v.confirm === 'FALSE' ? <span style={{color : 'blueviolet', cursor : 'pointer'}} onClick={()=>confirmClick(v.historyId)}>확인</span> : <></> }</div>
+                            <div key={v?.historyId || idx} style={{textAlign :"right", fontSize : 12}}>{v?.confirm === 'FALSE' ? <span style={{color : 'blueviolet', cursor : 'pointer'}} onClick={()=>confirmClick(v.historyId)}>확인</span> : <></> }</div>
                             <div style={{padding: 5, border: '1px solid lightGray', borderRadius: 5, marginTop: 5}}>
                             <div><span style={{fontWeight: 800}}>요청자</span> : {findMember?.name} &nbsp;&nbsp;&nbsp;
                                 <span
-                                    style={{fontWeight: 800}}>제목</span> : {v.title}</div>
+                                    style={{fontWeight: 800}}>제목</span> : {v?.title}</div>
                             <Button style={{width : '100%', whiteSpace: 'pre-line', height : '100%', fontSize : 12, textAlign : 'left'}} type={'primary'} onClick={() => {
                                 if (v.title === '[회신알림]') {
                                     setOpen(false)
                                     getPropertyId('rfq_update', v?.pk);
                                 }
                             }}>
-                                {v.message}
+                                {v?.message}
                             </Button></div></>
                     })}
                 </div>
