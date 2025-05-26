@@ -3,6 +3,7 @@ import {createWrapper, HYDRATE} from "next-redux-wrapper";
 import commonReducer from "@/store/common/commonSlice";
 import userReducer from "@/store/user/userSlice";
 import sampleReducer from "@/store/sample/sampleSlice";
+import historyReducer from "@/store/history/historySlice";
 
 
 const reducer = (state: any, action: PayloadAction<any>) => {
@@ -17,6 +18,7 @@ const reducer = (state: any, action: PayloadAction<any>) => {
     return combineReducers({
         common : commonReducer,
         user : userReducer,
+        history : historyReducer,
         sample : sampleReducer
     })(state, action);
 };

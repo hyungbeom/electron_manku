@@ -18,6 +18,7 @@ import {getData} from "@/manage/function/api";
 import {getCookie} from "@/manage/function/cookie";
 import Drawer from "antd/lib/drawer";
 import AlertHistoryRead from "@/component/page/etc/AlertHistoryRead";
+import {setHistoryList} from "@/store/history/historySlice";
 
 function summarizeNotifications(notifications) {
     const grouped = {};
@@ -80,7 +81,7 @@ export default function Main() {
 
 
         const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
-        // const socket = new SockJS(`http://49.175.200.55:3002/ws?userId=${userInfo.adminId}`);
+        // const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
 
 
         // STOMP 클라이언트 생성 및 설정
@@ -90,9 +91,33 @@ export default function Main() {
             onConnect: () => {
 
                 console.log('[WebSocket 연결 성공]');
-                client.subscribe('/user/queue/notifications', (msg) => {
+                client.subscribe('/user/queue/notifications', async (msg) => {
                     const data = JSON.parse(msg.body);
-                    console.log('[알림 수신]', data);
+
+
+                    await getData.post('history/getHistoryReceiveList').then(v => {
+
+
+                        console.log(data,'????')
+                        const rawData = v?.data
+
+// 날짜 기준으로 묶기
+
+                        if (rawData?.length) {
+                            const groupedByDate = rawData?.reduce((acc, curr) => {
+                                const date = curr.writtenDate;
+                                if (!acc[date]) {
+                                    acc[date] = [];
+                                }
+                                acc[date].push(curr);
+                                return acc;
+                            }, {});
+                            dispatch(setHistoryList(groupedByDate))
+
+                        }
+                    })
+
+
                     // OS 알림 띄우기 (preload에서 노출한 API 호출)
                     const findMember = adminList.find(v => v.adminId === data.senderId)
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {Content} from "antd/lib/layout/layout";
 import Dropdown from "antd/lib/dropdown";
 import {AlertFilled, BellFilled, LogoutOutlined, SettingOutlined,} from '@ant-design/icons';
@@ -8,7 +8,19 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Space from "antd/lib/space";
 
 export default function LayoutComponent({children, setOpen = null}) {
+    const {historyList} = useAppSelector((state) => state.history);
 
+    const status = useMemo(() => {
+
+
+        const hasUnconfirmed = Object.values(historyList).some((items: any) =>
+
+            items.some(item => item.confirm?.toString().toUpperCase() === 'FALSE')
+        );
+
+        console.log(hasUnconfirmed,'hasUnconfirmed::')
+        return hasUnconfirmed
+    }, [historyList]);
     const router = useRouter();
     return <>
         <Content>
@@ -26,7 +38,9 @@ export default function LayoutComponent({children, setOpen = null}) {
                     <div style={{fontSize: 20, fontWeight: 500, paddingLeft: 5}}>MANKU</div>
                 </div>
                 <div style={{display: 'flex'}}>
-                    <BellFilled style={{fontSize : 18, paddingRight : 10, cursor : 'pointer'}} onClick={()=> setOpen(true)} />
+                    {!status ?<BellFilled style={{fontSize: 18, paddingRight: 10, cursor: 'pointer'}}
+                                 onClick={() => setOpen(true)}/> : <><BellFilled style={{fontSize: 18, paddingRight: 15, cursor: 'pointer'}}
+                                                                                 onClick={() => setOpen(true)}/> <div style={{backgroundColor : 'red', width : 3, height : 3, position:'absolute'}}/></>}
                     <div style={{alignItems: 'center', display: 'flex', gap: 20, paddingRight: 20}}>
                         <svg style={{cursor: 'pointer'}} onClick={() => window.open('/erp_rule', '_blank')}
                              viewBox="64 64 896 896" focusable="false" data-icon="question-circle" width="1em"
