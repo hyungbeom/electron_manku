@@ -128,7 +128,6 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
             supplyAmount: Number(String(info?.supplyAmount).replace(/,/g, '')),
             selectOrderList: JSON.stringify(selectOrderNos)
         }
-        console.log(copyInfo, 'info :::')
         setLoading(true);
         try {
             const res = await getData.post('invoice/addInvoice', copyInfo);

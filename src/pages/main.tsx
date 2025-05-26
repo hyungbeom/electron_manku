@@ -54,6 +54,8 @@ export default function Main() {
     const dispatch = useAppDispatch();
     const [open, setOpen] = useState(false);
 
+    const [activeTabId, setActiveTabId] = useState<string | null>(null);
+
     useEffect(() => {
 
         getData.post('socket/getQueue').then(v => {
@@ -65,8 +67,8 @@ export default function Main() {
                     </>
 
                     , function () {
-                        if (data.title.includes('견적의뢰 알림')) {
-                            getPropertyId('rfq_update', data?.pk)
+                        if (data.title.includes('[회신알림]')) {
+                            getPropertyId('rfq_update', data?.pk);
                         }
                     },
 
@@ -78,6 +80,7 @@ export default function Main() {
 
 
         const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
+        // const socket = new SockJS(`http://49.175.200.55:3002/ws?userId=${userInfo.adminId}`);
 
 
         // STOMP 클라이언트 생성 및 설정
@@ -93,13 +96,12 @@ export default function Main() {
                     // OS 알림 띄우기 (preload에서 노출한 API 호출)
                     const findMember = adminList.find(v => v.adminId === data.senderId)
 
-                    console.log(findMember, 'member')
                     notificationAlert('success', "🔔" + data.title + `  요청자 : ${findMember?.name}`,
                         <>
                             {data.message}
                         </>
                         , function () {
-                            if (data.title === '견적의뢰 알림') {
+                            if (data.title === '[회신알림]') {
                                 getPropertyId('rfq_update', data?.pk)
                             }
                         },
@@ -135,7 +137,7 @@ export default function Main() {
         return () => {
             client.deactivate();
         };
-    }, []);
+    }, [activeTabId]);
 
     const modelRef = useRef(Model.fromJson({
         global: {},
@@ -146,8 +148,6 @@ export default function Main() {
             children: [{type: "tabset", weight: 50, children: []}],
         },
     }));
-
-    const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
     const layoutRef = useRef<any>(null);
 

@@ -308,6 +308,7 @@ export default function SearchInfoModal({
                              rowSelection="multiple"
                              onRowSelected={handleRowSelected}
                              onCellClicked={async (e) => {
+                                 console.log(openCheck)
                                  switch (openCheck) {
                                      case 'customerName' :
                                          setInfo(v => {

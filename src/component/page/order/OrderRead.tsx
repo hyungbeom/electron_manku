@@ -284,7 +284,12 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[1]} minSize={5}>
                                     <BoxCard title={''}>
-
+                                        {inputForm({
+                                            title: '등록직원명', id: 'searchCreatedBy',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
                                         {inputForm({
                                             title: '고객사명',
                                             id: 'searchCustomerName',
@@ -296,12 +301,6 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                                         {inputForm({
                                             title: '만쿠담당자',
                                             id: 'searchManagerAdminName',
-                                            onChange: onChange,
-                                            handleKeyPress: handleKeyPress,
-                                            data: info
-                                        })}
-                                        {inputForm({
-                                            title: '등록직원명', id: 'searchCreatedBy',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info

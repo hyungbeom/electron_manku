@@ -52,8 +52,8 @@ function AlertHistoryRead({open, setOpen, getPropertyId}) {
                             <div><span style={{fontWeight: 800}}>요청자</span> : {findMember?.name} &nbsp;&nbsp;&nbsp;
                                 <span
                                     style={{fontWeight: 800}}>제목</span> : {v.title}</div>
-                            <Button type={'primary'} onClick={() => {
-                                if (v.title === '견적의뢰 알림') {
+                            <Button style={{width : '100%', whiteSpace: 'pre-line', height : '100%', fontSize : 12, textAlign : 'left'}} type={'primary'} onClick={() => {
+                                if (v.title === '[회신알림]') {
                                     setOpen(false)
                                     getPropertyId('rfq_update', v?.pk);
                                 }

@@ -189,7 +189,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
             const findMember = adminList.find(v=> v.adminId === v.managerAdminId);
 
 
-            getData.post('socket/send',{receiverId : v.managerAdminId,receiverName : findMember?.name,   title :'견적의뢰 알림', message :childrenStr, pk : v.children[0]?.estimateRequestId})
+            getData.post('socket/send',{receiverId : v.managerAdminId,receiverName : findMember?.name,   title :'[회신알림]', message :childrenStr, pk : v.children[0]?.estimateRequestId})
         })
 
         sendMail(list)

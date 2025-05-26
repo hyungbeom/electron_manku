@@ -30,6 +30,8 @@ import useEventListener from "@/utils/common/function/UseEventListener";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import _ from "lodash";
 import {Actions} from "flexlayout-react";
+import Drawer from "antd/lib/drawer";
+import Button from "antd/lib/button";
 
 const listType = 'estimateRequestDetailList'
 
@@ -54,6 +56,7 @@ function RqfUpdate({
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
     const [memberList, setMemberList] = useState([]);
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
         getMemberList();
@@ -76,9 +79,10 @@ function RqfUpdate({
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
-    const userInfo = useAppSelector((state) => state.user.userInfo);
+    const { userInfo, adminList } = useAppSelector((state) => state.user);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
+        receiverId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         createdBy: userInfo['name'],
     }
@@ -356,6 +360,16 @@ function RqfUpdate({
         })
     }
 
+    function sendMessage(){
+        const findMember = adminList.find(v=> v.adminId === info.receiverId);
+        console.log(info.message);
+        getData.post('socket/send',{receiverId :info.receiverId,receiverName : findMember?.name,   title :'[회신알림]', message :info.message, pk :updateKey['rfq_update']}).then(src=>{
+            message.success("전송되었습니다");
+            setOpen(false)
+        })
+
+      }
+
     /**
      * @description 수정 페이지 > 돋보기 버튼
      * 매입처, 고객사, Maker 조회 Modal
@@ -379,6 +393,9 @@ function RqfUpdate({
             }}>
                 <MainCard title={'견적의뢰 수정'} list={[
                     {
+                        name: <div><SettingOutlined style={{paddingRight: 8}}/>메세지 보내기</div>,
+                        func: ()=>setOpen(true)
+                    }, {
                         name: <div><SettingOutlined style={{paddingRight: 8}}/>요청확인</div>,
                         func: alertConfirm
                     },
@@ -590,6 +607,32 @@ function RqfUpdate({
 
                 <Table data={tableData} column={rfqInfo['write']} funcButtons={['print']} ref={tableRef}
                        type={'rfq_write_column'} infoRef={infoRef}/>
+
+                <Drawer title={'메세지 보내기'} open={open} onClose={() => setOpen(false)}>
+
+                    <div>
+                        {selectBoxForm({
+                            title: '담당자',
+                            id: 'receiverId',
+                            onChange: onChange,
+                            data: info,
+                            list: memberList?.map((item) => ({
+                                ...item,
+                                value: item.adminId,
+                                label: item.name,
+                            }))
+                        })}
+                    </div>
+
+                    {textAreaForm({
+                        title: '보낼 메세지',
+                        rows: 2,
+                        id: 'message',
+                        onChange: onChange,
+                        data: info
+                    })}
+                    <Button type={'primary'} onClick={sendMessage}>전송</Button>
+                </Drawer>
             </div>
         </>
     </Spin>

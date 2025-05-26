@@ -226,32 +226,31 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
                                                     }}>M</Button>
                                         </div>
                                         <div style={{paddingBottom: 9}}>
-                                            {selectBoxForm({
-                                                title: '주문 여부', id: 'searchType', onChange: onChange, data: info, list: [
-                                                    {value: 0, label: '전체'},
-                                                    {value: 1, label: '주문'},
-                                                    {value: 2, label: '미주문'}
-                                                ]
+                                            {inputForm({
+                                                title: '문서번호', id: 'searchDocumentNumber',
+                                                onChange: onChange,
+                                                handleKeyPress: handleKeyPress,
+                                                data: info
                                             })}
                                         </div>
                                         {inputForm({
-                                            title: '등록직원명', id: 'searchCreatedBy',
+                                            title: 'Project No.', id: 'searchRfqNo',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
+
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[1]} minSize={5}>
                                     <BoxCard title={''}>
                                         {inputForm({
-                                            title: '문서번호', id: 'searchDocumentNumber',
+                                            title: '등록직원명', id: 'searchCreatedBy',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
-
                                         {inputForm({
                                             title: '고객사명', id: 'searchCustomerName',
                                             onChange: onChange,
@@ -295,12 +294,14 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
                                 <PanelResizeHandle/>
                                 <Panel defaultSize={sizes[2]} minSize={5}>
                                     <BoxCard title={''}>
-                                        {inputForm({
-                                            title: 'Project No.', id: 'searchRfqNo',
-                                            onChange: onChange,
-                                            handleKeyPress: handleKeyPress,
-                                            data: info
+                                        {selectBoxForm({
+                                            title: '주문 여부', id: 'searchType', onChange: onChange, data: info, list: [
+                                                {value: 0, label: '전체'},
+                                                {value: 1, label: '주문'},
+                                                {value: 2, label: '미주문'}
+                                            ]
                                         })}
+
                                     </BoxCard>
                                 </Panel>
                                 <PanelResizeHandle/>
