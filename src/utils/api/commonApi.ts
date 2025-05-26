@@ -6,6 +6,7 @@ import {commonFunc, commonManage} from "@/utils/commonManage";
 import {orderInfo} from "@/utils/column/ProjectInfo";
 
 export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
+    console.log(event.target.id,'::::')
     getData.post(modalList[event.target.id]?.url, {
         "searchType": "1",
         "searchText": event.target.value,       // 대리점코드 or 대리점 상호명
@@ -13,14 +14,17 @@ export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
         "limit": -1
     }).then(async v => {
 
-        console.log(event.target.id, 'event.target.id:')
-
         const data = v?.data?.entity[modalList[event.target.id]?.list];
 
         const size = data?.length;
 
         if (size > 1) {
-            return openModal(event.target.id);
+            if(event.target.id === 'agencyCode'){
+                openModal(event.target.id);
+                openModal('agencyCode_domestic');
+                openModal('agencyCode_overSeas');
+            }
+            return false;
         } else if (size === 1) {
             switch (event.target.id) {
                 case 'agencyCode' : {

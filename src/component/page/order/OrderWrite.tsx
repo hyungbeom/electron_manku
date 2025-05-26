@@ -199,6 +199,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                     managerAdminId: adminParams['managerAdminId'],
                                     managerAdminName: adminParams['managerAdminName'],
                                     createdBy: adminParams['createdBy'],
+                                    paymentTerms: '발주시 50% / 납품시 50%',
                                     writtenDate: moment().format('YYYY-MM-DD'),
                                     managerId: adminParams['managerId'],
                                     managerPhoneNumber: adminParams['managerPhoneNumber'],
