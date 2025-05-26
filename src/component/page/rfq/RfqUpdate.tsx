@@ -609,7 +609,6 @@ function RqfUpdate({
                        type={'rfq_write_column'} infoRef={infoRef}/>
 
                 <Drawer title={'메세지 보내기'} open={open} onClose={() => setOpen(false)}>
-
                     <div>
                         {selectBoxForm({
                             title: '담당자',

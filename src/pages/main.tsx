@@ -19,6 +19,7 @@ import {getCookie} from "@/manage/function/cookie";
 import Drawer from "antd/lib/drawer";
 import AlertHistoryRead from "@/component/page/etc/AlertHistoryRead";
 import {setHistoryList} from "@/store/history/historySlice";
+import GPT from "@/component/page/etc/GPT";
 
 function summarizeNotifications(notifications) {
     const grouped = {};
@@ -54,6 +55,7 @@ export default function Main() {
     // 만쿠 관리자 리스트 store에 추가
     const dispatch = useAppDispatch();
     const [open, setOpen] = useState(false);
+    const [open2, setOpen2] = useState(false);
 
     const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
@@ -70,6 +72,8 @@ export default function Main() {
                     , function () {
                         if (data.title.includes('[회신알림]')) {
                             getPropertyId('rfq_update', data?.pk);
+                        }else if (data.title.includes('[견적서알림]')) {
+                            getPropertyId('estimate_update', data?.pk);
                         }
                     },
 
@@ -126,8 +130,10 @@ export default function Main() {
                             {data.message}
                         </>
                         , function () {
-                            if (data.title === '[회신알림]') {
-                                getPropertyId('rfq_update', data?.pk)
+                            if (data.title.includes('[회신알림]')) {
+                                getPropertyId('rfq_update', data?.pk);
+                            }else if (data.title.includes('[견적서알림]')) {
+                                getPropertyId('estimate_update', data?.pk);
                             }
                         },
                         {cursor: 'pointer'},
@@ -327,7 +333,7 @@ export default function Main() {
 
     // @ts-ignore
     return (
-        <LayoutComponent setOpen={setOpen}>
+        <LayoutComponent setOpen={setOpen} setOpen2={setOpen2}>
             <div style={{display: "grid", gridTemplateColumns: "205px auto"}}>
                 <div style={{
                     borderRight: "1px solid lightGray",
@@ -424,6 +430,7 @@ export default function Main() {
 
             </div>
        <AlertHistoryRead open={open} setOpen={setOpen} getPropertyId={getPropertyId}/>
+       <GPT open={open2} setOpen={setOpen2} />
         </LayoutComponent>
     );
 }

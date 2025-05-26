@@ -49,8 +49,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         const savedSizes = localStorage.getItem('order_update');
         return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 25, 5]; // 기본값 [50, 50, 50]
     };
-    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
+    const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
     const [memberList, setMemberList] = useState([]);
 
     useEffect(() => {
@@ -378,10 +378,6 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         })
     }
 
-    console.log((info?.agencyCode?.startsWith('K') || info?.agencyCode === 'SK'), ":::||:::")
-    console.log(info?.agencyCode === 'SK')
-
-    console.log('?!?!?')
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
         {(isModalOpen['agencyCode'] || isModalOpen['customerName']) &&

@@ -7,7 +7,7 @@ import {removeCookie} from "@/manage/function/cookie";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import Space from "antd/lib/space";
 
-export default function LayoutComponent({children, setOpen = null}) {
+export default function LayoutComponent({children, setOpen = null, setOpen2 = null}) {
     const {historyList} = useAppSelector((state) => state.history);
 
     const status = useMemo(() => {
@@ -37,6 +37,9 @@ export default function LayoutComponent({children, setOpen = null}) {
                     <div style={{fontSize: 20, fontWeight: 500, paddingLeft: 5}}>MANKU</div>
                 </div>
                 <div style={{display: 'flex'}}>
+                    
+                    <div style={{fontSize : 12, padding : 5, paddingRight : 30, cursor : 'pointer'}} onClick={()=>setOpen2(true)}>학습데이터</div>
+
                     {!status ?<BellFilled style={{fontSize: 18, paddingRight: 10, cursor: 'pointer'}}
                                  onClick={() => setOpen(true)}/> : <><BellFilled style={{fontSize: 18, paddingRight: 15, cursor: 'pointer'}}
                                                                                  onClick={() => setOpen(true)}/> <div style={{backgroundColor : 'red', width : 3, height : 3, position:'absolute'}}/></>}

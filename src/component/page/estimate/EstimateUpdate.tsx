@@ -1,5 +1,12 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import {CopyOutlined, DeleteOutlined, ExceptionOutlined, FileAddFilled, FormOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    DeleteOutlined,
+    ExceptionOutlined,
+    FileAddFilled,
+    FormOutlined,
+    SettingOutlined
+} from "@ant-design/icons";
 import {ModalInitList} from "@/utils/initialList";
 import message from "antd/lib/message";
 import {getData} from "@/manage/function/api";
@@ -35,6 +42,8 @@ import _ from "lodash";
 import {Actions} from "flexlayout-react";
 import {pdf as pdfs} from "@react-pdf/renderer";
 import {PdfForm} from "@/component/견적서/PdfForm";
+import Drawer from "antd/lib/drawer";
+import Button from "antd/lib/button";
 
 const listType = 'estimateDetailList'
 
@@ -89,9 +98,11 @@ function EstimateUpdate({
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
     const [count, setCount] = useState(0);
 
-    const userInfo = useAppSelector((state) => state.user.userInfo);
+    const { userInfo, adminList } = useAppSelector((state) => state.user);
+    const [open, setOpen] = useState(false);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
+
         managerAdminName: userInfo['name'],
         createdBy: userInfo['name'],
     }
@@ -126,6 +137,7 @@ function EstimateUpdate({
                 ...getEstimateInit(),
                 ...estimateDetail,
                 managerAdminId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : '',
+                receiverId: estimateDetail['managerAdminId'] ? estimateDetail['managerAdminId'] : '',
                 managerAdminName: estimateDetail['managerAdminName'] ? estimateDetail['managerAdminName'] : '',
                 createdBy: estimateDetail['createdBy'] ? estimateDetail['createdBy'] : ''
             })
@@ -449,6 +461,16 @@ function EstimateUpdate({
         setLoading(false);
     }
 
+    function sendMessage(){
+        const findMember = adminList.find(v=> v.adminId === info.receiverId);
+        console.log(info.message);
+        getData.post('socket/send',{receiverId :info.receiverId,receiverName : findMember?.name,   title :'[견적서알림]', message :info.message, pk :updateKey['estimate_update']}).then(src=>{
+            message.success("전송되었습니다");
+            setOpen(false)
+        });
+    }
+
+
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_update'}/>
         <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
@@ -463,6 +485,10 @@ function EstimateUpdate({
                 rowGap: 10,
             }}>
                 <MainCard title={'견적서 수정'} list={[
+                    {
+                        name: <div><SettingOutlined style={{paddingRight: 8}}/>메세지 보내기</div>,
+                        func: ()=>setOpen(true)
+                    },
                     {name: <div><ExceptionOutlined style={{paddingRight: 8}}/>견적서 출력</div>, func: printEstimate, type: 'default'},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
@@ -699,6 +725,31 @@ function EstimateUpdate({
                 <Table data={tableData} column={estimateInfo['write']} funcButtons={['print']} ref={tableRef}
                        type={'estimate_write_column'}/>
             </div>
+
+            <Drawer title={'메세지 보내기'} open={open} onClose={() => setOpen(false)}>
+                <div>
+                    {selectBoxForm({
+                        title: '담당자',
+                        id: 'receiverId',
+                        onChange: onChange,
+                        data: info,
+                        list: memberList?.map((item) => ({
+                            ...item,
+                            value: item.adminId,
+                            label: item.name,
+                        }))
+                    })}
+                </div>
+
+                {textAreaForm({
+                    title: '보낼 메세지',
+                    rows: 2,
+                    id: 'message',
+                    onChange: onChange,
+                    data: info
+                })}
+                <Button type={'primary'} onClick={sendMessage}>전송</Button>
+            </Drawer>
         </>
     </Spin></div>
 }

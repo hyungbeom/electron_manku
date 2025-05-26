@@ -94,9 +94,12 @@ function AlertHistoryRead({open, setOpen, getPropertyId}) {
                                     style={{fontWeight: 800}}>제목</span> : {v?.title}</div>
                             <Button style={{width : '100%', whiteSpace: 'pre-line', height : '100%', fontSize : 12, textAlign : 'left'}} type={'primary'} onClick={() => {
                                 if (v.title === '[회신알림]') {
-                                    setOpen(false)
                                     getPropertyId('rfq_update', v?.pk);
+                                }else if (v.title === '[견적서알림]') {
+                                    getPropertyId('estimate_update', v?.pk);
                                 }
+
+                                setOpen(false)
                             }}>
                                 {v?.message}
                             </Button></div></>
