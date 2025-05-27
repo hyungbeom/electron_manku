@@ -22,7 +22,8 @@ import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import Popconfirm from "antd/lib/popconfirm";
 import moment from "moment";
-
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 function DeliveryRead({getPropertyId, getCopyPage}: any) {
     const notificationAlert = useNotificationAlert();
@@ -63,9 +64,9 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
             params.api.applyTransaction({add: v});
             setTotalRow(v?.pageInfo?.totalRow ?? v?.length ?? 0);
         })
-        .finally(() => {
-            setLoading(false);
-        });
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     function onChange(e: any) {
@@ -90,9 +91,9 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
                 gridManage.resetData(gridRef, v);
                 setTotalRow(v?.length ?? 0);
             })
-            .finally(() => {
-                setLoading(false);
-            });
+                .finally(() => {
+                    setLoading(false);
+                });
         }
     }
 
@@ -150,14 +151,124 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
                 )
             }
         })
-        .catch((err) => {
-            notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
-            console.error('에러:', err);
-        })
-        .finally(() => {
-            setLoading(false);
-        });
+            .catch((err) => {
+                notificationAlert('error', '❌ 네트워크 오류 발생', <div>{err.message}</div>);
+                console.error('에러:', err);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }
+
+    function exportExcel() {
+        const selectedRows = gridRef.current.getSelectedRows();
+
+        // 날짜 기준 오름차순 정렬
+        const sortedRows = [...selectedRows].sort((a, b) =>
+            // @ts-ignore
+            new Date(a.deliveryDate) - new Date(b.deliveryDate)
+        );
+
+        const 대한통운Data = [];
+        const 대신택배Data = [];
+        const 기타Data = [];
+
+        let prevDateCJ = '';
+        let prevDateDS = '';
+        let prevDateEtc = '';
+
+        sortedRows.forEach(row => {
+            const deliveryType = row.deliveryType?.toUpperCase();
+            const date = row.deliveryDate;
+            const isConfirm =row.isConfirm;
+            const quantity = row.quantity || 1;
+
+            if (deliveryType === 'CJ') {
+                대한통운Data.push({
+                    날짜: date !== prevDateCJ ? date : '',
+                    받는분성명: row.recipientName,
+                    받는분전화번호: row.recipientPhone,
+                    받는분기타연락처: row.recipientAltPhone,
+                    받는분우편번호: row.recipientPostalCode,
+                    받는분주소: row.recipientAddress,
+                    운송장번호: row.trackingNumber,
+                    고객주문번호: row.customerOrderNo,
+                    품목명: row.productName,
+                    박스수량: quantity,
+                    "Inquiry No": row.connectInquiryNo,
+                    확인: isConfirm
+                });
+                prevDateCJ = date;
+            } else if (deliveryType === 'DAESIN') {
+                대신택배Data.push({
+                    일자: date !== prevDateDS ? date : '',
+                    도착지: row.destination,
+                    전화번호: row.recipientPhone,
+                    업체: '대신택배',
+                    받는분: row.recipientName,
+                    주소: row.recipientAddress,
+                    품명: row.productName,
+                    포장: row.packagingType,
+                    수량: quantity,
+                    "택배/화물": row.shippingType,
+                    현불: row.paymentMethod === '현불' ? 'O' : '',
+                    착불: row.paymentMethod === '착불' ? 'O' : '',
+                    "Inquiry No": row.connectInquiryNo,
+                    확인: isConfirm
+                });
+                prevDateDS = date;
+            } else {
+                기타Data.push({
+                    일자: date !== prevDateEtc ? date : '',
+                    주소: row.recipientAddress,
+                    전화번호: row.recipientPhone,
+                    업체: row.deliveryType || '기타',
+                    받는분: row.recipientName,
+                    현불: row.paymentMethod === '현불' ? 'O' : '',
+                    착불: row.paymentMethod === '착불' ? 'O' : '',
+                    "Inquiry No": row.connectInquiryNo,
+                    구분: row.classification,
+                    확인: isConfirm
+                });
+                prevDateEtc = date;
+            }
+        });
+
+        const 대한통운Headers = [
+            "날짜", "받는분성명", "받는분전화번호", "받는분기타연락처", "받는분우편번호",
+            "받는분주소", "운송장번호", "고객주문번호", "품목명", "박스수량", "Inquiry No", "확인"
+        ];
+        const 대신택배Headers = [
+            "일자", "도착지", "전화번호", "업체", "받는분", "주소", "품명", "포장", "수량",
+            "택배/화물", "현불", "착불", "Inquiry No", "확인"
+        ];
+        const 기타Headers = [
+            "일자", "주소", "전화번호", "업체", "받는분", "현불", "착불", "Inquiry No", "구분", "확인"
+        ];
+
+        const workbook = XLSX.utils.book_new();
+
+        if (대한통운Data.length > 0) {
+            const ws1 = XLSX.utils.json_to_sheet(대한통운Data, { header: 대한통운Headers });
+            XLSX.utils.book_append_sheet(workbook, ws1, "대한통운");
+        }
+
+        if (대신택배Data.length > 0) {
+            const ws2 = XLSX.utils.json_to_sheet(대신택배Data, { header: 대신택배Headers });
+            XLSX.utils.book_append_sheet(workbook, ws2, "대신택배");
+        }
+
+        if (기타Data.length > 0) {
+            const ws3 = XLSX.utils.json_to_sheet(기타Data, { header: 기타Headers });
+            XLSX.utils.book_append_sheet(workbook, ws3, "퀵,직납,기타");
+        }
+
+        const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+        const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+        saveAs(blob, "출고분류.xlsx");
+    }
+
+
 
     return <Spin spinning={loading} tip={'배송 조회중...'}>
         <ReceiveComponent componentName={'delivery_read'} searchInfo={searchInfo}/>
@@ -182,140 +293,148 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
                     }
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div>
-                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5}}>
-                            <Panel defaultSize={sizes[0]} minSize={5}>
-                                <BoxCard title={'기본 정보'}>
-                                    <div style={{
-                                        display: 'grid',
-                                        gridTemplateColumns: '1fr 25px 25px 25px',
-                                        gap: 3
-                                    }}>
-                                        {rangePickerForm({title: '출고일자', id: 'searchDate', onChange: onChange, data: info})}
-                                        <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
-                                                onClick={() => {
-                                                    setInfo(v => {
-                                                        return {
-                                                            ...v,
-                                                            searchDate: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-                                                            searchStartDate: moment().format('YYYY-MM-DD'),              // 작성일자 시작일
-                                                            searchEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-                                                        }
-                                                    })
-                                                }}>T</Button>
-                                        <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
-                                                onClick={() => {
-                                                    setInfo(v => {
-                                                        return {
-                                                            ...v,
-                                                            searchDate: [moment().format('YYYY-MM-DD'), moment().add(1, 'week').format('YYYY-MM-DD')],
-                                                            searchStartDate: moment().format('YYYY-MM-DD'),              // 작성일자 시작일
-                                                            searchEndDate: moment().add(1, 'week').format('YYYY-MM-DD'),                // 작성일자 종료일
-                                                        }
-                                                    })
-                                                }}>W</Button>
-                                        <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
-                                                onClick={() => {
-                                                    setInfo(v => {
-                                                        return {
-                                                            ...v,
-                                                            searchDate: [moment().format('YYYY-MM-DD'), moment().add(1, 'month').format('YYYY-MM-DD')],
-                                                            searchStartDate: moment().format('YYYY-MM-DD'),              // 작성일자 시작일
-                                                            searchEndDate: moment().add(1, 'month').format('YYYY-MM-DD'),                // 작성일자 종료일
-                                                        }
-                                                    })
-                                                }}>M</Button>
-                                    </div>
-                                    {inputForm({
-                                        title: '문서번호',
-                                        id: 'searchConnectInquiryNo',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: 'Project No.',
-                                        id: 'searchRfqNo',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[1]} minSize={5}>
-                                <BoxCard title={'받는분 정보'}>
-                                    {inputForm({
-                                        title: '고객사명',
-                                        id: 'searchCustomerName',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '받는분 성명',
-                                        id: 'searchRecipientName',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                    {inputForm({
-                                        title: '받는분 연락처',
-                                        id: 'searchRecipientPhone',
-                                        onChange: onChange,
-                                        handleKeyPress: handleKeyPress,
-                                        data: info
-                                    })}
-                                </BoxCard>
-                            </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={'운송정보'} tooltip={''}>
-                                    <div style={{paddingBottom: 9}}>
+                            <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5}}>
+                                <Panel defaultSize={sizes[0]} minSize={5}>
+                                    <BoxCard title={'기본 정보'}>
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr 25px 25px 25px',
+                                            gap: 3
+                                        }}>
+                                            {rangePickerForm({
+                                                title: '출고일자',
+                                                id: 'searchDate',
+                                                onChange: onChange,
+                                                data: info
+                                            })}
+                                            <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                                    onClick={() => {
+                                                        setInfo(v => {
+                                                            return {
+                                                                ...v,
+                                                                searchDate: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                                searchStartDate: moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                                searchEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                            }
+                                                        })
+                                                    }}>T</Button>
+                                            <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                                    onClick={() => {
+                                                        setInfo(v => {
+                                                            return {
+                                                                ...v,
+                                                                searchDate: [moment().format('YYYY-MM-DD'), moment().add(1, 'week').format('YYYY-MM-DD')],
+                                                                searchStartDate: moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                                searchEndDate: moment().add(1, 'week').format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                            }
+                                                        })
+                                                    }}>W</Button>
+                                            <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                                    onClick={() => {
+                                                        setInfo(v => {
+                                                            return {
+                                                                ...v,
+                                                                searchDate: [moment().format('YYYY-MM-DD'), moment().add(1, 'month').format('YYYY-MM-DD')],
+                                                                searchStartDate: moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                                searchEndDate: moment().add(1, 'month').format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                            }
+                                                        })
+                                                    }}>M</Button>
+                                        </div>
                                         {inputForm({
-                                            title: '운송장번호',
-                                            id: 'searchTrackingNumber',
+                                            title: '문서번호',
+                                            id: 'searchConnectInquiryNo',
                                             onChange: onChange,
                                             handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
-                                        {selectBoxForm({
-                                            title: '확인여부', id: 'searchIsConfirm', list: [
-                                                {value: '', label: '전체'},
-                                                {value: 'O', label: 'O'},
-                                                {value: 'X', label: 'X'},
-                                            ],
+                                        {inputForm({
+                                            title: 'Project No.',
+                                            id: 'searchRfqNo',
                                             onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
-                                    </div>
-                                    <div style={{paddingBottom: 0}}>
-                                        {selectBoxForm({
-                                            title: '출고완료여부', id: 'searchIsOutBound', list: [
-                                                {value: '', label: '전체'},
-                                                {value: 'O', label: 'O'},
-                                                {value: 'X', label: 'X'},
-                                            ],
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[1]} minSize={5}>
+                                    <BoxCard title={'받는분 정보'}>
+                                        {inputForm({
+                                            title: '고객사명',
+                                            id: 'searchCustomerName',
                                             onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
                                             data: info
                                         })}
-                                    </div>
-                                </BoxCard>
-                            </Panel>
-                        </PanelGroup>
-                            </div>
+                                        {inputForm({
+                                            title: '받는분 성명',
+                                            id: 'searchRecipientName',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                        {inputForm({
+                                            title: '받는분 연락처',
+                                            id: 'searchRecipientPhone',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
+                                    </BoxCard>
+                                </Panel>
+                                <PanelResizeHandle/>
+                                <Panel defaultSize={sizes[2]} minSize={5}>
+                                    <BoxCard title={'운송정보'} tooltip={''}>
+                                        <div style={{paddingBottom: 9}}>
+                                            {inputForm({
+                                                title: '운송장번호',
+                                                id: 'searchTrackingNumber',
+                                                onChange: onChange,
+                                                handleKeyPress: handleKeyPress,
+                                                data: info
+                                            })}
+                                            {selectBoxForm({
+                                                title: '확인여부', id: 'searchIsConfirm', list: [
+                                                    {value: '', label: '전체'},
+                                                    {value: 'O', label: 'O'},
+                                                    {value: 'X', label: 'X'},
+                                                ],
+                                                onChange: onChange,
+                                                data: info
+                                            })}
+                                        </div>
+                                        <div style={{paddingBottom: 0}}>
+                                            {selectBoxForm({
+                                                title: '출고완료여부', id: 'searchIsOutBound', list: [
+                                                    {value: '', label: '전체'},
+                                                    {value: 'O', label: 'O'},
+                                                    {value: 'X', label: 'X'},
+                                                ],
+                                                onChange: onChange,
+                                                data: info
+                                            })}
+                                        </div>
+                                    </BoxCard>
+                                </Panel>
+                            </PanelGroup>
+                        </div>
                         : <></>}
                 </MainCard>
                 {/*@ts-ignored*/}
                 <TableGrid
                     deleteComp={
-                        <Popconfirm
-                            title="삭제하시겠습니까?"
-                            onConfirm={confirm}
-                            icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                            <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
-                                <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
-                            </Button>
-                        </Popconfirm>
+                        <>
+                            <Button size={'small'} style={{fontSize : 10}} type={'primary'} onClick={exportExcel}>송장출력</Button>
+                            <Popconfirm
+                                title="삭제하시겠습니까?"
+                                onConfirm={confirm}
+                                icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                                <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                                    <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                                </Button>
+                            </Popconfirm>
+                        </>
                     }
                     totalRow={totalRow}
                     getPropertyId={getPropertyId}

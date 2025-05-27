@@ -613,7 +613,7 @@ export const deliveryInfo = {
         managerAdminId: null,
         deliveryId: '',            // 배송 ID (기본키, 자동 증가)
         deliveryType: '',          // 배송 유형 (예: QUICK, DAESIN, CJ)
-        deliveryDate: '',          // 배송 예정일
+        deliveryDate: moment().format('YYYY-MM-DD'),          // 배송 예정일
         connectInquiryNo: '',      // 발주서 no 여러개
         orderDetailIds: '',        // 발주서 항목번호 여러개 (orderDetailId)
         customerName: '',          // 고객 이름
