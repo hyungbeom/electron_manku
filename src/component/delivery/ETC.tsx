@@ -39,7 +39,7 @@ export default function ETC({info, setInfo, openModal}) {
             {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange: onChange, data: info})}
         </TopBoxCard>
 
-        <PanelGroup direction="horizontal" style={{gap: 0.5, paddingTop: 10}}>
+        <PanelGroup direction="horizontal" style={{gap: 0.5, paddingTop: 2}}>
             <Panel defaultSize={20} minSize={5}>
                 <BoxCard title={'발주서 정보'}>
                     {inputForm({
@@ -96,8 +96,6 @@ export default function ETC({info, setInfo, openModal}) {
                     </div>
             </BoxCard>
             </Panel>
-            <PanelResizeHandle/>
-            <Panel defaultSize={5} minSize={0}></Panel>
         </PanelGroup>
     </>
 }

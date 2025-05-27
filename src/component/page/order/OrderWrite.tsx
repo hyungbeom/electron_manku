@@ -35,7 +35,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 25, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -604,8 +604,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
                                                      info={info} key={driveKey}/>
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={6} minSize={0}> </Panel>
+
                         </PanelGroup>
                     </div> : <></>}
                 </MainCard>

@@ -27,7 +27,7 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_agency_write');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 20, 20, 20]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -262,8 +262,6 @@ function OverseasAgencyWrite({copyPageInfo, getPropertyId}: any) {
                                     </div>
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[6]} minSize={0}></Panel>
                         </PanelGroup>
                     </div>
                     : <></>}

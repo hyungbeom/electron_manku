@@ -35,7 +35,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef, getCopy
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('overseas_remittance_update');
-        return savedSizes ? JSON.parse(savedSizes) : [20, 25, 20, 20, 5]; // 기본값 [50, 50, 50]
+        return savedSizes ? JSON.parse(savedSizes) : [20, 25, 20, 20]; // 기본값 [50, 50, 50]
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
@@ -572,8 +572,6 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef, getCopy
                                 </BoxCard>
 
                             </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[4]} minSize={0}></Panel>
                         </PanelGroup>
                     </div>
                 </MainCard>

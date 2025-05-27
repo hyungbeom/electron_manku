@@ -225,14 +225,13 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
                                                         })
                                                     }}>Y</Button>
                                         </div>
-                                        <div style={{paddingBottom: 9}}>
+
                                             {inputForm({
                                                 title: '문서번호', id: 'searchDocumentNumber',
                                                 onChange: onChange,
                                                 handleKeyPress: handleKeyPress,
                                                 data: info
                                             })}
-                                        </div>
                                         {inputForm({
                                             title: 'Project No.', id: 'searchRfqNo',
                                             onChange: onChange,
@@ -303,9 +302,6 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
                                         })}
 
                                     </BoxCard>
-                                </Panel>
-                                <PanelResizeHandle/>
-                                <Panel defaultSize={sizes[3]} minSize={0}>
                                 </Panel>
                             </PanelGroup>
                         </div>

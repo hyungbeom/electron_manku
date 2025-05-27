@@ -540,8 +540,6 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
                                     </div>
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={sizes[5]} minSize={0}></Panel>
                         </PanelGroup>
                     </div> : <></>}
                 </MainCard>

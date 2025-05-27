@@ -604,8 +604,6 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                                                      info={info} key={driveKey} type={'order'}/>
                                 </BoxCard>
                             </Panel>
-                            <PanelResizeHandle/>
-                            <Panel defaultSize={6} minSize={0}></Panel>
                         </PanelGroup>
                     </div> : <></>}
                 </MainCard>
