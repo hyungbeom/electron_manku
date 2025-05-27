@@ -376,7 +376,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
 
             <div ref={infoRef} style={{
                 display: 'grid',
-                gridTemplateRows: `${mini ? '490px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
+                gridTemplateRows: `${mini ? '490px' : '65px'} calc(100vh - ${mini ? 600 : 195}px)`,
                 // overflowY: 'hidden',
                 rowGap: 10,
             }}>
