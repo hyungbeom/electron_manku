@@ -161,6 +161,7 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
     }
 
     function exportExcel() {
+        const wideColumns = ['주소', '받는분주소', 'Inquiry No', '도착지'];
         const selectedRows = gridRef.current.getSelectedRows();
 
         // 날짜 기준 오름차순 정렬
@@ -250,22 +251,62 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
 
         if (대한통운Data.length > 0) {
             const ws1 = XLSX.utils.json_to_sheet(대한통운Data, { header: 대한통운Headers });
+            ws1['!cols'] =  [
+                { wch: 10 }, // 날짜
+                { wch: 15 }, // 받는분성명
+                { wch: 15 }, // 받는분전화번호
+                { wch: 15 }, // 받는분기타연락처
+                { wch: 15 }, // 받는분우편번호
+                { wch: 40 }, // 받는분주소
+                { wch: 10 }, // 운송장번호
+                { wch: 20 }, // 고객주문번호
+                { wch: 10 }, // 품목명
+                { wch: 8 }, // 박스수량
+                { wch: 40 }, // Inquiry No (넉넉하게)
+                { wch: 5 }  // 확인
+            ];
+
             XLSX.utils.book_append_sheet(workbook, ws1, "대한통운");
         }
-
         if (대신택배Data.length > 0) {
             const ws2 = XLSX.utils.json_to_sheet(대신택배Data, { header: 대신택배Headers });
+            ws2['!cols'] = [
+                { wch: 12 },  // 일자
+                { wch: 40 },  // 도착지 (길게)
+                { wch: 15 },  // 전화번호
+                { wch: 15 },  // 업체
+                { wch: 20 },  // 받는분
+                { wch: 50 },  // 주소 (길게)
+                { wch: 15 },  // 품명
+                { wch: 10 },  // 포장
+                { wch: 10 },  // 수량
+                { wch: 10 },  // 택배/화물
+                { wch: 6 },   // 현불
+                { wch: 6 },   // 착불
+                { wch: 50 },  // Inquiry No (넉넉하게)
+                { wch: 8 }    // 확인
+            ];
             XLSX.utils.book_append_sheet(workbook, ws2, "대신택배");
         }
-
         if (기타Data.length > 0) {
             const ws3 = XLSX.utils.json_to_sheet(기타Data, { header: 기타Headers });
+            ws3['!cols'] = [
+                { wch: 12 },  // 일자
+                { wch: 50 },  // 주소 (길게)
+                { wch: 15 },  // 전화번호
+                { wch: 20 },  // 업체
+                { wch: 20 },  // 받는분
+                { wch: 6 },   // 현불
+                { wch: 6 },   // 착불
+                { wch: 50 },  // Inquiry No (넉넉하게)
+                { wch: 15 },  // 구분
+                { wch: 8 }    // 확인
+            ];
             XLSX.utils.book_append_sheet(workbook, ws3, "퀵,직납,기타");
         }
-
         const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
         const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-        saveAs(blob, "출고분류.xlsx");
+        saveAs(blob, "배송송장.xlsx");
     }
 
 
@@ -447,6 +488,8 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
         </>
     </Spin>
 }
+
+
 
 export default memo(DeliveryRead, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);
