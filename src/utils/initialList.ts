@@ -149,6 +149,7 @@ export const taxInvoiceSearchInitial = {
     "customerManagerName": "",                         // 담당자명
     "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
     "invoiceStatus": "",                               // 계산서 발행여부 O, X
+    "rfqNo": "",                               // 계산서 발행여부 O, X
     "page": 1,
     "limit": -1
 }

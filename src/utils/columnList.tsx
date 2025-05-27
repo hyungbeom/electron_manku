@@ -2700,6 +2700,7 @@ export const tableTaxInvoiceReadColumn = [
     {
         headerName: 'Inquiry No.',
         field: 'documentNumberFull',
+        maxWidth: 120,
         pinned: 'left',
         // valueGetter: (params) => {
         //     const currentRowIndex = params.node.rowIndex;
@@ -2719,8 +2720,16 @@ export const tableTaxInvoiceReadColumn = [
         // },
     },
     {
+        headerName: 'Project No.',
+        field: 'rfqNo',
+        maxWidth: 120,
+        pinned: 'left'
+
+    },
+    {
         headerName: '항목번호',
         field: 'selectOrderList',
+        maxWidth: 120,
         pinned: 'left',
         valueGetter: (params) => {
             try {

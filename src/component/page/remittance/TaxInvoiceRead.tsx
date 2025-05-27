@@ -174,7 +174,7 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
         <PanelSizeUtil groupRef={groupRef} storage={'tax_invoice_read'}/>
         <div style={{
             display: 'grid',
-            gridTemplateRows: `${mini ? '215px' : '65px'} calc(100vh - ${mini ? 345 : 195}px)`,
+            gridTemplateRows: `${mini ? '270px' : '65px'} calc(100vh - ${mini ? 405 : 200}px)`,
             columnGap: 5
         }}>
             <MainCard title={'세금계산서 요청 조회'} list={[
@@ -201,8 +201,15 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
                                     data: info
                                 })}
                                 {inputForm({
-                                    title: '담당자',
-                                    id: 'customerManagerName',
+                                    title: '문서번호',
+                                    id: 'documentNumberFull',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'Project No.',
+                                    id: 'rfqNo',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
@@ -213,12 +220,13 @@ export default function TaxInvoiceRead({getPropertyId, getCopyPage}: any) {
                         <Panel defaultSize={sizes[1]} minSize={5}>
                             <BoxCard title={''}>
                                 {inputForm({
-                                    title: 'Inquiry No.',
-                                    id: 'documentNumberFull',
+                                    title: '담당자',
+                                    id: 'customerManagerName',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
                                 })}
+
                                 {inputForm({
                                     title: '고객사명',
                                     id: 'customerName',
