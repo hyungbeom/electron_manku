@@ -4,9 +4,15 @@ import {BoxCard, datePickerForm, inputForm, MainCard, radioForm, textAreaForm, T
 import {DriveUploadComp} from "@/component/common/SharePointComp";
 import _ from "lodash";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import {commonManage, fileManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, fileManage, gridManage} from "@/utils/commonManage";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {DeleteOutlined, ExclamationCircleOutlined, FolderOpenOutlined, FormOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    DeleteOutlined,
+    ExclamationCircleOutlined,
+    FolderOpenOutlined,
+    FormOutlined
+} from "@ant-design/icons";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
@@ -14,7 +20,7 @@ import moment from "moment";
 import {getData} from "@/manage/function/api";
 import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
-import {TIInfo} from "@/utils/column/ProjectInfo";
+import {DRInfo, TIInfo} from "@/utils/column/ProjectInfo";
 import TableGrid from "@/component/tableGrid";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
@@ -353,6 +359,27 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
         });
     }
 
+
+    function copyPage() {
+        const copyInfo = _.cloneDeep(info);
+        const copyInfo2 = _.cloneDeep(info);
+        copyInfo2['documentNumberFull'] = '';
+        copyInfo2['uploadType'] = 0;
+        copyInfo2['folderId'] = '';
+
+        const allData = [];
+        gridRef.current.forEachNode(node => {
+            allData.push(node.data);
+        });
+
+
+
+        copyInfo['invoiceinfo'] = copyInfo2;
+        copyInfo['invoiceDetailInfo'] =allData;
+
+        getCopyPage('tax_invoice_write', {...copyInfo, _meta: {updateKey: Date.now()}})
+    }
+
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'tax_invoice_update'}/>
         <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
@@ -368,6 +395,7 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
                 <MainCard title={'세금계산서 요청 수정'} list={[
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
+                    {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div ref={infoRef}>
                         <TopBoxCard grid={'110px 70px 70px 120px 110px 110px 120px'}>

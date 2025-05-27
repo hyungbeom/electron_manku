@@ -86,6 +86,17 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
             // copyPageInfo 가 없을시
             setSendRemittanceList(commonFunc.repeatObject(ORInfo['write']['defaultData'], 100))
         } else {
+            const {orderDetailList, remittanceDetail} = copyPageInfo
+            setSelectOrderList(orderDetailList);
+            setSendRemittanceList(remittanceDetail);
+
+            delete copyPageInfo?.orderDetailList
+            delete copyPageInfo?.remittanceDetail
+            setInfo({...copyPageInfo,
+                createdId: userInfo['adminId'],
+                createdBy: userInfo['name']
+            })
+
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
             // setInfo({
@@ -143,7 +154,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
         Object.entries(info).forEach(([key, value]) => {
             formData.append(key, value ?? '');
         });
-        formData.append('selectOrderList',JSON.stringify(selectOrderNos));
+        formData.append('selectOrderList',selectOrderNos);
         formData.append('sendRemittanceList',JSON.stringify(remittanceList));
 
         await saveRemittance({data: formData})

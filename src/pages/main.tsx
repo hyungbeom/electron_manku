@@ -60,34 +60,58 @@ export default function Main() {
 
     const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
+
+
     useEffect(() => {
+
         getData.post('socket/getQueue').then(v => {
-            const summary = summarizeNotifications(v?.data);
-            summary.forEach(data => {
-                notificationAlert('success', "🔔" + data.title,
-                    <>
-                        {data.message}
-                    </>
+            if(v?.data.length) {
+                const summary = summarizeNotifications(v?.data);
+                summary.forEach(data => {
+                    notificationAlert('success', "🔔" + data.title,
+                        <>
+                            {data.message}
+                        </>
 
-                    , function () {
-                        if (data.title.includes('[회신알림]')) {
-                            getPropertyId('rfq_update', data?.pk);
-                        }else if (data.title.includes('[견적서알림]')) {
-                            getPropertyId('estimate_update', data?.pk);
-                        }
-                    },
+                        , function () {
+                            if (data.title.includes('[회신알림]')) {
+                                getPropertyId('rfq_update', data?.pk);
+                            } else if (data.title.includes('[견적서알림]')) {
+                                getPropertyId('estimate_update', data?.pk);
+                            }
+                        },
 
-                    {cursor: 'pointer'},
-                    null
-                )
-            })
+                        {cursor: 'pointer'},
+                        null
+                    )
+                })
+            }
         })
-    }, []);
+        getData.post('socket/getQueue').then(v => {
+            if(v?.data.length) {
+                const summary = summarizeNotifications(v?.data);
+                summary.forEach(data => {
+                    notificationAlert('success', "🔔" + data.title,
+                        <>
+                            {data.message}
+                        </>
 
-    useEffect(() => {
+                        , function () {
+                            if (data.title.includes('[회신알림]')) {
+                                getPropertyId('rfq_update', data?.pk);
+                            } else if (data.title.includes('[견적서알림]')) {
+                                getPropertyId('estimate_update', data?.pk);
+                            }
+                        },
 
-        // const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
-        const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
+                        {cursor: 'pointer'},
+                        null
+                    )
+                })
+            }
+        })
+        const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
+        // const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
 
 
         // STOMP 클라이언트 생성 및 설정
@@ -210,8 +234,6 @@ export default function Main() {
         const existingTabs = modelRef.current.getRoot().getChildren().flatMap(tabset =>
             tabset.getChildren().map((tab: any) => tab.getComponent())
         );
-        console.log(existingTabs, 'existingTabs:')
-
         if (!copyPageInfo[selectedKey]) {
             setCopyPageInfo(prev => ({...prev, [selectedKey]: {}}));
         }

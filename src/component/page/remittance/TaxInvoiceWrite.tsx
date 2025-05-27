@@ -88,6 +88,15 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
         if (!isEmptyObj(copyPageInfo)) {
             // copyPageInfo 가 없을시
         } else {
+
+            const {invoiceinfo} = copyPageInfo
+
+
+            setSelectOrderList(JSON.parse(invoiceinfo?.selectOrderList))
+            setInfo({...invoiceinfo,
+                createdId: userInfo['adminId'],
+                createdBy: userInfo['name']
+            })
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
         }
@@ -106,7 +115,8 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
      */
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: []});
+
+        params.api.applyTransaction({add: copyPageInfo?.invoiceDetailInfo.length ? copyPageInfo?.invoiceDetailInfo : []});
         setTotalRow(0);
         isGridLoad.current = true;
     };
@@ -122,7 +132,12 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
     async function saveFunc() {
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
 
-        const selectOrderNos = selectOrderList.map(item => item.orderDetailId)
+        const allData = [];
+        gridRef.current.forEachNode(node => {
+            allData.push(node.data);
+        });
+
+        const selectOrderNos = allData.map(item => item.orderDetailId)
         const copyInfo = {
             ...info,
             supplyAmount: Number(String(info?.supplyAmount).replace(/,/g, '')),
