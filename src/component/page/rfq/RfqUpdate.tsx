@@ -55,24 +55,8 @@ function RqfUpdate({
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    const [memberList, setMemberList] = useState([]);
     const [open, setOpen] = useState(false);
 
-    useEffect(() => {
-        getMemberList();
-    }, []);
-
-    async function getMemberList() {
-        // @ts-ignore
-        return await getData.post('admin/getAdminList', {
-            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-            "searchAuthority": null,    // 1: 일반, 0: 관리자
-            "page": 1,
-            "limit": -1
-        }).then(v => {
-            setMemberList(v.data.entity.adminList)
-        })
-    }
 
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -227,7 +211,7 @@ function RqfUpdate({
             return message.error('하위 데이터의 수량을 입력해야 합니다.')
         }
 
-        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        const findMember = adminList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
 
         setLoading(true);
@@ -346,8 +330,6 @@ function RqfUpdate({
             }
         })
         copyInfo[listType] = [...list, ...commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000 - list.length)];
-
-        console.log(copyInfo, 'copyInfo:::')
         getCopyPage('rfq_write', {...copyInfo, _meta: {updateKey: Date.now()}})
     }
 
@@ -429,7 +411,7 @@ function RqfUpdate({
                                     onChange: onChange,
                                     data: info,
                                     validate: validate['managerAdminId'],
-                                    list: memberList?.map((item) => ({
+                                    list: adminList?.map((item) => ({
                                         ...item,
                                         value: item.adminId,
                                         label: item.name,
@@ -615,7 +597,7 @@ function RqfUpdate({
                             id: 'receiverId',
                             onChange: onChange,
                             data: info,
-                            list: memberList?.map((item) => ({
+                            list: adminList?.map((item) => ({
                                 ...item,
                                 value: item.adminId,
                                 label: item.name,

@@ -117,6 +117,7 @@ export const TopPoInfo = ({info, hsCode, getTopInfoData, type}) => {
     const [infoData, setInfoData] = useState({})
     const [title, setTitle] = useState<any>(paperTopInfo[type])
 
+    console.log(title,'title:')
     useEffect(() => {
 
 

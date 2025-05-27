@@ -44,6 +44,7 @@ function summarizeNotifications(notifications) {
             pk: first.pk
         };
     });
+    console.log(notifications,'summarized::::')
 
     return summarized;
 }
@@ -60,7 +61,6 @@ export default function Main() {
     const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
     useEffect(() => {
-
         getData.post('socket/getQueue').then(v => {
             const summary = summarizeNotifications(v?.data);
             summary.forEach(data => {
@@ -82,10 +82,12 @@ export default function Main() {
                 )
             })
         })
+    }, []);
 
+    useEffect(() => {
 
-        const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
-        // const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
+        // const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
+        const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
 
 
         // STOMP 클라이언트 생성 및 설정

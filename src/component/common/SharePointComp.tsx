@@ -307,6 +307,7 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
         // 현재 선택된 업로드 타입, 넘버링, 정보들을 가지고 파일명 생성
         const numberType = parseInt(uploadType);
         let result = '';
+
         switch (numberType) {
             case 0:
                 result = `${prefix}${info?.documentNumberFull || baseFileName}_RFQ.${extension}`;

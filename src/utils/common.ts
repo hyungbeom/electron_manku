@@ -349,9 +349,9 @@ export const paperTopInfo = {
         documentNumberFull: '발주번호',
         deliveryCondition: '납품조건',
         yourPoNo: '귀사견적',
-        paymentTerms: '결제조건.',
+        paymentTerms: '결제조건',
         managerId: '담당자',
-        deliveryDateCondition: '납기조건',
+        deliveryTerms: '납기조건',
         managerPhoneNumber: '연락처',
         blank: '',
         managerEmail: 'E-Mail'

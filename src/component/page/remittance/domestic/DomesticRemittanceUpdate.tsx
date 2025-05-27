@@ -7,10 +7,10 @@ import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {commonFunc, commonManage, fileManage} from "@/utils/commonManage";
 import {updateRemittance} from "@/utils/api/mainApi";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {DeleteOutlined, FolderOpenOutlined, FormOutlined} from "@ant-design/icons";
+import {CopyOutlined, DeleteOutlined, FolderOpenOutlined, FormOutlined} from "@ant-design/icons";
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import {DRInfo} from "@/utils/column/ProjectInfo";
+import {DRInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import {getData} from "@/manage/function/api";
 import Tabs from "antd/lib/tabs";
 import message from "antd/lib/message";
@@ -372,6 +372,26 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef, getCopy
         });
     }
 
+
+
+    function copyPage() {
+        const copyInfo = _.cloneDeep(info);
+        copyInfo['documentNumberFull'] = '';
+        copyInfo['uploadType'] = 0;
+        copyInfo['folderId'] = '';
+        const totalList = tableRef.current.getSourceData();
+        totalList.pop();
+
+       const list = totalList.filter(v=> v.supplyAmount)
+
+        copyInfo['remittanceDetail'] = [...list, ...commonFunc.repeatObject(DRInfo['write']['defaultData'], 100 - list?.length)];
+        copyInfo['orderDetailList'] =selectOrderList;
+
+        getCopyPage('domestic_remittance_write', {...copyInfo, _meta: {updateKey: Date.now()}})
+    }
+
+
+
     return <Spin spinning={loading}>
         {/*<div style={{height: 'calc(100vh - 90px)'}}>*/}
             <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_update'}/>
@@ -389,7 +409,8 @@ export default function DomesticRemittanceUpdate({ updateKey, layoutRef, getCopy
 
                 <MainCard title={'국내 송금 수정'} list={[
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
-                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'}
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
+                    {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: ''}
                 ]} mini={mini} setMini={setMini}>
                     <div ref={infoRef}>
                         <TopBoxCard grid={'110px 70px 70px 120px 120px'}>

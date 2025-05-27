@@ -11,7 +11,7 @@ import {FolderOpenOutlined, RadiusSettingOutlined, SaveOutlined} from "@ant-desi
 import PanelSizeUtil from "@/component/util/PanelSizeUtil";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
-import {DRInfo} from "@/utils/column/ProjectInfo";
+import {DRInfo, rfqInfo} from "@/utils/column/ProjectInfo";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment";
 import Tabs from "antd/lib/tabs";
@@ -85,6 +85,16 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
             // copyPageInfo 가 없을시
             setSendRemittanceList(commonFunc.repeatObject(DRInfo['write']['defaultData'], 100))
         } else {
+            const {orderDetailList, remittanceDetail} = copyPageInfo
+            setSelectOrderList(orderDetailList);
+            setSendRemittanceList(remittanceDetail);
+
+            delete copyPageInfo?.orderDetailList
+            delete copyPageInfo?.remittanceDetail
+            setInfo({...copyPageInfo,
+                createdId: userInfo['adminId'],
+                createdBy: userInfo['name']
+            })
             // // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
             // setInfo({
@@ -95,7 +105,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
             // setTableData(copyPageInfo[listType]);
         }
         setLoading(false);
-    }, [copyPageInfo]);
+    }, [copyPageInfo?._meta?.updateKey]);
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
