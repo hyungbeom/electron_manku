@@ -25,7 +25,7 @@ function summarizeNotifications(notifications) {
     const grouped = {};
 
     // 1. title 기준으로 그룹화
-    notifications.forEach((item) => {
+    notifications?.forEach((item) => {
         if (!grouped[item.title]) {
             grouped[item.title] = [];
         }
