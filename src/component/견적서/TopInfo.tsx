@@ -128,6 +128,7 @@ export const TopPoInfo = ({info, hsCode, getTopInfoData, type}) => {
         setInfoData({...copyData, hscode: hsCode});
         copyData['incoterms'] = 'EXW'
         // EXW, FOB, CIF, DDU
+
         getTopInfoData(copyData)
     }, [hsCode]);
 

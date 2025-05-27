@@ -45,7 +45,7 @@ function PrintPo({
         })
         setData(copyData);
 
-        if(info?.agencyCode?.startsWith('K')) {
+        if(info?.agencyCode?.startsWith('K') || info?.agencyCode?.startsWith('SK')) {
             setBottomInfo(bottomInfoKr);
         } else {
             setBottomInfo(bottomInfoEn);
