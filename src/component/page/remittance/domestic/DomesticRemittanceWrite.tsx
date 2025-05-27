@@ -95,14 +95,6 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                 createdId: userInfo['adminId'],
                 createdBy: userInfo['name']
             })
-            // // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
-            // // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-            // setInfo({
-            //     ...getRemittanceInit(),
-            //     ...copyPageInfo,
-            //     writtenDate: moment().format('YYYY-MM-DD')
-            // })
-            // setTableData(copyPageInfo[listType]);
         }
         setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
@@ -123,13 +115,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         const filterTableList = tableList.slice(0, -1).filter(row =>
             Object.keys(requiredFields).some(field => !!row[field])
         );
-        // const isValidValue = (value: any) =>
-        //     value !== null && value !== undefined &&
-        //     !(typeof value === 'string' && value.trim().startsWith('='));
-        //
-        // const filterTableList = tableList.slice(0, -1).filter(row =>
-        //     Object.keys(requiredFields).some(field => isValidValue(row[field]))
-        // );
+
         if (!filterTableList?.length) return message.warn('송금 데이터가 1개 이상이여야 합니다.');
         for (const [field, label] of Object.entries(requiredFields)) {
             const missing = filterTableList.filter(row => !row[field]);

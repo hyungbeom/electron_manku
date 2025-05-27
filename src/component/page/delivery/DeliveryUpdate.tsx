@@ -347,6 +347,10 @@ function DeliveryUpdate({updateKey, layoutRef, getCopyPage}:any){
         setSelectOrderList(filterSelectList);
     }
 
+    function deliveryPaperFunc(){
+
+    }
+
     return <Spin spinning={loading}>
         <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
                          open={isModalOpen}
@@ -360,6 +364,7 @@ function DeliveryUpdate({updateKey, layoutRef, getCopyPage}:any){
 
             <div style={{flexShrink: 0}}>
                 <MainCard title={'배송 수정'} list={[
+                    {name: <div><FormOutlined style={{paddingRight: 8}}/>송장출력</div>, func: deliveryPaperFunc, type: 'delete'},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'}
                 ]}>

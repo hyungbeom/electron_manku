@@ -207,23 +207,23 @@ function EstimateRead({getPropertyId, getCopyPage,}: any) {
                                                         setInfo(v => {
                                                             return {
                                                                 ...v,
-                                                                searchDate: [moment().subtract(1, 'week').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-                                                                "searchStartDate": moment().subtract(1, 'week').format('YYYY-MM-DD'),              // 작성일자 시작일
-                                                                "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
-                                                            }
-                                                        })
-                                                    }}>W</Button>
-                                            <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
-                                                    onClick={() => {
-                                                        setInfo(v => {
-                                                            return {
-                                                                ...v,
                                                                 searchDate: [moment().subtract(1, 'month').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
                                                                 "searchStartDate": moment().subtract(1, 'month').format('YYYY-MM-DD'),              // 작성일자 시작일
                                                                 "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
                                                             }
                                                         })
                                                     }}>M</Button>
+                                            <Button size={'small'} style={{fontSize: 12, marginTop: 25}}
+                                                    onClick={() => {
+                                                        setInfo(v => {
+                                                            return {
+                                                                ...v,
+                                                                searchDate: [moment().subtract(1, 'year').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+                                                                "searchStartDate": moment().subtract(1, 'year').format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                                "searchEndDate": moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                            }
+                                                        })
+                                                    }}>Y</Button>
                                         </div>
                                         <div style={{paddingBottom: 9}}>
                                             {inputForm({

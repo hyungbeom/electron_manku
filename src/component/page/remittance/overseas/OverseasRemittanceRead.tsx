@@ -222,9 +222,9 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
                                                 setInfo(v => {
                                                     return {
                                                         ...v,
-                                                        searchRequestDate: [moment().subtract(1, 'week').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-                                                        searchRequestStartDate: moment().subtract(1, 'week').format('YYYY-MM-DD'),              // 작성일자 시작일
-                                                        searchRequestEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                        searchRequestDate: [moment().format('YYYY-MM-DD'), moment().add(1, 'week').format('YYYY-MM-DD')],
+                                                        searchRequestStartDate: moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                        searchRequestEndDate: moment().add(1, 'week').format('YYYY-MM-DD'),                // 작성일자 종료일
                                                     }
                                                 })
                                             }}>W</Button>
@@ -233,9 +233,9 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
                                                 setInfo(v => {
                                                     return {
                                                         ...v,
-                                                        searchRequestDate: [moment().subtract(1, 'month').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-                                                        searchRequestStartDate: moment().subtract(1, 'month').format('YYYY-MM-DD'),              // 작성일자 시작일
-                                                        searchRequestEndDate: moment().format('YYYY-MM-DD'),                // 작성일자 종료일
+                                                        searchRequestDate: [moment().format('YYYY-MM-DD'), moment().add(1, 'month').format('YYYY-MM-DD')],
+                                                        searchRequestStartDate: moment().format('YYYY-MM-DD'),              // 작성일자 시작일
+                                                        searchRequestEndDate: moment().add(1, 'month').format('YYYY-MM-DD'),                // 작성일자 종료일
                                                     }
                                                 })
                                             }}>M</Button>

@@ -82,9 +82,9 @@ export const rfqWriteInitial = {
 
 // ========================================== 배송 ================================================
 export const deliverySearchInitial = {
-    searchDate: [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-    searchStartDate: moment().subtract(1, 'years').format('YYYY-MM-DD'),
-    searchEndDate: moment().format('YYYY-MM-DD'),
+    searchDate: [moment().format('YYYY-MM-DD'), moment().add(1, 'month').format('YYYY-MM-DD')],
+    searchStartDate: moment().format('YYYY-MM-DD'),
+    searchEndDate:  moment().add(1, 'month').format('YYYY-MM-DD'),
     searchConnectInquiryNo: "",
     searchTrackingNumber: "",
     searchCustomerName: "",
@@ -105,9 +105,9 @@ export const deliverySearchInitial = {
 // 송금 > 국내송금 조회 > 검색 초기값 정보
 export const domesticRemittanceSearchInitial = {
     "searchRegion": 'domestic',            // 국내송금 flag
-    "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-    "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금지정일자 검색 시작일
-    "searchRequestEndDate": moment().format('YYYY-MM-DD'),                          // 송금지정일자 검색 종료일
+    "searchRequestDate": [moment().format('YYYY-MM-DD'),moment().add(1, 'month').format('YYYY-MM-DD')],
+    "searchRequestStartDate": moment().format('YYYY-MM-DD'),   // 송금지정일자 검색 시작일
+    "searchRequestEndDate": moment().add(1, 'month').format('YYYY-MM-DD'),                          // 송금지정일자 검색 종료일
     "searchManagerAdminName": "",          // 담당자
     "searchDocumentNumber": "",            // InquiryNo
     "searchCustomerName": "",              // 고객사명
@@ -124,9 +124,9 @@ export const domesticRemittanceSearchInitial = {
 // 송금 > 해외송금 조회 > 검색 초기값 정보
 export const overseasRemittanceSearchInitial = {
     "searchRegion": 'foreign',             // 해외송금 Flag
-    "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
-    "searchRequestStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),   // 송금지정일자 검색 시작일
-    "searchRequestEndDate": moment().format('YYYY-MM-DD'),                          // 송금지정일자 검색 종료일
+    "searchRequestDate": [moment().format('YYYY-MM-DD'),moment().add(1, 'month').format('YYYY-MM-DD')],
+    "searchRequestStartDate": moment().format('YYYY-MM-DD'),   // 송금지정일자 검색 시작일
+    "searchRequestEndDate": moment().add(1, 'month').format('YYYY-MM-DD'),                          // 송금지정일자 검색 종료               // 송금지정일자 검색 종료일
     "searchManagerAdminName": "",          // 담당자
     "searchDocumentNumber": "",            // InquiryNo
     "searchCustomerName": "",              // 고객사명
@@ -144,16 +144,15 @@ export const overseasRemittanceSearchInitial = {
 export const taxInvoiceSearchInitial = {
     "documentNumberFull": "",                          // Inquiry No.
     "customerName": "",                                // 고객사명
-    "searchStartDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),                                // 고객사명
-    "searchEndDate":  moment().format('YYYY-MM-DD'),                                // 고객사명
+    "searchStartDate": moment().format('YYYY-MM-DD'),                                // 고객사명
+    "searchEndDate":  moment().add(1, 'month').format('YYYY-MM-DD'),                                // 고객사명
     "customerManagerName": "",                         // 담당자명
-    "searchDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
+    "searchDate": [moment().format('YYYY-MM-DD'),moment().add(1, 'month').format('YYYY-MM-DD')],
     "invoiceStatus": "",                               // 계산서 발행여부 O, X
     "rfqNo": "",                               // 계산서 발행여부 O, X
     "page": 1,
     "limit": -1
 }
-//
 
 
 
