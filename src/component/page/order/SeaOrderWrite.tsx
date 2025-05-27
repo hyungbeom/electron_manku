@@ -134,6 +134,8 @@ function SeaOrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
         if (e.key === 'Enter') {
             switch (e.target.id) {
                 case 'agencyCode' :
+                    await findCodeInfo(e, setInfo, openModal,'agencyCode_overSeas')
+                    break;
                 case 'customerName' :
                     await findCodeInfo(e, setInfo, openModal)
                     break;

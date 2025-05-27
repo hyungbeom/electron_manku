@@ -41,7 +41,13 @@ export default function SearchInfoModal({
             console.log(open,'open');
             const firstTrueKey = Object.keys(open).find(key => open[key]);
             console.log(firstTrueKey)
-            const dom = infoRef?.current?.querySelector(`#${firstTrueKey}`) ?? '';
+            let dom = infoRef?.current?.querySelector(`#${firstTrueKey}`) ?? '';
+
+            if(firstTrueKey === 'agencyCode_overSeas' || firstTrueKey === 'agencyCode_domestic'){
+
+                dom = infoRef?.current?.querySelector('#agencyCode') ?? '';
+            }
+
             switch (firstTrueKey) {
                 case 'agencyCode' :
                 case 'agencyCode_domestic' :

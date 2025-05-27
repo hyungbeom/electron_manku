@@ -5,28 +5,26 @@ import moment from "moment/moment";
 import {commonFunc, commonManage} from "@/utils/commonManage";
 import {orderInfo} from "@/utils/column/ProjectInfo";
 
-export const findCodeInfo = async (event, setInfo, openModal, infoRef?) => {
-    console.log(event.target.id,'::::')
-    getData.post(modalList[event.target.id]?.url, {
+export const findCodeInfo = async (event, setInfo, openModal, type?) => {
+
+    getData.post(modalList[type? type : event.target.id]?.url, {
         "searchType": "1",
         "searchText": event.target.value,       // 대리점코드 or 대리점 상호명
         "page": 1,
         "limit": -1
     }).then(async v => {
 
-        const data = v?.data?.entity[modalList[event.target.id]?.list];
+        const data = v?.data?.entity[modalList[type? type : event.target.id]?.list];
 
         const size = data?.length;
 
         if (size > 1) {
-            if(event.target.id === 'agencyCode'){
-                openModal(event.target.id);
-                openModal('agencyCode_domestic');
-                openModal('agencyCode_overSeas');
-            }
+            openModal(type? type : event.target.id);
             return false;
         } else if (size === 1) {
             switch (event.target.id) {
+                case 'agencyCode_overSeas ' :
+                case 'agencyCode_domestic ' :
                 case 'agencyCode' : {
                     // K79
                     const {agencyId, agencyCode, agencyName, currencyUnit, email, managerName, phoneNumber} = data[0];
