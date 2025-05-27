@@ -25,7 +25,7 @@ export default function Deahan({info, setInfo, openModal}) {
     };
 
     return <>
-        <TopBoxCard grid={'120px 120px 150px 110px 150px'}>
+        <TopBoxCard grid={'120px 120px 120px 120px 120px 120px'}>
             {inputForm({
                 title: '만쿠발주서 No.',
                 id: 'connectInquiryNo',
@@ -37,10 +37,18 @@ export default function Deahan({info, setInfo, openModal}) {
                     }
                 }>🔍</span>,
             })}
+            {inputForm({
+                title: 'Project No.',
+                id: 'rfqNo',
+                onChange: onChange,
+                data: info
+            })}
             {inputForm({ title: '고객주문번호', id: 'customerOrderNo', onChange: onChange, data: info })}
             {inputForm({ title: '고객사명', id: 'customerName', onChange: onChange, data: info })}
             {datePickerForm({title: '출고일자', id: 'deliveryDate', onChange: onChange, data: info})}
             {inputForm({ title: '운송장번호', id: 'trackingNumber', onChange: onChange, data: info })}
+
+
         </TopBoxCard>
 
         <PanelGroup direction="horizontal" style={{gap: 0.5, paddingTop: 10}}>

@@ -633,6 +633,7 @@ export const deliveryInfo = {
         classification: '',        // 상품 분류
         isConfirm: 'X',            // 배송 확인 여부 (예: O, X)
         isOutBound: 'X',           // 출고 완료 여부 (예: O, X)
+        rfqNo: '',           // 출고 완료 여부 (예: O, X)
     },
 };
 //
@@ -673,6 +674,7 @@ export const DRInfo = {
             "total": "",                   // 합계
             "sendStatus": '',              // 송금 상태
             "invoiceStatus": '',           // 계산서 발행 여부
+            "rfqNo": '',           // 계산서 발행 여부
         }, mapping: {
             "remittanceDueDate": '송금 지정 일자',
             "remittanceRequestDate": '송금 요청 일자',
@@ -752,6 +754,7 @@ export const ORInfo = {
             "sendStatus": '',              // 송금 상태
             "invoiceStatus": '',           // 증빙서류 여부
             "exchange": '',                // 환율
+            "rfqNo": '',                // 환율
         }, mapping: {
             "remittanceDueDate": '송금 지정 일자',
             "remittanceRequestDate": '송금 요청 일자',

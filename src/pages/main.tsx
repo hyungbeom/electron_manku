@@ -84,8 +84,8 @@ export default function Main() {
         })
 
 
-        const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
-        // const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
+        // const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
+        const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
 
 
         // STOMP 클라이언트 생성 및 설정
@@ -102,8 +102,7 @@ export default function Main() {
                     await getData.post('history/getHistoryReceiveList').then(v => {
 
 
-                        console.log(data,'????')
-                        const rawData = v?.data
+                        const rawData = v?.data;
 
 // 날짜 기준으로 묶기
 
@@ -157,7 +156,7 @@ export default function Main() {
         if (window?.electron) {
             // @ts-ignore
             window.electron.onNotificationClicked(({title, body}) => {
-                console.log('Notification clicked:', title, body);
+                // console.log('Notification clicked:', title, body);
                 // 여기서 원하는 동작 실행
                 alert(`알림 클릭됨: ${title}`);
                 // 또는 React 상태 업데이트, 라우팅 등

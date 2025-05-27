@@ -374,7 +374,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                     {name: <div><RadiusSettingOutlined style={{paddingRight: 8}}/>초기화</div>, func: clearAll, type: 'danger'}
                 ]} mini={mini} setMini={setMini}>
                     {mini ? <div ref={infoRef}>
-                        <TopBoxCard grid={'110px 70px 70px 120px'}>
+                        <TopBoxCard grid={'110px 70px 70px 120px 120px'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
@@ -418,6 +418,12 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
                                         openModal('connectInquiryNo');
                                     }
                                 }>🔍</span>,
+                            })}
+                            {inputForm({
+                                title: 'Project No.',
+                                id: 'rfqNo',
+                                onChange: onChange,
+                                data: info,
                             })}
                         </TopBoxCard>
 

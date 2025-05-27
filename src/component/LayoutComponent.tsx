@@ -38,7 +38,7 @@ export default function LayoutComponent({children, setOpen = null, setOpen2 = nu
                 </div>
                 <div style={{display: 'flex'}}>
                     
-                    <div style={{fontSize : 12, padding : 5, paddingRight : 30, cursor : 'pointer'}} onClick={()=>setOpen2(true)}>학습데이터</div>
+                    {/*<div style={{fontSize : 12, padding : 5, paddingRight : 30, cursor : 'pointer'}} onClick={()=>setOpen2(true)}>학습데이터</div>*/}
 
                     {!status ?<BellFilled style={{fontSize: 18, paddingRight: 10, cursor: 'pointer'}}
                                  onClick={() => setOpen(true)}/> : <><BellFilled style={{fontSize: 18, paddingRight: 15, cursor: 'pointer'}}

@@ -92,6 +92,7 @@ export const deliverySearchInitial = {
     searchRecipientPhone: "",
     searchIsConfirm: "",
     searchIsOutBound: "",
+    searchRfqNo: "",
     page : 1 ,
     limit : -1
 }
@@ -110,6 +111,7 @@ export const domesticRemittanceSearchInitial = {
     "searchManagerAdminName": "",          // 담당자
     "searchDocumentNumber": "",            // InquiryNo
     "searchCustomerName": "",              // 고객사명
+    "searchRfqNo": "",              // 고객사명
     "searchAgencyName": "",                // 매입처명
     "searchIsInvoice": "",                 // 계산서 발행여부 O, X
     "searchPartialRemittanceStatus": "",   // 부분송금 진행여부
@@ -132,6 +134,7 @@ export const overseasRemittanceSearchInitial = {
     "searchIsInvoice": "",                 // 증빙서류 여부 O, X
     "searchPartialRemittanceStatus": "",   // 부분송금 진행여부
     "searchIsSend": "",                    // 송금상태
+    "searchRfqNo": "",                    // 송금상태
     "page": 1,
     "limit": -1
 }

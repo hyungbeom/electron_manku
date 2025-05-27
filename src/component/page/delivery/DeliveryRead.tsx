@@ -186,15 +186,15 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
                                 <BoxCard title={'기본 정보'}>
                                     {rangePickerForm({title: '출고일자', id: 'searchDate', onChange: onChange, data: info})}
                                     {inputForm({
-                                        title: 'Inquiry No.',
+                                        title: '문서번호',
                                         id: 'searchConnectInquiryNo',
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
                                         data: info
                                     })}
                                     {inputForm({
-                                        title: '운송장번호',
-                                        id: 'searchTrackingNumber',
+                                        title: 'Project No.',
+                                        id: 'searchRfqNo',
                                         onChange: onChange,
                                         handleKeyPress: handleKeyPress,
                                         data: info
@@ -229,8 +229,15 @@ function DeliveryRead({getPropertyId, getCopyPage}: any) {
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[2]} minSize={5}>
-                                <BoxCard title={'기타 정보'} tooltip={''}>
+                                <BoxCard title={'운송정보'} tooltip={''}>
                                     <div style={{paddingBottom: 9}}>
+                                        {inputForm({
+                                            title: '운송장번호',
+                                            id: 'searchTrackingNumber',
+                                            onChange: onChange,
+                                            handleKeyPress: handleKeyPress,
+                                            data: info
+                                        })}
                                         {selectBoxForm({
                                             title: '확인여부', id: 'searchIsConfirm', list: [
                                                 {value: '', label: '전체'},

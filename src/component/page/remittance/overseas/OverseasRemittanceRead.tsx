@@ -240,9 +240,17 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
                                                 })
                                             }}>M</Button>
                                 </div>
+
                                 {inputForm({
-                                    title: '담당자',
-                                    id: 'searchManagerAdminName',
+                                    title: '문서번호',
+                                    id: 'searchDocumentNumber',
+                                    onChange: onChange,
+                                    handleKeyPress: handleKeyPress,
+                                    data: info
+                                })}
+                                {inputForm({
+                                    title: 'Project No.',
+                                    id: 'searchRfqNo',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info
@@ -253,8 +261,8 @@ export default function OverseasRemittanceRead({getPropertyId, getCopyPage}: any
                         <Panel defaultSize={sizes[1]} minSize={5}>
                             <BoxCard title={''}>
                                 {inputForm({
-                                    title: 'Inquiry No.',
-                                    id: 'searchDocumentNumber',
+                                    title: '담당자',
+                                    id: 'searchManagerAdminName',
                                     onChange: onChange,
                                     handleKeyPress: handleKeyPress,
                                     data: info

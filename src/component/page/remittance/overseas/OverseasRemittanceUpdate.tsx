@@ -391,7 +391,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef, getCopy
                     {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'}
                 ]} mini={mini} setMini={setMini}>
                     <div ref={infoRef}>
-                        <TopBoxCard grid={'110px 70px 70px 120px'}>
+                        <TopBoxCard grid={'110px 70px 70px 120px 120px'}>
                             {datePickerForm({
                                 title: '작성일',
                                 id: 'writtenDate',
@@ -436,6 +436,12 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef, getCopy
                                         openModal('connectInquiryNo');
                                     }
                                 }>🔍</span>,
+                            })}
+                            {inputForm({
+                                title: 'Project No.',
+                                id: 'rfqNo',
+                                onChange: onChange,
+                                data: info,
                             })}
                         </TopBoxCard>
 

@@ -2482,6 +2482,7 @@ export const tableCodeDomesticRemittanceReadColumn = [
         headerName: 'Inquiry No.',
         field: 'documentNumbers',
         pinned: 'left',
+        maxWidth: 120,
         valueGetter: (params) => {
             const currentRowIndex = params.node.rowIndex;
             const currentValue = params.data.remittanceId;
@@ -2502,9 +2503,14 @@ export const tableCodeDomesticRemittanceReadColumn = [
     {
         headerName: '항목번호',
         field: 'orderDetailIds',
-        pinned: 'left'
+        pinned: 'left',
+        maxWidth: 120,
     },
     {
+        headerName: 'Project No.',
+        field: 'rfqNo',
+        maxWidth: 120,
+    }, {
         headerName: '송금지정일자',
         field: 'remittanceDueDate',
         maxWidth: 120,
@@ -2568,6 +2574,7 @@ export const tableCodeOverseasRemittanceReadColumn = [
         headerName: 'Inquiry No.',
         field: 'documentNumbers',
         pinned: 'left',
+        maxWidth: 120,
         valueGetter: (params) => {
             const currentRowIndex = params.node.rowIndex;
             const currentValue = params.data.remittanceId;
@@ -2588,7 +2595,14 @@ export const tableCodeOverseasRemittanceReadColumn = [
     {
         headerName: '항목번호',
         field: 'orderDetailIds',
-        pinned: 'left'
+        pinned: 'left',
+        maxWidth: 120,
+    },
+    {
+        headerName: 'Project No.',
+        field: 'rfqNo',
+        pinned: 'left',
+        maxWidth: 120,
     },
     {
         headerName: '송금지정일자',
@@ -4039,6 +4053,11 @@ export const deliveryReadColumn = [
     }, {
         headerName: 'Inquiry No.',
         field: 'connectInquiryNo',
+        maxWidth: 120,
+        pinned: 'left',
+    }, {
+        headerName: 'Project No.',
+        field: 'rfqNo',
         maxWidth: 120,
         pinned: 'left',
     }, {
