@@ -116,7 +116,7 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
     const onGridReady = async (params) => {
         gridRef.current = params.api;
 
-        params.api.applyTransaction({add: copyPageInfo?.invoiceDetailInfo.length ? copyPageInfo?.invoiceDetailInfo : []});
+        params.api.applyTransaction({add: copyPageInfo?.invoiceDetailInfo?.length ? copyPageInfo?.invoiceDetailInfo : []});
         setTotalRow(0);
         isGridLoad.current = true;
     };

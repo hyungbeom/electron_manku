@@ -24,9 +24,10 @@ import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import moment from "moment";
 import Spin from "antd/lib/spin";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import {deliveryInfo} from "@/utils/column/ProjectInfo";
+import {DCInfo, deliveryInfo} from "@/utils/column/ProjectInfo";
+import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 
 function DeliveryWrite({copyPageInfo, getPropertyId}:any) {
     const notificationAlert = useNotificationAlert();
@@ -62,16 +63,46 @@ function DeliveryWrite({copyPageInfo, getPropertyId}:any) {
         setTotalRow(selectOrderList?.length ?? 0);
     }, [selectOrderList]);
 
+
     /**
      * @description ag-grid 테이블 초기 rowData 요소 '[]' 초기화 설정
      * @param params ag-grid 제공 event 파라미터
      */
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        params.api.applyTransaction({add: []});
+        params.api.applyTransaction({add: copyPageInfo?.deliveryDetailInfo?.length ? copyPageInfo?.deliveryDetailInfo : []});
         setTotalRow(0);
         isGridLoad.current = true;
     };
+
+
+
+    useEffect(() => {
+
+        if (!isEmptyObj(copyPageInfo)) {
+            setLoading(true);
+            setInfo(getDeliveryInit());
+        } else {
+            // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
+            // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
+
+            // console.log(gridRef.current,'??')
+            if(gridRef?.current?.applyTransaction) {
+                gridManage.resetData(gridRef, copyPageInfo?.deliveryDetailInfo)
+                // console.log(gridRef?.current?.applyTransaction,'?????')
+                // gridRef?.current?.applyTransaction({add: copyPageInfo?.deliveryDetailInfo?.length ? copyPageInfo?.deliveryDetailInfo : []});
+            }
+            const loadData = _.cloneDeep(copyPageInfo);
+            delete loadData.deliveryDetailInfo;
+            setInfo({
+                ...getDeliveryInit(),
+                ...loadData,
+            });
+            // setTableData(copyPageInfo[listType])
+            // setFileList(copyPageInfo?.['attachmentFileList'] ?? []);
+        }
+        setLoading(false);
+    }, [copyPageInfo?._meta?.updateKey]);
 
     /**
      * @description 등록 페이지 > 등록 버튼
@@ -85,7 +116,6 @@ function DeliveryWrite({copyPageInfo, getPropertyId}:any) {
             ..._.cloneDeep(info),
             sendSelectOrderList: selectOrderNos
         }
-        console.log(copyInfo, 'info :::')
         try {
             const res = await getData.post('delivery/addDelivery', copyInfo);
             if (res?.data?.code !== 1) {

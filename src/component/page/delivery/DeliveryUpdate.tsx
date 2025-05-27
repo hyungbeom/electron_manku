@@ -8,18 +8,24 @@ import {TabsProps} from "antd";
 import Tabs from "antd/lib/tabs";
 import ETC from "@/component/delivery/ETC";
 import message from "antd/lib/message";
-import {commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
 import _ from "lodash";
 import Spin from "antd/lib/spin";
 import SearchInfoModal from "@/component/SearchAgencyModal";
-import {DeleteOutlined, ExclamationCircleOutlined, FileDoneOutlined, FormOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined,
+    DeleteOutlined,
+    ExclamationCircleOutlined,
+    FileDoneOutlined,
+    FormOutlined
+} from "@ant-design/icons";
 import TableGrid from "@/component/tableGrid";
 import Button from "antd/lib/button";
 import Popconfirm from "antd/lib/popconfirm";
 import {tableSelectOrderReadColumns} from "@/utils/columnList";
 import moment from "moment/moment";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
-import {deliveryInfo} from "@/utils/column/ProjectInfo";
+import {DCInfo, deliveryInfo} from "@/utils/column/ProjectInfo";
 import {useNotificationAlert} from "@/component/util/NoticeProvider";
 import {Actions} from "flexlayout-react";
 import {deleteDelivery} from "@/utils/api/mainApi";
@@ -344,12 +350,32 @@ function DeliveryUpdate({updateKey, layoutRef, getCopyPage}:any){
         const filterSelectList = selectOrderList.filter(selectOrder =>
             !deleteList.some(deleteItem => deleteItem.orderDetailId === Number(selectOrder.orderDetailId))
         );
+
+        const idList = filterSelectList.map(v=> v.orderDetailId).join(', ');
+        setInfo(v=>{
+            return {
+                ...v, orderDetailIds : idList
+            }
+        })
         setSelectOrderList(filterSelectList);
     }
 
     function deliveryPaperFunc(){
 
     }
+
+    function copyPage() {
+        const copyInfo = _.cloneDeep(info);
+        const allData = [];
+        gridRef.current.forEachNode(node => {
+            allData.push(node.data);
+        });
+
+        copyInfo['deliveryDetailInfo'] = allData;
+        getCopyPage('delivery_write', {...copyInfo, _meta: {updateKey: Date.now()}})
+    }
+
+
 
     return <Spin spinning={loading}>
         <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
@@ -364,9 +390,9 @@ function DeliveryUpdate({updateKey, layoutRef, getCopyPage}:any){
 
             <div style={{flexShrink: 0}}>
                 <MainCard title={'배송 수정'} list={[
-                    {name: <div><FormOutlined style={{paddingRight: 8}}/>송장출력</div>, func: deliveryPaperFunc, type: 'delete'},
                     {name: <div><FormOutlined style={{paddingRight: 8}}/>수정</div>, func: saveFunc, type: 'primary'},
-                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'}
+                    {name: <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>, func: deleteFunc, type: 'delete'},
+                    {name: <div><CopyOutlined style={{paddingRight: 8}}/>복제</div>, func: copyPage, type: 'default'}
                 ]}>
                     <Tabs size={'small'} activeKey={tabNumb} items={items} onChange={tabChange}/>
                 </MainCard>
