@@ -154,7 +154,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
         Object.entries(info).forEach(([key, value]) => {
             formData.append(key, value ?? '');
         });
-        formData.append('selectOrderList',JSON.stringify(selectOrderNos));
+        formData.append('selectOrderList',selectOrderNos);
         formData.append('sendRemittanceList',JSON.stringify(remittanceList));
 
         await saveRemittance({data: formData})
