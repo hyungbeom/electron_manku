@@ -24,7 +24,11 @@ import {DRInfo, TIInfo} from "@/utils/column/ProjectInfo";
 import TableGrid from "@/component/tableGrid";
 import Popconfirm from "antd/lib/popconfirm";
 import Button from "antd/lib/button";
-import {tableOrderReadColumns, tableSelectOrderReadColumns} from "@/utils/columnList";
+import {
+    tableOrderReadColumns,
+    tableSelectOrderReadColumns,
+    tableSelectOrderReadColumnsForTax
+} from "@/utils/columnList";
 import {Actions} from "flexlayout-react";
 
 const listType = 'list';
@@ -600,10 +604,11 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
                     }
                     totalRow={totalRow}
                     gridRef={gridRef}
-                    columns={tableSelectOrderReadColumns}
-                    customType={'Tax'}
+                    columns={tableSelectOrderReadColumnsForTax}
+                    // customType={'Tax'}
                     onGridReady={onGridReady}
                     funcButtons={['agPrint']}
+                    type={'write'}
                     tempFunc={getOrderFile}
                 />
             </div>

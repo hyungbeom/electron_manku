@@ -131,8 +131,6 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                 message.error(v.message)
             }
         })
-
-
     }
 
 
@@ -216,8 +214,6 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                 return acc;
             }, {})
         );
-
-        console.log(grouped,'grouped:')
 
 
 
