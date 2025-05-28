@@ -3,8 +3,6 @@ import {getCookie} from "@/manage/function/cookie";
 import https from 'https';
 
 
-
-
 //DEV
 // export const API_URL = 'https://manku.progist.co.kr/api';
 export const API_URL = 'https://server.progist.co.kr/api';
