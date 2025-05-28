@@ -2,7 +2,7 @@ module.exports = {
     apps: [
         {
             name: "nextjs-app",
-            script: "yarn",
+            script: "node_modules/next/dist/bin/next",
             args: "start",
             env: {
                 PORT: 3000,
@@ -11,7 +11,7 @@ module.exports = {
         },
         {
             name: "nextjs-apps",
-            script: "yarn",
+            script: "node_modules/next/dist/bin/next",
             args: "start",
             env: {
                 PORT: 3001,
