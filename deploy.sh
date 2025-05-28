@@ -22,7 +22,7 @@ fi
 echo "Restarting application with PM2 using ecosystem.config.js..."
 pm2 stop nextjs-app || true
 pm2 delete nextjs-app || true
-pm2 start ecosystem.config.js
+pm2 start ecosystem.config.cjs
 
 # Nginx 재시작
 echo "Restarting Nginx..."
