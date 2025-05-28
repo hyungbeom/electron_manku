@@ -67,29 +67,7 @@ function EstimateUpdate({
     };
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    const [memberList, setMemberList] = useState([]);
 
-    useEffect(() => {
-        getMemberList();
-    }, []);
-
-    async function getMemberList() {
-        // @ts-ignore
-        return await getData.post('admin/getAdminList', {
-            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-            "searchAuthority": null,    // 1: 일반, 0: 관리자
-            "page": 1,
-            "limit": -1
-        }).then(v => {
-            setMemberList(v.data.entity.adminList)
-        })
-    }
-
-    const options = memberList?.map((item) => ({
-        ...item,
-        value: item.adminId,
-        label: item.name,
-    }));
 
     const router = useRouter();
     const [loading, setLoading] = useState(false);
@@ -219,7 +197,7 @@ function EstimateUpdate({
             footer={null}
             onOk={() => setIsPrintModalOpen(false)}>
             <EstimatePaper info={info} pdfRef={pdfRef} pdfSubRef={pdfSubRef} tableRef={tableRef} position={true}
-                           memberList={memberList} maker={info.maker} title={'견적서 출력'} count={count}/>
+                           memberList={adminList} maker={info.maker} title={'견적서 출력'} count={count}/>
         </Modal>
     }
 
@@ -244,7 +222,7 @@ function EstimateUpdate({
         // 유효성 체크
         if(!commonManage.checkValidate(info, estimateInfo['write']['validationList'], setValidate)) return;
 
-        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        const findMember = adminList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
         info['estimateId'] = updateKey['estimate_update']
 
@@ -407,7 +385,7 @@ function EstimateUpdate({
      */
     async function addEstimate() {
         setLoading(true);
-        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        const findMember = adminList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
         info['name'] = findMember['name'];
         info['contactNumber'] = findMember['contactNumber'];
@@ -515,7 +493,7 @@ function EstimateUpdate({
                                         onChange: onChange,
                                         data: info,
                                         validate: validate['managerAdminId'],
-                                        list: memberList?.map((item) => ({
+                                        list: adminList?.map((item) => ({
                                             ...item,
                                             value: item.adminId,
                                             label: item.name,
@@ -733,7 +711,7 @@ function EstimateUpdate({
                         id: 'receiverId',
                         onChange: onChange,
                         data: info,
-                        list: memberList?.map((item) => ({
+                        list: adminList?.map((item) => ({
                             ...item,
                             value: item.adminId,
                             label: item.name,

@@ -12,7 +12,7 @@ import EstimateListModal from "@/component/EstimateListModal";
 import OrderListModal from "@/component/OrderListModal";
 import Button from "antd/lib/button";
 import * as XLSX from 'xlsx';
-import {CopyOutlined, FileExcelOutlined, UploadOutlined} from "@ant-design/icons";
+import {CopyOutlined, UploadOutlined} from "@ant-design/icons";
 import HsCodeListModal from "@/component/HsCodeListModal";
 import _ from "lodash";
 // register Handsontable's modules
@@ -68,7 +68,7 @@ const Table = forwardRef(({
 
 
     const afterRenderer = (td, row, col, prop, value) => {
-        if (["unitPrice", "total", 'net', 'totalNet', "purchasePrice", "totalPurchase", 'quantity', 'receivedQuantity', 'unreceivedQuantity','supplyAmount', 'tax', 'exchange', 'fee'].includes(prop)) {
+        if (["unitPrice", "total", 'net', 'totalNet', "purchasePrice", "totalPurchase", 'quantity', 'receivedQuantity', 'unreceivedQuantity', 'supplyAmount', 'tax', 'exchange', 'fee'].includes(prop)) {
 
             td.style.textAlign = "right"; // 우측 정렬
             td.style.color = "black"; // 텍스트 굵게
@@ -138,7 +138,7 @@ const Table = forwardRef(({
                     if (type === 'rfq_write_column') {
                         const format = Math.floor(parseFloat(change[newValueIndex]) * 100) / 100
                         // hotRef.current.hotInstance.setDataAtCell(row, 4, format);
-4
+                        4
                         hotRef.current.hotInstance.setDataAtCell(row, 7, '회신'); // replyDate 컬럼 업데이트
                         hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
                     }
@@ -403,6 +403,7 @@ const Table = forwardRef(({
         'domestic_agency_write_column', 'domestic_agency_update_column', 'overseas_agency_write_column', 'overseas_agency_update_column',
         'domestic_customer_write_column', 'domestic_customer_update_column', 'overseas_customer_write_column', 'overseas_customer_update_column'
     ]
+
     function handleFileUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -523,7 +524,8 @@ const Table = forwardRef(({
 
 
     return (
-        <div ref={tableContainerRef} className="table-container" style={{width: '100%', overflowX: 'auto', height:'100%'}}>
+        <div ref={tableContainerRef} className="table-container"
+             style={{width: '100%', overflowX: 'auto', height: '100%'}}>
             <div style={{display: 'flex', justifyContent: 'space-between'}}>
                 <div>
                     {
@@ -613,6 +615,7 @@ const Table = forwardRef(({
                 // 🔥 특정 컬럼에 스타일 적용 (수정)
 
                 cells={(row, col, prop) => {
+
                     const totalRowIndex = data.length; // 🔥 마지막 행의 인덱스
                     if (row === totalRowIndex) {
                         return {readOnly: true}; // 🔥 마지막 행은 읽기 전용
@@ -621,6 +624,8 @@ const Table = forwardRef(({
                     if (prop === 'unitPrice' || prop === 'total' || prop === 'net' || prop === 'totalNet') {
                         return {numericFormat: {pattern: '0,0.00'}};
                     }
+                    return {className: 'custom-cell'}
+
                 }}
 
                 afterColumnResize={afterColumnResize}

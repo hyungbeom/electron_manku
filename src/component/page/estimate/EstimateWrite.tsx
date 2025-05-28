@@ -149,7 +149,7 @@ function EstimateWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                             .then(src => {
                                 console.log(src?.data?.entity)
                                 const result = connValue.replace(/^[a-zA-Z]+/, match => match.toUpperCase());
-                                console.log(estimateRequestDetail.folderId,':::')
+                                console.log(estimateRequestDetail.folderId,':??::')
                                 setInfo({
                                     ...getEstimateInit(),
                                     ...estimateRequestDetail,

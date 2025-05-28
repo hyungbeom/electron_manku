@@ -51,25 +51,12 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     };
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-    const [memberList, setMemberList] = useState([]);
 
-    useEffect(() => {
-        getMemberList();
-    }, []);
 
-    async function getMemberList() {
-        // @ts-ignore
-        return await getData.post('admin/getAdminList', {
-            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-            "searchAuthority": null,    // 1: 일반, 0: 관리자
-            "page": 1,
-            "limit": -1
-        }).then(v => {
-            setMemberList(v.data.entity.adminList)
-        })
-    }
 
-    const options = memberList?.map((item) => ({
+    const { userInfo, adminList } = useAppSelector((state) => state.user);
+
+    const options = adminList?.map((item) => ({
         ...item,
         value: item.adminId,
         label: item.name,
@@ -82,7 +69,6 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     const [customerData, setCustomerData] = useState<any>(printEstimateInitial)
     const [isModalOpen, setIsModalOpen] = useState({event1: false, event2: false, event3: false});
 
-    const userInfo = useAppSelector((state) => state.user.userInfo);
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
@@ -211,8 +197,8 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         //유효성 체크
         if (!commonManage.checkValidate(info, orderInfo['write']['validationList'], setValidate)) return;
 
-        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
-        console.log(memberList, 'memberList')
+        const findMember = adminList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        console.log(adminList, 'memberList')
         console.log(findMember, 'findMember')
         console.log(info['managerAdminId'], 'info[\'managerAdminId\']')
         info['managerAdminName'] = findMember['name'];
@@ -433,7 +419,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             <div>
                                 <div style={{fontSize: 12, fontWeight: 700, paddingBottom: 5.5}}>담당자</div>
                                 <select name="languages" id="managerAdminId" onChange={e => {
-                                    const member = memberList.find(v => v.adminId === parseInt(e.target.value))
+                                    const member = adminList.find(v => v.adminId === parseInt(e.target.value))
                                     const managerInfo = {
                                         // managerId: info?.agencyCode?.toUpperCase().startsWith('K') ? member?.name : member?.adminName,
                                         managerAdminId: member?.adminId,

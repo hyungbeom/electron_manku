@@ -459,3 +459,16 @@ td {
 /*#total{*/
 /*    background-color: red;*/
 /*}*/
+
+
+/* CSS 파일에 추가 */
+.htCore td.custom-cell {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-height: 14px !important; /* rowHeights와 맞춰서 강제 높이 제한 */
+    height: 14px !important;
+    line-height: 14px !important;
+    padding: 0 5px !important; /* 필요 시 패딩 조정 */
+    padding-top: 5px !important;  /* 위쪽 여백을 4px 줌 */
+}
