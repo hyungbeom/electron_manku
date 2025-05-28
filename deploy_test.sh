@@ -20,8 +20,8 @@ fi
 
 # PM2로 애플리케이션 재실행
 echo "Restarting application with PM2..."
-pm2 stop nextjs-app || true  # 기존 프로세스가 있으면 중지
-pm2 start --name "nextjs-app" -- bash -c "PORT=3001 yarn start"
+pm2 stop nextjs-apps || true  # 기존 프로세스가 있으면 중지
+pm2 start --name "nextjs-apps" -- bash -c "PORT=3001 yarn start"
 
 # Nginx 재시작
 echo "Restarting Nginx..."
