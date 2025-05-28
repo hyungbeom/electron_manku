@@ -4,8 +4,8 @@ import https from 'https';
 
 
 //DEV
-// export const API_URL = 'https://manku.progist.co.kr/api';
-export const API_URL = 'https://server.progist.co.kr/api';
+export const API_URL = 'http://localhost:8080/api';
+// export const API_URL = 'https://server.progist.co.kr/api';
 // export const API_URL = 'http://175.125.92.183:8080/api';
 // export const API_URL = 'http://49.175.200.55:3002/api';
 // export const API_URL = process.env.NODE_ENV === 'development' ? 'http://49.175.200.55:3002/api' : 'https://manku.progist.co.kr';
