@@ -138,7 +138,7 @@ const Table = forwardRef(({
                     if (type === 'rfq_write_column') {
                         const format = Math.floor(parseFloat(change[newValueIndex]) * 100) / 100
                         // hotRef.current.hotInstance.setDataAtCell(row, 4, format);
-                        4
+
                         hotRef.current.hotInstance.setDataAtCell(row, 7, '회신'); // replyDate 컬럼 업데이트
                         hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
                     }

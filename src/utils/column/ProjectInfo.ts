@@ -816,9 +816,10 @@ export const TIInfo = {
         managerAdminId: null,                                // 담당자 id
         managerAdminName: null,                              // 담당자 이름
         invoiceId: '',                                       // 해외송금 여부
-        invoiceDueDate: '',                                  // 발행지정일자
+        invoiceDueDate: moment().format('YYYY-MM-DD'),                                  // 발행지정일자
         invoiceRequestDate: moment().format('YYYY-MM-DD'),   // 발행요청일자
         rfqNo: '',                                           // 프로젝트 No.
+        deleteList: [],                                           // 프로젝트 No.
         yourPoNo: '',                                        // 고객사 발주서 No.
         customerName: '',                                    // 고객사명
         sendEmail: '',                                       // 발행 이메일 주소
@@ -1346,3 +1347,99 @@ export const hsCodeInfo = {
         hsCode: ""  // hs-code
     }
 }
+
+
+
+
+
+
+
+export const TaxInfo = {
+    write: {
+        columnWidth: [80, 80, 80, 80, 80, 80, 80,80,80,80,80,80,80,80,80,80,80],
+        column: ['작성일자', 'Inquiry No.', 'Project No.', '고객사명', 'Maker', 'Item', 'Model','단위','화폐','매입 단가','매입총액','수량','매출 단가','매출 총액','예상납기','견적서담당자','비고란'],
+        columnList: [
+            {data: "writtenDate", type: "date"},
+            {data: "documentNumberFull", type: "text"},
+            {data: "rfqNo", type: "text"},
+            {data: "customerName", type: "text"},
+            {data: "maker", type: "text"},
+            {data: "item", type: "text"},
+            {data: "model", type: "text"},
+            {
+                data: "unit",
+                type: "autocomplete",
+                source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
+            },
+            {data: "currency", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
+            {data: "unitPrice", type: "numeric", pattern: {pattern: 0.00}},
+            {data: "totalPrice", type: "numeric", pattern: {pattern: 0.00}},
+            {data: "quantity", type: "numeric"},
+            {data: "net", type: "numeric", pattern: {pattern: 0.00}},
+            {data: "totalNet", type: "numeric", pattern: {pattern: 0.00}},
+            {data: "delivery", type: "date"},
+            {data: "estimateManager", type: "text"},
+            {data: "remarks", type: "text"},
+
+
+
+        ],
+        defaultData: {
+            writtenDate : "",
+            documentNumberFull : "",
+            rfqNo : "",
+            customerName : "",
+            maker : "",
+            item : "",
+            model : "",
+            unit : "",
+            currency : "",
+            unitPrice : "",
+            totalPrice : "",
+            quantity : 0,
+            net : "",
+            totalNet : "",
+            delivery : "",
+            estimateManager : "",
+            remarks : ""
+        }, mapping: {
+            // "remittanceDueDate": '송금 지정 일자',
+            // "remittanceRequestDate": '송금 요청 일자',
+            // "supplyAmount": '공급가액',
+            // "tax": "부가세",
+            // "total": '합계',
+            // "sendStatus": '송금 상태',
+            // "invoiceStatus": '계산서 발행 여부',
+        },
+        excelExpert: (v, i) => {
+            v['totalPrice'] = `=L${i + 1}*J${i + 1}`
+            v['totalNet'] = `=L${i + 1}*M${i + 1}`
+            return v
+        },
+        totalList: {
+            "quantity": '=SUM(L1:L100)',
+            "unitPrice": '=SUM(J1:J100)',
+            "totalPrice": '=SUM(K1:K100)',
+            "totalNet": '=SUM(N1:N100)',
+            "net": '=SUM(M1:M100)',
+        },
+        type: 'write'
+    },
+    defaultInfo: {
+        writtenDate: moment().format('YYYY-MM-DD'),   // 작성일
+        createdId: null,                              // 작성자 id
+        createdBy: null,                              // 작성자 이름
+        managerAdminId: null,                         // 담당자 id
+        managerAdminName: null,                       // 담당자 이름
+        remittanceId: '',                             // 송금 pk
+        customerName: '',                             // 고객사
+        agencyName: '',                               // 매입처
+        connectInquiryNo: '',                         // 발주서 no 여러개
+        orderDetailIds: '',                           // 발주서 항목번호 여러개 (orderDetailId)
+        totalAmount: '',                              // 총액
+        partialRemittance: '',                        // 부분송금액
+        balance: '',                                  // 합계
+        partialRemittanceStatus: '',                  // 부분 송금 진행 여부
+        remarks: '',                                  // 비고
+    },
+};

@@ -145,13 +145,21 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
     async function saveFunc() {
         if (!selectOrderList?.length) return message.warn('발주서 데이터가 1개 이상이여야 합니다.');
 
-        const selectOrderNos = selectOrderList.map(item => Number(item.orderDetailId));
+        const allData = [];
+        gridRef.current.forEachNode(node => {
+            allData.push(node.data);
+        });
+        const selectOrderNos = allData.map(item => item.orderDetailId)
+        // @ts-ignore
+        const documentNumberFullList = [...new Set(allData.map((item:any) => item.documentNumberFull))].join('\n');
         const copyInfo = {
             ...info,
+            selectOrderList: JSON.stringify(selectOrderNos),
             supplyAmount: Number(String(info?.supplyAmount).replace(/,/g, '')),
-            selectOrderList: JSON.stringify(selectOrderNos)
+            invoiceDetailList: allData,
+            documentNumberFullList: documentNumberFullList
         }
-        console.log(copyInfo, 'info :::')
+
         setLoading(true);
         try {
             const res = await getData.post('invoice/updateInvoice', copyInfo);
@@ -324,10 +332,17 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
         if (gridRef.current.getSelectedRows().length < 1) {
             return message.error('삭제할 발주서 정보를 선택해주세요.');
         }
-        const deleteList = gridManage.getFieldDeleteList(gridRef, {orderDetailId: 'orderDetailId'});
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {invoiceDetailId: 'invoiceDetailId'});
         const filterSelectList = selectOrderList.filter(selectOrder =>
-            !deleteList.some(deleteItem => deleteItem.orderDetailId === Number(selectOrder.orderDetailId))
+            !deleteList.some(deleteItem => deleteItem.invoiceDetailId === Number(selectOrder.invoiceDetailId))
         );
+
+        const invoiceDetailIdList = deleteList.map(v=> v.invoiceDetailId)
+
+        setInfo(v=>{
+            return {...v, deleteList : [...v.deleteList, ...invoiceDetailIdList]}
+        })
+
         setSelectOrderList(filterSelectList);
 
         // Inquiry No. 정리
@@ -382,6 +397,17 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
         copyInfo['invoiceDetailInfo'] =allData;
 
         getCopyPage('tax_invoice_write', {...copyInfo, _meta: {updateKey: Date.now()}})
+    }
+
+    function updateFunc(){
+        let supplyAmount = 0;
+        gridRef.current.forEachNode(node => {
+            const totalNet = parseFloat(node.data.net) * parseFloat(node.data.quantity);
+            supplyAmount += !isNaN(totalNet) ? totalNet : 0
+        });
+        setInfo(v=>{
+            return {...v, supplyAmount : supplyAmount.toLocaleString(), tax : (supplyAmount * 0.1).toLocaleString(), totalAmount : (supplyAmount + (supplyAmount * 0.1)).toLocaleString()}
+        })
     }
 
     return <Spin spinning={loading}>
@@ -605,11 +631,12 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
                     totalRow={totalRow}
                     gridRef={gridRef}
                     columns={tableSelectOrderReadColumnsForTax}
-                    // customType={'Tax'}
+                    customType={'Tax'}
                     onGridReady={onGridReady}
                     funcButtons={['agPrint']}
                     type={'write'}
                     tempFunc={getOrderFile}
+                    updateFunc={updateFunc}
                 />
             </div>
     </Spin>

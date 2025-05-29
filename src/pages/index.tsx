@@ -10,7 +10,7 @@ import {getData} from "@/manage/function/api";
 import {getCookie, setCookies} from "@/manage/function/cookie";
 import message from "antd/lib/message";
 
-export default function Home(props) {
+export default function Home() {
 
 
     const router = useRouter();
@@ -25,12 +25,7 @@ export default function Home(props) {
         // window.electron?.resizeWindow(600, 868)
     }, []);
 
-    useEffect(() => {
-        if (props?.message) {
-            return message.error(props?.message)
-        }
 
-    }, [])
     return (
         <div>
             <video style={{
@@ -133,12 +128,12 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
 
     let message = ''
 
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
+    await initialServerRouter(ctx, store);
     const {query} = ctx; // URL 쿼리 파라미터
     const {code, redirect_to} = query;
 
     if (code) {
+
         const codeVerifier = getCookie(ctx, "code_verifier");
 
         try {
@@ -162,34 +157,23 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
                     };
                 }
 
-            } else if (codeCheck === -10007) {
-                message = v.data.message;
-            } else if (codeCheck === -10005) {
-                message = v.data.message;
             }
-            console.log(message,'::::message::::')
-
         } catch (error) {
             console.error("Microsoft Login failed:", error);
             // 필요시 로그인 실패 처리를 할 수 있습니다.
         }
-    } else if (userInfo) {
+    }else{
+        const state = store.getState();
 
-        if (codeInfo >= 0) {
+        // userInfo 추출
+        const userInfo = state.user.userInfo;
+        if(userInfo?.accessToken){
             return {
                 redirect: {
                     destination: '/main?first=true',
-                    permanent: false,
                 },
             };
         }
-        store.dispatch(setUserInfo(userInfo));
-
-    } else {
-        return {
-            props: {message: message},
-        };
     }
-
 
 });
