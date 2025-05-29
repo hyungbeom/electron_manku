@@ -97,8 +97,10 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
         if (!commonManage.checkValidate(info, sourceInfo['write']['validationList'], setValidate)) return;
 
         if (tableData?.length > 0) {
-            if (info.unit !== tableData?.[0].unit) {
-                return message.warn(<>기존 재고와 단위가 일치하지 않습니다.<br /> (기존 재고 단위 : "{tableData?.[0].unit}")</>)
+            console.log(tableData?.[tableData?.length -1]?.unit,':::::')
+            console.log(info.unit,'info.unit')
+            if (info.unit !== tableData?.[tableData?.length -1].unit) {
+                return message.warn(<>기존 재고와 단위가 일치하지 않습니다.<br /> (기존 재고 단위 : "{tableData?.[tableData?.length -1].unit}")</>)
             }
         }
         const copyInfo = {
@@ -219,6 +221,7 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
                 return;
             }
             const inventoryItemList = res?.data?.entity ?? [];
+            console.log(inventoryItemList,'????')
             // History 리스트에서 잔량 계산
             let sum = 0;
             const sourceHistoryList = [...inventoryItemList]
@@ -233,7 +236,7 @@ function SourceWrite({copyPageInfo, getPropertyId}: any) {
 
             setInfo(prev => ({
                 ...prev,
-                inventoryId: sourceHistoryList?.[0]?.inventoryId ?? '',
+                inventoryId: sourceHistoryList?.[sourceHistoryList?.length -1]?.inventoryId ?? '',
             }))
             setTableData(sourceHistoryList);
             setTotalRow(sourceHistoryList.length);

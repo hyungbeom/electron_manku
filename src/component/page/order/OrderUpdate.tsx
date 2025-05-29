@@ -31,6 +31,7 @@ import _ from "lodash";
 import {Actions} from "flexlayout-react";
 import TransactionStatementHeader from "@/component/TransactionStatement/TransactionStatementHeader";
 import {Switch} from "antd";
+import Button from "antd/lib/button";
 
 const listType = 'orderDetailList'
 
@@ -364,6 +365,34 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
         })
     }
 
+    function getMergePdf(){
+        console.log(info.folderId,'info.folderId:')
+        getData.post('common/getMergePdf', {folderId : info.folderId}).then(v => {
+
+            if(v?.data.code === 1 && v?.data?.entity){
+
+
+                const byteCharacters = atob(v?.data?.entity);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+
+// Blob 생성
+                const blob = new Blob([byteArray], { type: 'application/pdf' });
+
+// Blob URL 생성
+                const blobUrl = URL.createObjectURL(blob);
+
+// 새 탭 또는 팝업으로 PDF 열기
+                window.open(blobUrl);
+
+            }
+        })
+
+    }
+
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
         {(isModalOpen['agencyCode'] || isModalOpen['customerName']) &&
@@ -583,7 +612,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
                             </Panel>
                             <PanelResizeHandle/>
                             <Panel defaultSize={sizes[4]} minSize={5}>
-                                <BoxCard title={'드라이브 목록'}
+                                <BoxCard title={<>드라이브 목록 <Button size={'small'} style={{fontSize : 10, float : 'right'}} type={'primary'} onClick={getMergePdf}>폴더내 내용</Button></>}
                                          disabled={!userInfo['microsoftId']}>
                                     <DriveUploadComp fileList={fileList} setFileList={setFileList} fileRef={fileRef}
                                                      ref={uploadRef}
