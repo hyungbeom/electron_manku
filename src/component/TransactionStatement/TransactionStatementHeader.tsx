@@ -443,6 +443,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
                                             .map((line, idx) => (
                                                 <div key={idx}>{line}</div>
                                             ))}
+
                                         {/*<TextArea autoSize={{minRows: 1, maxRows: 6}} style={{*/}
                                         {/*    resize: 'none',*/}
                                         {/*    border: 'none',*/}
