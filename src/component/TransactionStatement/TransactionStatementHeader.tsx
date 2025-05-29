@@ -437,16 +437,21 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
                                             style={{border: 'none', textAlign: 'center', fontSize: 12, fontWeight: 700}}
                                             defaultValue={domesticInfo?.businessType}/></th>
                                     <th style={headerStyle}>종목</th>
-                                    <th style={cellStyle}>
-                                        <TextArea autoSize={{minRows: 1, maxRows: 6}} style={{
-                                            resize: 'none',
-                                            border: 'none',
-                                            textAlign: 'center',
-                                            fontSize: 12,
-                                            fontWeight: 700
-                                        }}
-                                                  value={domesticInfo?.businessItem}/></th>
-
+                                    <th style={{width: 150, wordWrap: 'break-word', whiteSpace: 'pre-wrap'}}>
+                                        {(domesticInfo?.businessItem || '')
+                                            .split('\n')
+                                            .map((line, idx) => (
+                                                <div key={idx}>{line}</div>
+                                            ))}
+                                        {/*<TextArea autoSize={{minRows: 1, maxRows: 6}} style={{*/}
+                                        {/*    resize: 'none',*/}
+                                        {/*    border: 'none',*/}
+                                        {/*    textAlign: 'center',*/}
+                                        {/*    fontSize: 12,*/}
+                                        {/*    fontWeight: 700*/}
+                                        {/*}}*/}
+                                        {/*          value={domesticInfo?.businessItem}/> */}
+                                        </th>
                                 </tr>
                                 </thead>
 
