@@ -383,36 +383,6 @@ function StoreUpdate({updateKey, getCopyPage}:any) {
     </Spin>
 }
 
-// @ts-ignored
-export const getServerSideProps = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-    const {query} = ctx;
-
-    const {orderStatusId} = query;
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    }
-    store.dispatch(setUserInfo(userInfo));
-
-
-    const result = await getData.post('order/getOrderStatusDetail', {orderStatusId: orderStatusId});
-
-
-    const dataInfo = result?.data?.entity?.orderStatusDetail
-    // result?.data?.entity?.estimateRequestList
-    return {
-        props: {dataInfo: dataInfo ? dataInfo : null}
-    }
-
-})
 
 export default memo(StoreUpdate, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);

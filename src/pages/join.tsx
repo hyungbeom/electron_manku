@@ -234,25 +234,18 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
 
     let message = ''
 
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-    if (codeInfo >= 0) {  // 조건을 좀 더 직관적으로 변경
+     await initialServerRouter(ctx, store);
+
+
+    const state = store.getState();
+
+    // userInfo 추출
+    const userInfo = state.user.userInfo;
+    if(userInfo?.accessToken){
         return {
             redirect: {
                 destination: '/main',
-                permanent: false,
             },
         };
     }
-
-    store.dispatch(setUserInfo(userInfo));
-
-
-    const {query} = ctx; // URL 쿼리 파라미터
-
-
-    return {
-        props: {code: query?.code ? query?.code : null},
-    };
-
-
 });

@@ -171,28 +171,6 @@ function StoreRead({ getPropertyId, getCopyPage}:any) {
 }
 
 
-export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
-
-        let result = await getOrderStatusList({data: storeRealInitial});
-
-        return {
-            props: {dataInfo: result ? result : null}
-        }
-    }
-})
 
 export default memo(StoreRead, (prevProps, nextProps) => {
     return _.isEqual(prevProps, nextProps);
