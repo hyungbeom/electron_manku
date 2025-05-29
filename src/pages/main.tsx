@@ -110,7 +110,7 @@ export default function Main() {
                 })
             }
         })
-        const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
+        const socket = new SockJS(`https://server.progist.co.kr/ws?userId=${userInfo.adminId}`);
         // const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
 
 
