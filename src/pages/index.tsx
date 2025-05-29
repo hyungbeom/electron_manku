@@ -145,7 +145,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
             const v = await getData.post('account/microsoftLogin', {
                 authorizationCode: code,
                 codeVerifier: codeVerifier,
-                redirectUri: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://manku.progist.co.kr'
+                redirectUri: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://server.progist.co.kr'
             });
 
 
