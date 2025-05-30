@@ -410,6 +410,22 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
         })
     }
 
+    function copyRows(){
+        const list = gridRef.current.getSelectedRows();
+        const text = jsonToClipboardTable(list);
+        navigator.clipboard.writeText(text).then(() => {
+            alert("엑셀 붙여넣기용 데이터가 복사되었습니다!");
+        });
+    }
+    function jsonToClipboardTable(data) {
+        if (data.length === 0) return "";
+
+        const headers = Object.keys(data[0]);
+        const rows = data.map(obj => headers.map(h => obj[h]).join("\t"));
+        return rows.join("\n"); // 헤더 제거
+    }
+
+
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'tax_invoice_update'}/>
         <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
@@ -618,7 +634,8 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
                 </MainCard>
                 {/*@ts-ignored*/}
                 <TableGrid
-                    deleteComp={
+                    deleteComp={<>
+                       <Button size={'small'} style={{fontSize : 11}} type={'primary'} onClick={copyRows} >복사</Button>
                         <Popconfirm
                             title="삭제하시겠습니까?"
                             onConfirm={confirm}
@@ -627,6 +644,7 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
                                 <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
                             </Button>
                         </Popconfirm>
+                    </>
                     }
                     totalRow={totalRow}
                     gridRef={gridRef}

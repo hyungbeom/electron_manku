@@ -357,7 +357,9 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
 
 
     function alertConfirm() {
-        getData.post('order/replyStatusConfirm', updateKey['order_update']).then(v => {
+
+        const member = adminList.find(v => v.adminId === parseInt(info.managerAdminId))
+        getData.post('order/replyStatusConfirm', {pk :updateKey['order_update'], receiverEmail : member.email, documentNumberFull : info.documentNumberFull, customerName : info.customerName}).then(v => {
             message.success({
                 content: '메일회신확인 완료',
                 duration: 2, // 3초 후 사라짐

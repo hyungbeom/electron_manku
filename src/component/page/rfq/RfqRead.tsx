@@ -204,6 +204,7 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
                 managerAdminName: "김민국",
                 detailList: list  // 이건 배열
             }
+
         ];
 
 
