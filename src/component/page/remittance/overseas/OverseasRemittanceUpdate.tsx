@@ -393,7 +393,7 @@ export default function OverseasRemittanceUpdate({ updateKey, layoutRef, getCopy
     return <Spin spinning={loading}>
         {/*<div style={{height: 'calc(100vh - 90px)'}}>*/}
             <PanelSizeUtil groupRef={groupRef} storage={'overseas_remittance_update'}/>
-            <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
+            <SearchInfoModal  infoRef={infoRef} setInfo={setSelectOrderList}
                              open={isModalOpen}
                              setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
 

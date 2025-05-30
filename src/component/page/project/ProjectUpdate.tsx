@@ -429,7 +429,7 @@ function ProjectUpdate({
     return <Spin spinning={loading}>
         <EstimateModal/>
         <PanelSizeUtil groupRef={groupRef} storage={'project_update'}/>
-        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+        <SearchInfoModal  infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
         <>

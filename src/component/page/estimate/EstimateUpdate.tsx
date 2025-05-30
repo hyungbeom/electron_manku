@@ -451,7 +451,7 @@ function EstimateUpdate({
 
     return <div style={{overflow: 'hidden'}}><Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'estimate_update'}/>
-        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+        <SearchInfoModal  infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
         <EstimateModal/>

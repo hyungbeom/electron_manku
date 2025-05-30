@@ -399,7 +399,7 @@ export default function DomesticRemittanceUpdate({updateKey, layoutRef, getCopyP
     return <Spin spinning={loading}>
         {/*<div style={{height: 'calc(100vh - 90px)'}}>*/}
         <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_update'}/>
-        <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
+        <SearchInfoModal  infoRef={infoRef} setInfo={setSelectOrderList}
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
 
@@ -554,6 +554,13 @@ export default function DomesticRemittanceUpdate({updateKey, layoutRef, getCopyP
                                         {value: '진행중', title: '진행중'},
                                         {value: '', title: '해당없음'}
                                     ]
+                                })}
+                                {inputForm({
+                                    title: '계좌번호',
+                                    id: 'bankAccountNumber',
+
+                                    onChange: onChange,
+                                    data: info,
                                 })}
                             </BoxCard>
                         </Panel>

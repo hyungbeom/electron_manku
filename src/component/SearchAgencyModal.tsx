@@ -16,8 +16,8 @@ export default function SearchInfoModal({
                                             open,
                                             setIsModalOpen,
                                             infoRef,
-                                            info,
-                                            setInfo,
+
+                                            setInfo={},
                                             gridRef = null,
                                             type = '',
                                             compProps,
@@ -236,6 +236,7 @@ export default function SearchInfoModal({
      * @param params
      */
     function onRowClicked(params) {
+
         const modalName = Object.keys(open).find(key => open[key]);
 
         if (modalName === 'connectInquiryNoForSource') {

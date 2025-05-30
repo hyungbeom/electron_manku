@@ -428,7 +428,7 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'tax_invoice_update'}/>
-        <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
+        <SearchInfoModal  infoRef={infoRef} setInfo={setSelectOrderList}
                              open={isModalOpen}
                              setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
 

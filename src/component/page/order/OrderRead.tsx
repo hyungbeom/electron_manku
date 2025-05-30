@@ -50,7 +50,7 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
         gridRef.current = params.api;
         await searchOrder({data: orderReadInitial}).then(v => {
             params.api.applyTransaction({add: v?.data});
-            setTotalRow(v.pageInfo.totalRow)
+            setTotalRow(v?.data?.length)
             setLoading(false)
         })
     };
@@ -77,7 +77,7 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
             copyData['searchDocumentNumber'] = copyData?.searchDocumentNumber.replace(/\s/g, "").toUpperCase();
             await searchOrder({data: {...copyData, "page": 1, "limit": -1}}).then(v => {
                 gridManage.resetData(gridRef, v.data);
-                setTotalRow(v.pageInfo.totalRow)
+                setTotalRow(v.data?.length)
                 setLoading(false)
             })
                 .finally(() => {

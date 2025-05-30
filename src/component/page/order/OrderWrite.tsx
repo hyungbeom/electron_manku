@@ -378,7 +378,7 @@ function OrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_write'}/>
         {(isModalOpen['event1'] || isModalOpen['agencyCode_domestic'] || isModalOpen['event2'] || isModalOpen['customerName']) &&
-            <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+            <SearchInfoModal infoRef={infoRef} setInfo={setInfo}
                              open={isModalOpen}
 
                              setIsModalOpen={setIsModalOpen}/>}

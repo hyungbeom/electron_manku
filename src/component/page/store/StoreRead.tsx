@@ -17,6 +17,7 @@ import message from "antd/lib/message";
 import Spin from "antd/lib/spin";
 import ReceiveComponent from "@/component/ReceiveComponent";
 import StoreWrite from "@/component/page/store/StoreWrite";
+import {getData} from "@/manage/function/api";
 
 
 function StoreRead({ getPropertyId, getCopyPage}:any) {
@@ -33,10 +34,15 @@ function StoreRead({ getPropertyId, getCopyPage}:any) {
 
     const onGridReady = async (params) => {
         gridRef.current = params.api;
-        await getOrderStatusList({data: storeRealInitial}).then(v => {
-            params.api.applyTransaction({add: v?.data});
-            setTotalRow(v.pageInfo.totalRow)
+        await getData.post('inbound/getInboundListInfo',{}).then(v => {
+            console.log(v,':::')
+            const {code, entity} = v?.data;
+            if(code === 1){
+                params.api.applyTransaction({add: entity?.inboundList});
+                setTotalRow(entity?.inboundList?.length)
+            }
         })
+
     };
 
 

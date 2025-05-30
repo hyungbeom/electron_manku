@@ -398,7 +398,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
         {(isModalOpen['agencyCode'] || isModalOpen['customerName']) &&
-            <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+            <SearchInfoModal  infoRef={infoRef} setInfo={setInfo}
                              open={isModalOpen}
 
                              setIsModalOpen={setIsModalOpen}/>}

@@ -370,7 +370,7 @@ export default function OverseasRemittanceWrite({copyPageInfo, getPropertyId}: a
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'overseas_remittance_write'}/>
-        <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
+        <SearchInfoModal  infoRef={infoRef} setInfo={setSelectOrderList}
                              open={isModalOpen}
                              setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
 

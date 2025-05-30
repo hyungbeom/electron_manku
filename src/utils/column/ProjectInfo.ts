@@ -484,16 +484,16 @@ export const orderInfo = {
 
 export const storeInfo = {
     write: {
-        columnWidth: [220, 50, 50, 50, 45, 50, 120, 120, 120, 120, 80, 50, 50, 50, 50, 50, 50, 50, 50, 50],
+        columnWidth: [50, 50, 50, 50, 45, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50],
         column: [
             "Inquiry No.",
-            "세부항목 번호",
             "매입처명",
             "고객사명",
+            "결제조건",
             "환율",
             "발주일자",
             "송금일자",
-            "수량",
+            "부분입고여부",
             "금액",
             "환폐단위",
             "원화환산금액",
@@ -505,97 +505,98 @@ export const storeInfo = {
             "계산서 발행일자",
             "결제 여부",
             "선수금",
-            "비고"
+            "세부항목 번호"
         ],
         columnList: [
-            {data: "orderDocumentNumberFull", type: "text"},
-            {data: "itemDetailNo", type: "numeric"},
-            {data: "agencyName", type: "numeric"},
-            {data: "customerName", type: "numeric", readOnly: true},
-            {
-                data: "exchangeRate",
-                type: "autocomplete",
-                source: ['ea', 'Set', 'Pack', 'Can', 'Box', 'MOQ', 'Meter', 'Feet', 'Inch', 'Roll', 'g', 'kg', 'oz']
-            },
-            {data: "orderDate", type: "autocomplete", source: ['KRW', 'USD', 'EUR', 'JPY', 'GBP']},
-            {data: "remittanceDate", type: "numeric"},
-            {data: "quantity", type: "numeric"},
-            {data: "amount", type: "numeric"},
-            {data: "currencyUnit", type: "numeric"},
-            {data: "returnAmount", type: "numeric"},
-            {data: "commissionFee", type: "text"},
-            {data: "salesAmount", type: "text"},
-            {data: "salesAmountVat", type: "text"},
-            {data: "receiptDate", type: "text"},
-            {data: "deliveryDate", type: "text"},
-            {data: "", type: "text"},
-            {data: "paymentStatus", type: "text"},
-            {data: "advancePayment", type: "text"},
-            {data: "remarks", type: "text"},
+            {data: "documentNumberFull", type: "text"},      // 문서번호
+            {data: "agencyName", type: "text"},              // 매입처
+            {data: "customerName", type: "text"},            // 고객사
+            {data: "paymentTerms", type: "text"},            // 결제조건
+            {data: "exchange", type: "numeric", numericFormat: {pattern: '0.0000'}}, // 환율
+            {data: "writtenDate", type: "date", dateFormat: 'YYYY-MM-DD', correctFormat: true}, // 발주일자
+            {data: "requestStartDate", type: "date", dateFormat: 'YYYY-MM-DD', correctFormat: true}, // 송금일자
+            {data: "PartialInbound", type: "text"},          // 부분입고
+            {data: "amount", type: "numeric", numericFormat: {pattern: '0,0.00'}},    // 금액
+            {data: "currency", type: "text"},                // 화폐단위
+            {data: "krw", type: "numeric", numericFormat: {pattern: '0,0.00'}},       // 원화환산금액
+            {data: "krwVat", type: "numeric", numericFormat: {pattern: '0,0.00'}},    // 원화환산금액(vat)
+            {data: "inboundDate", type: "date", dateFormat: 'YYYY-MM-DD', correctFormat: true}, // 입고일자
+            {data: "outboundDate", type: "date", dateFormat: 'YYYY-MM-DD', correctFormat: true}, // 출고일자
+            {data: "invoiceDate", type: "date", dateFormat: 'YYYY-MM-DD', correctFormat: true},  // 계산서 발행일자
+            {data: "paymentStatus", type: "text"},           // 결제여부
+            {data: "paymentMethod", type: "text"},           // 선수금
+            {data: "orderDetailId", type: "numeric"}         // 세부항목 번호
         ],
         defaultData: {
-            "orderDocumentNumberFull": "",
-            "itemDetailNo": "",
-            "agencyName": "",
-            "customerName": "",
-            "exchangeRate": "",
-            "orderDate": "",
-            "remittanceDate": "",
-            "quantity": "",
-            "amount": "",
-            "currencyUnit": "",
-            "returnAmount": "",
-            "commissionFee": "",
-            "salesAmount": "",
-            "salesAmountVat": "",
-            "receiptDate": "",
-            "deliveryDate": "",
-            "": "",
-            "paymentStatus": "",
-            "advancePayment": "",
-            "remarks": ""
+            "documentNumberFull": "",       //문서번호
+            "agencyName": "",            //매입처
+            "customerName": "",          //고객사
+            "paymentTerms": "",        //결제조건
+            "exchange": "",         //환율
+            "writtenDate": "",       //발주일자
+            "requestStartDate": "",   //송금일자
+            "PartialInbound": "",   //부분입고
+            "amount": "",      //금액
+            "currency": "",   //화폐단위
+            "krw": "",    //원화환산금액
+            "tax": "",    // 수수료
+            "saleAmount": "",    // 판매금액
+            "saleVatAmount": "",    // 판매금액(vat)
+            "inboundDate": "",  // 입고일자
+            "outboundDate": "",  // 출고일자
+            "invoiceDate": "",  //계산서 발행일자
+            "paymentStatus": "",  //결제여부
+            "paymentMethod": "",  //선수금
+            "orderDetailId": "",  //세부항목 번호
         },
         excelExpert: (v, i) => {
-            v['amount'] = `=H${i + 1} -C${i + 1}`
-            v['total'] = `=B${i + 1}*G${i + 1}`
-            v['totalNet'] = `=B${i + 1}*I${i + 1}`
+            // v['amount'] = `=H${i + 1} -C${i + 1}`
+            // v['total'] = `=B${i + 1}*G${i + 1}`
+            // v['totalNet'] = `=B${i + 1}*I${i + 1}`
             return v
         },
         totalList: {
-            "model": "",           // Model
-            "quantity": '=SUM(B1:B1000)',              // 수량
-            "receivedQuantity": '=SUM(C1:C1000)',
-            "unreceivedQuantity": '=SUM(D1:D1000)',
-            "unit": '',               // 단위
-            "currency": '',
-            "net": '=SUM(G1:G1000)',            // 매입단가
-            "total": '=SUM(H1:H1000)',            // 매입단가
-            "unitPrice": '=SUM(I1:I1000)',
-            "totalNet": '=SUM(J1:J1000)',            // 매입단가
-            "hscode": '',
+            // "model": "",           // Model
+            // "quantity": '=SUM(B1:B1000)',              // 수량
+            // "receivedQuantity": '=SUM(C1:C1000)',
+            // "unreceivedQuantity": '=SUM(D1:D1000)',
+            // "unit": '',               // 단위
+            // "currency": '',
+            // "net": '=SUM(G1:G1000)',            // 매입단가
+            // "total": '=SUM(H1:H1000)',            // 매입단가
+            // "unitPrice": '=SUM(I1:I1000)',
+            // "totalNet": '=SUM(J1:J1000)',            // 매입단가
         },
 
         type: 'write'
     },
     defaultInfo: {
+        createdDate: moment().format('YYYY-MM-DD'),
         createdBy: '',
         managerAdminName: '',
         managerAdminId: null,
-        blNo: "",              // BL No.
+        inboundDate: moment().format('YYYY-MM-DD'),  //입고일자
         carrierName: "",        // 운수사명
-        arrivalDate: '',    // 입고일자
-        tariff: null,          // 관세
-        vatAmount: null,              // 부가세
-        shippingFee: null,            // 운임비
-        total: null,
-        totalVat: null,
-        saleTotal: null,
-        saleVatTotal: null,
+        blNo: "",              // BL No.
+        arrivalDate: moment().format('YYYY-MM-DD'),    // 도착일
+        vatAmount: 0,              // 부가세
+        tariff: 0,          // 관세
+        shippingFee: 0,            // 운임비
+        transport: '항공',            //운송수단
+        inboundStatus: '진행중',    //매입상태
+        remarks: '',          //비고
+        etcPrice: 0, // 기타비용
+        totalKrw: 0,
+        totalTax: 0,
+
+
+        total: null,   // 합계
+        totalVat: null,  //합계(vat 포함)
+        saleTotal: null,   // 판매금액 합계
+        saleVatTotal: null,  // 판매금액 합계(vat 포함)
         operationIncome: null,
-        orderStatusDetailList: []
     },
 };
-
 
 
 // =================================================================================================================
@@ -637,7 +638,6 @@ export const deliveryInfo = {
     },
 };
 //
-
 
 
 // =================================================================================================================
@@ -708,6 +708,7 @@ export const DRInfo = {
         managerAdminId: null,                         // 담당자 id
         managerAdminName: null,                       // 담당자 이름
         remittanceId: '',                             // 송금 pk
+        bankAccountNumber: '',                             // 고객사
         customerName: '',                             // 고객사
         sendStatusCount: 0,              // 송금 상태
         agencyName: '',                               // 매입처
@@ -833,7 +834,6 @@ export const TIInfo = {
     },
 };
 //
-
 
 
 // ===================================================== 데이터 관리 =====================================================
@@ -1313,7 +1313,7 @@ export const sourceInfo = {
         ]
     },
     defaultInfo: {
-        "inventoryId" : '',                             // 재고
+        "inventoryId": '',                             // 재고
         "inventoryDetailId": '',                        // 재고 내역
         "receiptDate": moment().format('YYYY-MM-DD'),   // 입고 날짜
         "documentNumber": "",                           // 문서 번호
@@ -1351,15 +1351,10 @@ export const hsCodeInfo = {
 }
 
 
-
-
-
-
-
 export const TaxInfo = {
     write: {
-        columnWidth: [80, 80, 80, 80, 80, 80, 80,80,80,80,80,80,80,80,80,80,80],
-        column: ['작성일자', 'Inquiry No.', 'Project No.', '고객사명', 'Maker', 'Item', 'Model','단위','화폐','매입 단가','매입총액','수량','매출 단가','매출 총액','예상납기','견적서담당자','비고란'],
+        columnWidth: [80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80],
+        column: ['작성일자', 'Inquiry No.', 'Project No.', '고객사명', 'Maker', 'Item', 'Model', '단위', '화폐', '매입 단가', '매입총액', '수량', '매출 단가', '매출 총액', '예상납기', '견적서담당자', '비고란'],
         columnList: [
             {data: "writtenDate", type: "date"},
             {data: "documentNumberFull", type: "text"},
@@ -1384,26 +1379,25 @@ export const TaxInfo = {
             {data: "remarks", type: "text"},
 
 
-
         ],
         defaultData: {
-            writtenDate : "",
-            documentNumberFull : "",
-            rfqNo : "",
-            customerName : "",
-            maker : "",
-            item : "",
-            model : "",
-            unit : "",
-            currency : "",
-            unitPrice : "",
-            totalPrice : "",
-            quantity : 0,
-            net : "",
-            totalNet : "",
-            delivery : "",
-            estimateManager : "",
-            remarks : ""
+            writtenDate: "",
+            documentNumberFull: "",
+            rfqNo: "",
+            customerName: "",
+            maker: "",
+            item: "",
+            model: "",
+            unit: "",
+            currency: "",
+            unitPrice: "",
+            totalPrice: "",
+            quantity: 0,
+            net: "",
+            totalNet: "",
+            delivery: "",
+            estimateManager: "",
+            remarks: ""
         }, mapping: {
             // "remittanceDueDate": '송금 지정 일자',
             // "remittanceRequestDate": '송금 요청 일자',

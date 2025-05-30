@@ -57,7 +57,6 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
 
     const { userInfo, adminList } = useAppSelector((state) => state.user);
 
-    console.log(userInfo,'userInfo:')
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],

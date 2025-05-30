@@ -378,7 +378,7 @@ function DeliveryUpdate({updateKey, layoutRef, getCopyPage}:any){
 
 
     return <Spin spinning={loading}>
-        <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
+        <SearchInfoModal infoRef={infoRef} setInfo={setSelectOrderList}
                          open={isModalOpen}
                          setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
         <div style={{

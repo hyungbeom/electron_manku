@@ -193,8 +193,23 @@ const TableGrid = ({
         clickRowCheck(e.api);
 
         // updateFunc
+        const { data, colDef, newValue } = e;
 
-        if(customType === 'Tax'){
+        if(customType === 'inbound'){
+            if (colDef.field === 'saleAmount' ) {
+                data.saleTaxAmount = parseFloat(data.saleAmount) * 1.1;
+            }
+
+            if (colDef.field === 'amount' || colDef.field === 'exchange' ) {
+                data.krw = parseFloat(data.amount) * parseFloat(data.exchange);
+            }
+
+            e.api.applyTransaction({ update: [data] });
+            updateFunc();
+        }
+
+        if(customType === 'Tax' ){
+
             updateFunc(e.data)
         }
 
