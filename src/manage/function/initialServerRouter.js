@@ -9,13 +9,15 @@ export default async function (ctx, store) {
         getData.defaults.headers["authorization"] = `Bearer ${getCookie(ctx, 'token')}`;
         getData.defaults.headers["refresh_token"] = getCookie(ctx, "refreshToken");
 
-        await getData.post("account/getMyAccount").then(async (res) => {
+        return await getData.post("account/getMyAccount").then(async (res) => {
 
             const {entity, code} = res?.data;
 
-            store.dispatch(setUserInfo(entity));
+            console.log(code, 'code:::::')
+            console.log(entity, 'entity:::::')
             if (code === 1) {
 
+                store.dispatch(setUserInfo(entity));
                 await getData.post('admin/getAdminList', {
                     "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
                     "searchAuthority": null,    // 1: 일반, 0: 관리자
@@ -25,6 +27,7 @@ export default async function (ctx, store) {
                     store.dispatch(setAdminList(v?.data?.entity?.adminList));
                 })
             } else {
+                console.log("여기로 와야할텐데?")
                 return {
                     redirect: {
                         destination: '/',
@@ -36,6 +39,7 @@ export default async function (ctx, store) {
 
         }, async err => {
 
+            console.log(":::::::::::")
             return {
                 redirect: {
                     destination: '/',

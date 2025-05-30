@@ -148,35 +148,18 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
 
     function sendAlertMail(){
         const list = gridRef.current.getSelectedRows();
-        function checkMail(managerAdminId) {
-            // 실제 구현에 맞게 수정
-            if (managerAdminId === 20) return "test20@example.com";
-            if (managerAdminId === 17) return "test17@example.com";
-            if (managerAdminId === 19) return "test19@example.com";
-            return "";
-        }
+
+        const payload = [
+            {
+                email: "sales@manku.co.kr",
+                managerAdminName: "김민국",
+                detailList: list  // 이건 배열
+            }
+        ];
+        
 
 
-// data는 위에서 주신 배열
-        const grouped = Object.values(
-            list.reduce((acc, cur) => {
-                const id = cur.managerAdminId;
-                if (!acc[id]) {
-                    const findMember = adminList.find(v=> v.adminId === id)
-
-                    acc[id] = {
-                        email: findMember?.email,
-                        managerAdminName: cur.managerAdminName,
-                        detailList: []
-                    };
-                }
-                acc[id].detailList.push(cur);
-                return acc;
-            }, {})
-        );
-
-
-        getData.post('order/updateCheckEmail', {data : grouped}).then(v=>{
+        getData.post('order/updateCheckEmail', {data : payload}).then(v=>{
             if(v?.data?.code === 1){
                 message.success("요청메일 보내기가 완료되었습니다");
                 searchInfo(true);

@@ -411,5 +411,17 @@ export default function Main() {
 
 // @ts-ignore
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
-    await initialServerRouter(ctx, store);
+    const redirectResult = await initialServerRouter(ctx, store);
+
+    console.log(redirectResult,'redirectResult:::')
+    if (redirectResult?.redirect) {
+        return redirectResult;  // ⬅️ redirect 정보가 있으면 바로 리턴
+    }
+
+    return {
+        props: {},
+    };
+
+
+
 })
