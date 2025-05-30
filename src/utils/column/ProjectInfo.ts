@@ -673,6 +673,7 @@ export const DRInfo = {
             "tax": "",                     // 부가세
             "total": "",                   // 합계
             "sendStatus": '',              // 송금 상태
+            "sendStatusCount": 0,              // 송금 상태
             "invoiceStatus": '',           // 계산서 발행 여부
             "rfqNo": '',           // 계산서 발행 여부
         }, mapping: {
@@ -708,6 +709,7 @@ export const DRInfo = {
         managerAdminName: null,                       // 담당자 이름
         remittanceId: '',                             // 송금 pk
         customerName: '',                             // 고객사
+        sendStatusCount: 0,              // 송금 상태
         agencyName: '',                               // 매입처
         connectInquiryNo: '',                         // 발주서 no 여러개
         orderDetailIds: '',                           // 발주서 항목번호 여러개 (orderDetailId)

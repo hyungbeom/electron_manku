@@ -23,6 +23,7 @@ import GPT from "@/component/page/etc/GPT";
 import {summarizeNotifications} from "@/utils/common";
 
 
+
 export default function Main() {
     const notificationAlert = useNotificationAlert();
     const {userInfo, adminList} = useAppSelector((state) => state.user);
@@ -35,116 +36,118 @@ export default function Main() {
     const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
 
-//     useEffect(() => {
-//
-//         getData.post('socket/getQueue').then(v => {
-//             if (v?.data.length) {
-//                 const summary = summarizeNotifications(v?.data);
-//                 summary.forEach(data => {
-//                     notificationAlert('success', "🔔" + data.title,
-//                         <>
-//                             {data.message}
-//                         </>
-//
-//                         , function () {
-//                             if (data.title.includes('[회신알림]')) {
-//                                 getPropertyId('rfq_update', data?.pk);
-//                             } else if (data.title.includes('[견적서알림]')) {
-//                                 getPropertyId('estimate_update', data?.pk);
-//                             }
-//                         },
-//
-//                         {cursor: 'pointer'},
-//                         null
-//                     )
-//                 })
-//             }
-//         });
-//
-//         const socket = new SockJS(process.env.NODE_ENV === 'development' ? `http://localhost:3002/ws?userId=${userInfo.adminId}` : `https://server.progist.co.kr/ws?userId=${userInfo.adminId}`);
-//         // const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
-//
-//
-//         // STOMP 클라이언트 생성 및 설정
-//         const client = new Client({
-//             webSocketFactory: () => socket,
-//             reconnectDelay: 5000,
-//             onConnect: () => {
-//
-//                 console.log('[WebSocket 연결 성공]');
-//                 client.subscribe('/user/queue/notifications', async (msg) => {
-//                     const data = JSON.parse(msg.body);
-//
-//
-//                     await getData.post('history/getHistoryReceiveList').then(v => {
-//
-//
-//                         const rawData = v?.data;
-//
-// // 날짜 기준으로 묶기
-//
-//                         if (rawData?.length) {
-//                             const groupedByDate = rawData?.reduce((acc, curr) => {
-//                                 const date = curr.writtenDate;
-//                                 if (!acc[date]) {
-//                                     acc[date] = [];
-//                                 }
-//                                 acc[date].push(curr);
-//                                 return acc;
-//                             }, {});
-//                             dispatch(setHistoryList(groupedByDate))
-//
-//                         }
-//                     })
-//
-//
-//                     // OS 알림 띄우기 (preload에서 노출한 API 호출)
-//                     const findMember = adminList.find(v => v.adminId === data.senderId)
-//
-//                     notificationAlert('success', "🔔" + data.title + `  요청자 : ${findMember?.name}`,
-//                         <>
-//                             {data.message}
-//                         </>
-//                         , function () {
-//                             if (data.title.includes('[회신알림]')) {
-//                                 getPropertyId('rfq_update', data?.pk);
-//                             } else if (data.title.includes('[견적서알림]')) {
-//                                 getPropertyId('estimate_update', data?.pk);
-//                             }
-//                         },
-//                         {cursor: 'pointer'},
-//                         null
-//                     )
-//                     // @ts-ignore
-//                     if (window.electron && window.electron.notify) {
-//                         // @ts-ignore
-//                         window.electron.notify(data.title + `  요청자 : ${findMember.name}`, data.message);
-//                     }
-//                 });
-//             },
-//             onStompError: (frame) => {
-//                 console.error('STOMP Error: ', frame.headers['message']);
-//             },
-//         });
-//
-//
-//         client.activate();
-//         // @ts-ignore
-//         if (window?.electron) {
-//             // @ts-ignore
-//             window.electron.onNotificationClicked(({title, body}) => {
-//                 // console.log('Notification clicked:', title, body);
-//                 // 여기서 원하는 동작 실행
-//                 alert(`알림 클릭됨: ${title}`);
-//                 // 또는 React 상태 업데이트, 라우팅 등
-//             });
-//         }
-//
-//
-//         return () => {
-//             client.deactivate();
-//         };
-//     }, [activeTabId]);
+    // @ts-ignore
+    useEffect(() => {
+        let client; // 클라이언트를 useEffect 외부로 선언해 반환 함수에서 접근 가능하게
+
+        // 알림 끈 상태면 아무 것도 하지 않고 연결도 해제
+        if (userInfo.alertStatus !== 'on') {
+            return () => {
+                if (client?.connected) {
+                    client.deactivate();
+                    console.log('🔌 알림 끔 - 소켓 연결 해제됨');
+                }
+            };
+        }
+
+        // 알림 ON일 때만 동작
+        getData.post('socket/getQueue').then(v => {
+            if (v?.data.length) {
+                const summary = summarizeNotifications(v?.data);
+                summary.forEach(data => {
+                    notificationAlert(
+                        'success',
+                        "🔔" + data.title,
+                        <>{data.message}</>,
+                        () => {
+                            if (data.title.includes('[회신알림]')) {
+                                getPropertyId('rfq_update', data?.pk);
+                            } else if (data.title.includes('[견적서알림]')) {
+                                getPropertyId('estimate_update', data?.pk);
+                            }
+                        },
+                        { cursor: 'pointer' },
+                        null
+                    );
+                });
+            }
+        });
+
+        const socket = new SockJS(
+            process.env.NODE_ENV === 'development'
+                ? `http://localhost:3002/ws?userId=${userInfo.adminId}`
+                : `https://server.progist.co.kr/ws?userId=${userInfo.adminId}`
+        );
+
+        client = new Client({
+            webSocketFactory: () => socket,
+            reconnectDelay: 5000,
+            onConnect: () => {
+                console.log('[WebSocket 연결 성공]');
+                client.subscribe('/user/queue/notifications', async (msg) => {
+                    const data = JSON.parse(msg.body);
+
+                    const v = await getData.post('history/getHistoryReceiveList');
+                    const rawData = v?.data;
+                    if (rawData?.length) {
+                        const grouped = rawData.reduce((acc, curr) => {
+                            const date = curr.writtenDate;
+                            if (!acc[date]) acc[date] = [];
+                            acc[date].push(curr);
+                            return acc;
+                        }, {});
+                        dispatch(setHistoryList(grouped));
+                    }
+
+                    const findMember = adminList.find(v => v.adminId === data.senderId);
+
+                    notificationAlert(
+                        'success',
+                        "🔔" + data.title + `  요청자 : ${findMember?.name}`,
+                        <>{data.message}</>,
+                        () => {
+                            if (data.title.includes('[회신알림]')) {
+                                getPropertyId('rfq_update', data?.pk);
+                            } else if (data.title.includes('[견적서알림]')) {
+                                getPropertyId('estimate_update', data?.pk);
+                            }
+                        },
+                        { cursor: 'pointer' },
+                        null
+                    );
+
+                    // @ts-ignored
+                    if (window?.electron?.notify) {
+                        // @ts-ignored
+                        window.electron.notify(
+                            data.title + `  요청자 : ${findMember?.name}`,
+                            data.message
+                        );
+                    }
+                });
+            },
+            onStompError: (frame) => {
+                console.error('STOMP Error: ', frame.headers['message']);
+            },
+        });
+
+        client.activate();
+
+        // @ts-ignored
+        if (window?.electron?.onNotificationClicked) {
+            // @ts-ignored
+            window.electron.onNotificationClicked(({ title }) => {
+                alert(`알림 클릭됨: ${title}`);
+            });
+        }
+
+        return () => {
+            if (client?.connected) {
+                client.deactivate();
+                console.log('🧹 WebSocket 정리됨');
+            }
+        };
+    }, [activeTabId, userInfo.alertStatus]); // userInfo.alertStatus도 의존성에 추가
 
     const modelRef = useRef(Model.fromJson({
         global: {},
@@ -413,7 +416,6 @@ export default function Main() {
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
     const redirectResult = await initialServerRouter(ctx, store);
 
-    console.log(redirectResult,'redirectResult:::')
     if (redirectResult?.redirect) {
         return redirectResult;  // ⬅️ redirect 정보가 있으면 바로 리턴
     }
@@ -421,7 +423,6 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
     return {
         props: {},
     };
-
 
 
 })

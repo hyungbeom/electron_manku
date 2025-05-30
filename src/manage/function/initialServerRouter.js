@@ -13,8 +13,6 @@ export default async function (ctx, store) {
 
             const {entity, code} = res?.data;
 
-            console.log(code, 'code:::::')
-            console.log(entity, 'entity:::::')
             if (code === 1) {
 
                 store.dispatch(setUserInfo(entity));
