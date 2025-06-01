@@ -2,7 +2,7 @@
 
 # Git pull
 echo "Pulling latest changes from Git..."
-git pull origin test
+git pull origin main
 
 # Next.js 설치
 echo "Installing Next.js dependencies..."
