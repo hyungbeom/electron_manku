@@ -140,6 +140,9 @@ const TableGrid = ({
             if (e.data.invoiceId) { // 세금계산서 발행 수정
                 getPropertyId('tax_invoice_update', e.data.invoiceId)
             }
+            if (e.data.inboundId) { // 세금계산서 발행 수정
+                getPropertyId('store_update', e.data.inboundId)
+            }
             if (e.data.agencyId) { // 국내 매입처 수정
                 getPropertyId('domestic_agency_update', e.data.agencyId)
             }

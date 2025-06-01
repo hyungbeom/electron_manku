@@ -160,7 +160,7 @@ function StoreWrite({copyPageInfo, notificationAlert = null, getPropertyId}: any
 
     function onChange(e) {
         commonManage.onChange(e, setInfo)
-        if(e.target.id === 'vatAmount' ||e.target.id === 'tariff' ||e.target.id === 'shippingFee'  ||e.target.id === 'etcPrice' ){
+        if(e.target.id === 'tariff' ||e.target.id === 'shippingFee'  ||e.target.id === 'etcPrice' ){
             updateCalc()
         }
     }

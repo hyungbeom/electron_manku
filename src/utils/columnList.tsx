@@ -4245,6 +4245,7 @@ export const storeReadColumn = [
     { headerName: "수수료", field: "tax", maxWidth: 120, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
 
     { headerName: "부가세", field: "vatAmount", maxWidth: 120, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
+    { headerName: "관세", field: "tariff", maxWidth: 120, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
     { headerName: "운임비", field: "shippingFee", maxWidth: 120, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
 
     { headerName: "합계", field: "total", maxWidth: 140, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
