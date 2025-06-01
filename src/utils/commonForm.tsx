@@ -722,10 +722,6 @@ export const tableButtonList = (type: any, gridRef?: any) => {
     }
 }
 
-
-/**
- * @description 탭을 활성화 시키기 위한 컴포넌트 집약 데이터
- */
 export const tabComponents = {
 
     project_write: {name: "프로젝트 등록", component: <ProjectWrite/>},
