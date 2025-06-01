@@ -182,7 +182,7 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
                     URL.revokeObjectURL(url);
                 }
             }
-        // Shift 키와 왼쪽 버튼 (이름 변경)
+            // Shift 키와 왼쪽 버튼 (이름 변경)
         } else if (e.shiftKey && e.button === 0) {
             // 쉐어포인트에 업로드 되지 않은 파일 이름 변경 (등록 페이지)
             if (file?.originFileObj && !file?.driveId) {
@@ -196,7 +196,7 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
                 setTempFileName(namePart); // 파일 이름 저장
                 setFileExtension(extensionPart); // 확장자 저장
             }
-        // 왼쪽 버튼만 (파일 다운로드)
+            // 왼쪽 버튼만 (파일 다운로드)
         } else {
             let blob = null;
             let fileName = '';
@@ -408,6 +408,7 @@ export const DriveUploadComp = forwardRef(function DriveUploadComp({
             name: fileName,
             originFileObj: file?.originFileObj || file
         };
+        console.log(info?.folderId,'????')
         if (type && info?.folderId) {
             const formData = new FormData();
             formData.append('folderId', info?.folderId);
