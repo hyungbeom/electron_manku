@@ -879,7 +879,7 @@ export const storeRealInitial = {
     "searchStartInvoiceDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),               // 입고일자 시작
     "searchEndInvoiceDate": moment().format('YYYY-MM-DD'),                 // 입고일자 종료
 
-    "searchPaymentStatus": "완료",                  // 결제 여부
+    "searchPaymentStatus": "",                  // 결제 여부
 }
 
 
