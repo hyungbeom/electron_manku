@@ -76,7 +76,8 @@ export default function Main() {
         const socket = new SockJS(
             process.env.NODE_ENV === 'development'
                 ? `http://localhost:3002/ws?userId=${userInfo.adminId}`
-                : `https://server.progist.co.kr/ws?userId=${userInfo.adminId}`
+                : `https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`
+                // : `https://server.progist.co.kr/ws?userId=${userInfo.adminId}`
         );
 
         client = new Client({
