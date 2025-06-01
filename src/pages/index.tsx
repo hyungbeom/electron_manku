@@ -145,7 +145,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
             });
 
 
-            const codeCheck = v?.data?.code
+            const codeCheck = v?.data?.code;
 
             if (codeCheck === 1) {
                 const {accessToken} = v?.data?.entity;
