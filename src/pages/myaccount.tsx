@@ -144,18 +144,21 @@ export default function myaccount() {
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
 
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
+    await initialServerRouter(ctx, store);
 
-    if (codeInfo < 0) {
+
+    const state = store.getState();
+
+    // userInfo 추출
+    const userInfo = state.user.userInfo;
+    if(!userInfo?.accessToken){
         return {
             redirect: {
                 destination: '/',
                 permanent: false,
             },
         };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
     }
 
-    // return {props: {dataInfo: 'asdf'}}
+
 })

@@ -20,8 +20,8 @@ fi
 
 # PM2로 애플리케이션 재실행 (ecosystem 사용)
 echo "Restarting application with PM2 using ecosystem.config.js..."
-pm2 stop nextjs-apps || true
-pm2 delete nextjs-apps || true
+pm2 stop nextjs-app || true
+pm2 delete nextjs-app || true
 pm2 start ecosystem.config.cjs
 
 # Nginx 재시작

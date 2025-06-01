@@ -73,17 +73,4 @@ export default function Manage(any) {
 // @ts-ignore
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
 
-
-    const {userInfo, codeInfo} = await initialServerRouter(ctx, store);
-
-    if (codeInfo < 0) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
-    }
 })

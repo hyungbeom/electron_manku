@@ -363,7 +363,7 @@ function RqfUpdate({
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'rfq_update'}/>
-        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+        <SearchInfoModal infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
 
                          setIsModalOpen={setIsModalOpen}/>

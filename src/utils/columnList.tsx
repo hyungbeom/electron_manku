@@ -13,21 +13,24 @@ export const replyStatus = {
 function handleCellClick(params) {
     const clickedNode = params.node;
 
-    // 이전에 클릭된 row 높이를 복귀
+    // 이전에 클릭된 row 높이 원상복귀
     if (lastClickedRowNode && lastClickedRowNode !== clickedNode) {
-        lastClickedRowNode.setRowHeight(25); // ✅ 기본 높이로 복귀
-        params.api.onRowHeightChanged(); // ✅ 높이 변경 반영
+        lastClickedRowNode.setRowHeight(25); // 기본 높이
     }
 
-    // 현재 클릭된 row 높이를 확장
+    // 클릭한 row 내용 줄 수 계산
     const rowContent = params.data[params.colDef.field] || '';
-    const lines = rowContent.split('\n').length; // 줄바꿈 기준으로 줄 수 계산
-    const newHeight = Math.max(40, lines * 20); // 줄 수에 따라 높이 조정
+    const lines = rowContent.split('\n').length;
 
-    clickedNode.setRowHeight(newHeight); // ✅ 새로운 높이 적용
-    params.api.onRowHeightChanged(); // ✅ 높이 변경 반영
+    const lineHeight = 24; // 폰트 크기에 맞게 조절
+    const padding = 8; // 약간의 여유 공간
 
-    // 현재 row를 마지막 클릭된 row로 추적
+    const newHeight = Math.max(50, lines * lineHeight + padding);
+    // 현재 클릭된 row 높이 변경
+    clickedNode.setRowHeight(newHeight);
+    params.api.onRowHeightChanged();
+
+    // 마지막 클릭 row 갱신
     lastClickedRowNode = clickedNode;
 }
 
@@ -2014,6 +2017,7 @@ export const tableSelectOrderReadColumnsForTax = [
         headerName: '매입 단가',
         field: 'unitPrice',
         align: 'center',
+        editable: true,
         valueFormatter: (params) => {
             const {unitPrice, currency} = params.data ?? {};
 
@@ -2075,6 +2079,7 @@ export const tableSelectOrderReadColumnsForTax = [
         key: 'quantity',
         align: 'center',
         minWidth: 70,
+        editable: true,
         valueFormatter: numberFormat,
         cellStyle: {textAlign: 'right'}
     },
@@ -2083,6 +2088,7 @@ export const tableSelectOrderReadColumnsForTax = [
         field: 'net',
         key: 'net',
         align: 'center',
+        editable: true,
         valueFormatter: (params) => {
             const {net} = params.data ?? {};
             const value = params.node.rowPinned
@@ -2380,320 +2386,6 @@ export const subSecTableOrderReadColumns = [
 ];
 
 
-export const remittanceDomesticColumns = [
-
-    {
-        headerName: '운송사',
-        field: 'customerName',
-        width: 70,
-        pinned: 'left',
-    },
-    {
-        headerName: '문서번호',
-        field: 'documentNumberFull',
-        width: 80,
-        pinned: 'left',
-    },
-    {
-        headerName: '고객사코드',
-        field: 'writtenDate',
-        width: 70,
-    },
-    {
-        headerName: '고객사명',
-        field: 'customerName',
-        minWidth: 120,
-    },
-    {
-        headerName: '발주일',
-        field: 'writtenDate',
-        width: 120,
-    },
-    {
-        headerName: '송금일',
-        field: 'writtenDate',
-        width: 120,
-    },
-    {
-        headerName: '송금액',
-        field: 'writtenDate',
-        width: 70,
-    },
-    {
-        headerName: '화폐단위',
-        field: 'unit',
-        align: 'center',
-        minWidth: 70,
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: {
-            values: ['ea', 'set', 'm', 'feet', 'roll', 'box', 'g', 'kg', 'Pack', 'Inch', 'MOQ'],
-        },
-    },
-    {
-        headerName: '환율',
-        field: 'customerName',
-        minWidth: 70,
-    },
-    {
-        headerName: '원화',
-        field: 'customerName',
-        minWidth: 70,
-    },
-    {
-        headerName: '수수료',
-        field: 'customerName',
-        minWidth: 70,
-    },
-    {
-        headerName: '부가세',
-        field: 'customerName',
-        minWidth: 70,
-    },
-    {
-        headerName: '관세',
-        field: 'customerName',
-        minWidth: 70,
-    },
-    {
-        headerName: '운임비',
-        field: 'customerName',
-        minWidth: 70,
-    },
-    {
-        headerName: '비용 합계',
-        field: 'customerName',
-        minWidth: 80,
-    },
-    {
-        headerName: 'VAT 포함',
-        field: 'customerName',
-        minWidth: 80,
-    },
-    {
-        headerName: '지불수단',
-        field: 'unit',
-        align: 'center',
-        minWidth: 60,
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: {
-            values: ['현금', '신용',],
-        },
-    },
-    {
-        headerName: '판매금액',
-        field: 'customerName',
-        minWidth: 80,
-    },
-    {
-        headerName: '영업이익',
-        field: 'customerName',
-        minWidth: 80,
-    },
-    {
-        headerName: 'VAT 포함',
-        field: 'customerName',
-        minWidth: 80,
-    },
-    {
-        headerName: '입고일',
-        field: 'customerName',
-        minWidth: 120,
-    },
-    {
-        headerName: '출고일',
-        field: 'customerName',
-        minWidth: 120,
-    },
-    {
-        headerName: '계산서발행일',
-        field: 'customerName',
-        minWidth: 120,
-    },
-    {
-        headerName: '결제여부',
-        field: 'unit',
-        align: 'center',
-        minWidth: 70,
-        cellEditor: 'agSelectCellEditor',
-        cellEditorParams: {
-            values: ['미결제', '부분결제', '결제완료'],
-        },
-    },
-    {
-        headerName: '선수금',
-        field: 'customerName',
-        minWidth: 80,
-    },
-    {
-        headerName: '무게',
-        field: 'customerName',
-        minWidth: 70,
-    },
-];
-
-
-export const tableOrderInventory = [
-    {
-        headerName: 'Maker',
-        field: 'maker',
-        key: 'maker',
-    },
-    {
-        headerName: 'Model',
-        field: 'model',
-        key: 'model',
-    },
-    {
-        headerName: '잔량',
-        field: 'remainingQuantity',
-        key: 'remainingQuantity',
-    },
-    {
-        headerName: '출고',
-        field: 'shippedQuantity',
-        key: 'shippedQuantity',
-    },
-    {
-        headerName: '합계',
-        field: 'totalQuantity',
-        key: 'totalQuantity',
-    },
-    {
-        headerName: '위치',
-        field: 'location',
-        key: 'location',
-    },
-
-];
-
-
-export const tableOrderCustomerColumns = [
-    {
-        headerName: 'No',
-        field: 'key',
-        key: 'key',
-    },
-    {
-        headerName: '고객사명',
-        field: 'customerName',
-        key: 'customerName',
-    },
-    {
-        headerName: '미입고금액',
-        field: 'unpaidAmount',
-        key: 'unpaidAmount',
-    },
-    {
-        headerName: '입고금액',
-        field: 'paidAmount',
-        key: 'paidAmount',
-    },
-    {
-        headerName: '합계',
-        field: 'totalAmount',
-        key: 'totalAmount',
-    },
-];
-
-
-export const subAgencyReadColumns = [
-    {
-        headerName: 'No',
-        field: 'key',
-        key: 'key',
-    },
-    {
-        headerName: '코드',
-        field: 'agencyCode',
-        key: 'agencyCode',
-    },
-    {
-        headerName: '매입처명',
-        field: 'agencyName',
-        key: 'agencyName',
-    },
-    {
-        headerName: '미입고외화',
-        field: 'pendingForeignAmount',
-        key: 'pendingForeignAmount',
-        valueFormatter: numberFormat,
-        cellStyle: {textAlign: 'right'}
-    },
-    {
-        headerName: '입고외화',
-        field: 'receivedForeignAmount',
-        key: 'receivedForeignAmount',
-        valueFormatter: numberFormat,
-        cellStyle: {textAlign: 'right'}
-    },
-    {
-        headerName: '외화합계',
-        field: 'totalForeignAmount',
-        key: 'totalForeignAmount',
-        valueFormatter: numberFormat,
-        cellStyle: {textAlign: 'right'}
-    },
-    {
-        headerName: '원화합계',
-        field: 'totalAmountInKrw',
-        key: 'totalAmountInKrw',
-        valueFormatter: numberFormat,
-        cellStyle: {textAlign: 'right'}
-    },
-];
-
-
-export const tableCodeDomesticAgencyWriteColumns = [
-    {
-        headerName: '담당자',
-        field: 'managerName',
-        key: 'managerName',
-        editable: true,
-    },
-    {
-        headerName: '연락처',
-        field: 'phoneNumber',
-        key: 'phoneNumber',
-        editable: true,
-    },
-    {
-        headerName: '팩스번호',
-        field: 'faxNumber',
-        key: 'faxNumber',
-        editable: true,
-    },
-    {
-        headerName: '이메일',
-        field: 'email',
-        key: 'email',
-        editable: true,
-    },
-    {
-        headerName: '주소',
-        field: 'address',
-        key: 'address',
-        editable: true,
-    },
-    {
-        headerName: '국가대리점',
-        field: 'countryAgency',
-        key: 'countryAgency',
-        editable: true,
-    },
-    {
-        headerName: '휴대폰',
-        field: 'mobilePhone',
-        key: 'mobilePhone',
-        editable: true,
-    },
-    {
-        headerName: '비고',
-        field: 'remarks',
-        key: 'remarks',
-        editable: true,
-    },
-]
-
 
 // ================================================ 송금 =================================================
 
@@ -2930,9 +2622,11 @@ export const tableTaxInvoiceReadColumn = [
     },
     {
         headerName: 'Inquiry No.',
-        field: 'documentNumberFull',
+        field: 'documentNumberFullList',
         maxWidth: 120,
         pinned: 'left',
+        cellStyle: { whiteSpace: 'pre-line',lineHeight : 1.5 },
+        autoHeight: true,
         // valueGetter: (params) => {
         //     const currentRowIndex = params.node.rowIndex;
         //     const currentValue = params.data.remittanceId;
@@ -4520,136 +4214,112 @@ export const storeWriteColumn = [
 
 export const storeReadColumn = [
     {
-        headerName: "", // 컬럼 제목
-        headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
-        checkboxSelection: true, // 각 행에 체크박스 추가
-        valueGetter: (params) => params.node.rowIndex + 1, // 1부터 시작하는 인덱스
-        cellStyle: {textAlign: "center"}, // 스타일 설정
-        maxWidth: 60, // 컬럼 너비
-        pinned: "left", // 왼쪽에 고정
-        filter: false
-    }, {
-        headerName: '운수사명',
-        field: 'carrierName',
-        minWidth: 80,
-    }, {
-        headerName: 'B/L No.',
-        field: 'blNo',
-        maxWidth: 100,
-        pinned: 'left'
-    }, {
-        headerName: 'Inquiry No.',
-        field: 'orderDocumentNumberFull',
-        maxWidth: 120,
-
-        pinned: 'left'
-    }, {
-        headerName: '세부항목 번호',
-        field: 'itemDetailNo',
-        minWidth: 150,
-    }, {
-        headerName: '고객사명',
-        field: 'customerName',
-        minWidth: 100,
-    }, {
-        headerName: '매입처명',
-        field: 'agencyName',
-        minWidth: 100
-    }, {
-        headerName: '환율',
-        field: 'exchangeRate',
-        minWidth: 80,
+        headerName: "", // 행 번호용 빈 헤더
+        headerCheckboxSelection: true,
+        checkboxSelection: true,
+        valueGetter: (params) => params.node.rowIndex + 1,
+        cellStyle: { textAlign: "center" },
+        maxWidth: 60,
+        pinned: "left",
+        filter: false,
     },
+    { headerName: "운수사명", field: "carrierName", maxWidth: 150, pinned: "left" },
+    { headerName: "B/L 번호", field: "blNo", maxWidth: 150, pinned: "left" },
+    { headerName: "Inquiry No.", field: "documentNumberFull", maxWidth: 150, pinned: "left" },
+
+    { headerName: "거래처명", field: "customerName", maxWidth: 150 },
+    { headerName: "매입처명", field: "agencyName", maxWidth: 150 },
+
+    { headerName: "발주일자", field: "writtenDate", maxWidth: 120, editable: false, cellEditor: "agDateCellEditor",
+        valueFormatter: (params) => (moment(params.value).isValid() ? params.value : ""),
+    },
+    { headerName: "송금일자", field: "requestStartDate", maxWidth: 120, editable: false, cellEditor: "agDateCellEditor",
+        valueFormatter: (params) => (moment(params.value).isValid() ? params.value : ""),
+    },
+
+    { headerName: "금액", field: "amount", maxWidth: 120, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
+    { headerName: "화폐 단위", field: "currency", maxWidth: 100 },
+    { headerName: "환율", field: "exchange", maxWidth: 100, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
+
+    { headerName: "원화환산금액", field: "krw", maxWidth: 140, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
+    { headerName: "수수료", field: "tax", maxWidth: 120, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
+
+    { headerName: "부가세", field: "vatAmount", maxWidth: 120, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
+    { headerName: "관세", field: "tariff", maxWidth: 120, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
+    { headerName: "운임비", field: "shippingFee", maxWidth: 120, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
+
+    { headerName: "합계", field: "total", maxWidth: 140, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
     {
-        headerName: '발주일자',
-        field: 'amount',
-        cellEditor: 'agDateCellEditor',
-        minWidth: 100
-    }, {
-        headerName: '송금일자',
-        field: 'currencyUnit',
-        cellEditor: 'agDateCellEditor',
-        minWidth: 100,
-    }, {
-        headerName: '금액',
-        field: 'amount',
-        minWidth: 120
-    }, {
-        headerName: '화폐단위',
-        field: 'currencyUnit',
-        minWidth: 80
-    }, {
-        headerName: '원화환산금액',
-        field: 'salesAmount',
-        minWidth: 120,
-        valueFormatter: numberFormat,
-    }, {
-        headerName: '수수료',
-        field: 'commissionFee',
-        minWidth: 120,
-        valueFormatter: numberFormat,
-    }, {
-        headerName: '부가세',
-        field: 'vatAmount',
-        minWidth: 120,
-        editable: true
-    }, {
-        headerName: '관세',
-        field: 'tariff',
-        minWidth: 150,
-        cellEditor: 'agDateCellEditor',
+        headerName: "합계 (VAT 포함)",
+        field: "totalWithVat", // 실제 필드는 없어도 됩니다
+        maxWidth: 140,
+        editable: false,
+        type: "numericColumn",
+        cellStyle: { textAlign: "right" },
+        valueGetter: (params) => {
+            const total = Number(params.data.total);
+            if (isNaN(total)) return "";
+            return (total * 1.1).toFixed(2); // 소수점 둘째자리까지
+        }
+    },
 
-    }, {
-        headerName: '운임비',
-        field: 'shippingFee',
-        minWidth: 120,
-    }, {
-        headerName: '합계',
-        field: 'paymentStatus',
-        minWidth: 150
-    }, {
-        headerName: '합계(VAT 포함)',
-        field: 'advancePayment',
-        minWidth: 150
-    }, {
-        headerName: '판매금액',
-        field: 'remarks',
-        minWidth: 150
-    }, {
-        headerName: '판매금액 (VAT 포함)',
-        field: 'remarks',
-        minWidth: 150
-    }, {
-        headerName: '영업이익금',
-        field: 'remarks',
-        minWidth: 150
-    }, {
-        headerName: '입고일자',
-        field: 'receiptDate',
-        minWidth: 150
-    }, {
-        headerName: '출고일자',
-        field: 'remarks',
-        minWidth: 150
-    }, {
-        headerName: '계산서 발행일자',
-        field: 'invoiceDate',
-        minWidth: 150
-    }, {
-        headerName: '결제여부',
-        field: 'paymentStatus',
-        minWidth: 150
-    }, {
+    { headerName: "판매금액", field: "saleAmount", maxWidth: 140, editable: false, type: "numericColumn", cellStyle: { textAlign: "right" } },
+    {
+        headerName: "판매금액 (VAT 포함)",
+        field: "saleVatAmount", // 실제 백엔드 필드 없어도 OK
+        maxWidth: 160,
+        editable: false,
+        type: "numericColumn",
+        cellStyle: { textAlign: "right" },
+        valueGetter: (params) => {
+            const amount = Number(params.data.saleAmount);
+            if (isNaN(amount)) return "";
+            return (amount * 1.1).toFixed(2); // 소수점 둘째자리까지
+        }
+    },
 
-        headerName: '선수금',
-        field: 'remarks',
-        minWidth: 150
-    }
+    {
+        headerName: "영업이익금",
+        field: "operatingProfit", // 백엔드 필드는 없어도 됨
+        maxWidth: 140,
+        editable: false,
+        type: "numericColumn",
+        cellStyle: { textAlign: "right" },
+        valueGetter: (params) => {
+            const total = Number(params.data.total);
+            const saleTotal = Number(params.data.saleTotal);
+            if (isNaN(total) || isNaN(saleTotal)) return "";
+            return (saleTotal - total).toFixed(2); // 소수점 둘째자리까지
+        }
+    },
+
+    { headerName: "입고일자", field: "inboundDate", maxWidth: 120, editable: false, cellEditor: "agDateCellEditor",
+        valueFormatter: (params) => (moment(params.value).isValid() ? params.value : ""),
+    },
+    { headerName: "출고일자", field: "outboundDate", maxWidth: 120, editable: false, cellEditor: "agDateCellEditor",
+        valueFormatter: (params) => (moment(params.value).isValid() ? params.value : ""),
+    },
+
+    { headerName: "계산서 발행 일자", field: "invoiceDate", maxWidth: 140, editable: false, cellEditor: "agDateCellEditor",
+        valueFormatter: (params) => (moment(params.value).isValid() ? params.value : ""),
+    },
+
+    {
+        headerName: "결제여부",
+        field: "paymentStatus",
+        maxWidth: 100,
+        editable: true,
+        cellEditor: "agSelectCellEditor",
+        cellEditorParams: { values: ["완료", "부분완료", "미완료"] },
+    },
+
+    { headerName: "선수금", field: "paymentMethod", maxWidth: 100 },
+    { headerName: "세부 항목 번호", field: "orderDetailId", maxWidth: 120 }
 ];
 
 
 
-export const historyReadColumn = [
+export const inboundColumn = [
     {
         headerName: "", // 컬럼 제목
         headerCheckboxSelection: true, // 헤더 체크박스 추가 (전체 선택/해제)
@@ -4659,24 +4329,37 @@ export const historyReadColumn = [
         maxWidth: 60, // 컬럼 너비
         pinned: "left", // 왼쪽에 고정
         filter: false
-    }, {
-        headerName: '알림일자',
-        field: 'blNo',
-        maxWidth: 100,
-        pinned: 'left'
-    }, {
-        headerName: '요청자',
-        field: 'orderDocumentNumberFull',
-        maxWidth: 120,
+    },
+    { headerName: '문서번호', field: 'documentNumberFull', maxWidth: 150, pinned: 'left' },
+    { headerName: '매입처', field: 'agencyName', maxWidth: 120 , pinned: 'left'},
+    { headerName: '고객사', field: 'customerName', maxWidth: 120, pinned: 'left' },
+    { headerName: '결제조건', field: 'paymentTerms', maxWidth: 100, pinned: 'left' },
+    { headerName: '환율', field: 'exchange', maxWidth: 80, editable: true },
+    { headerName: '발주일자', field: 'writtenDate', maxWidth: 100 },
+    { headerName: '송금일자', field: 'requestStartDate', maxWidth: 100 },
+    { headerName: '부분입고여부', field: 'PartialInbound', maxWidth: 90 , editable: true},
+    { headerName: '금액', field: 'amount', maxWidth: 100 , editable: true},
+    { headerName: '화폐단위', field: 'currency', maxWidth: 80 },
+    { headerName: '원화환산금액', field: 'krw', maxWidth: 120 , editable: true},
+    { headerName: '수수료', field: 'tax', maxWidth: 120 , editable: true},
+    { headerName: '판매금액', field: 'saleAmount', maxWidth: 120 , editable: true},
+    { headerName: '판매금액(VAT 포함)', field: 'saleTaxAmount', maxWidth: 120 },
 
-        pinned: 'left'
-    }, {
-        headerName: '카테고리',
-        field: 'itemDetailNo',
-        maxWidth: 150,
-    }, {
-        headerName: '내용',
-        field: 'customerName',
-        minWidth: 100,
-    }
+
+    { headerName: '입고일자', field: 'inboundDate', maxWidth: 100,editable: true,       cellEditor: 'agDateCellEditor',
+        valueFormatter: (params) => {
+            return moment(params.value).isValid() ? dateFormat(params) : ''
+        } },
+    { headerName: '출고일자', field: 'writtenDate', maxWidth: 100 },
+    { headerName: '계산서 발행일자', field: 'invoiceDate', maxWidth: 120,editable: true,        cellEditor: 'agDateCellEditor',
+        valueFormatter: (params) => {
+            return moment(params.value).isValid() ? dateFormat(params) : ''
+        } },
+    { headerName: '결제여부', field: 'paymentStatus', maxWidth: 90 ,editable: true,  cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['완료', '부분완료','미완료'],
+        }},
+    { headerName: '선수금', field: 'paymentMethod', maxWidth: 90 ,editable: true},
+    { headerName: '세부항목 번호', field: 'orderDetailId', maxWidth: 120 }
 ];
+

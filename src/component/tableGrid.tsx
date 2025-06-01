@@ -24,6 +24,8 @@ const TableGrid = ({
                        },
                        tempFunc = function () {
                        },
+                       updateFunc = function () {
+                       },
                        type = 'read',
                        customType = '',
                        funcButtons = [],
@@ -105,13 +107,10 @@ const TableGrid = ({
     const handleDoubleClicked = (e) => {
         if (type === 'read') {
 
-            // 송금, 세금계산서 등록/수정시 하단에 선택한 발주서 항목 더블클릭
-            if (customType === 'Remittance' || customType === 'Tax') {
+            if (customType === 'Remittance' ) {
                 tempFunc(e.data);
                 return;
             }
-
-            console.log(e.data ,'e.data')
             if (e.data.projectId) { // 프로젝트 수정
                 getPropertyId('project_update', e.data.projectId)
             }
@@ -140,6 +139,9 @@ const TableGrid = ({
             }
             if (e.data.invoiceId) { // 세금계산서 발행 수정
                 getPropertyId('tax_invoice_update', e.data.invoiceId)
+            }
+            if (e.data.inboundId) { // 세금계산서 발행 수정
+                getPropertyId('store_update', e.data.inboundId)
             }
             if (e.data.agencyId) { // 국내 매입처 수정
                 getPropertyId('domestic_agency_update', e.data.agencyId)
@@ -192,6 +194,27 @@ const TableGrid = ({
 
     function dataChange(e) {
         clickRowCheck(e.api);
+
+        // updateFunc
+        const { data, colDef, newValue } = e;
+
+        if(customType === 'inbound'){
+            if (colDef.field === 'saleAmount' ) {
+                data.saleTaxAmount = parseFloat(data.saleAmount) * 1.1;
+            }
+
+            if (colDef.field === 'amount' || colDef.field === 'exchange' ) {
+                data.krw = parseFloat(data.amount) * parseFloat(data.exchange);
+            }
+
+            e.api.applyTransaction({ update: [data] });
+            updateFunc();
+        }
+
+        if(customType === 'Tax' ){
+
+            updateFunc(e.data)
+        }
 
         if (e.column.colId === 'actualQuantity' || e.column.colId === 'expectQuantity') {
             const {orderDetailId, actualQuantity, expectQuantity} = e.data;
@@ -251,7 +274,7 @@ const TableGrid = ({
      * (사용처: 견적의뢰, 견적서, 발주서 등)
      */
     const includeKeys = ['estimateRequestId', 'estimateId', 'orderId', 'orderStatusId'];
-    const excludedTypes = ['delivery', 'Remittance', 'Tax', 'SourceWrite', 'SourceUpdate'];
+    const excludedTypes = ['delivery', 'Remittance', 'SourceWrite', 'SourceUpdate'];
     const containsIncludeKey = (list) => {
         const firstRow = list?.[0];
         if (!firstRow) return false;
@@ -267,6 +290,7 @@ const TableGrid = ({
             return;
         }
         const totals = commonFunc.sumCalc(selectedRows);
+        console.log(selectedRows,'selectedRows:')
         setPinnedBottomRowData([totals]);
     };
 
@@ -347,9 +371,23 @@ const TableGrid = ({
     };
 
     function cellDoubleClick(event){
+        const field = event.colDef.field;
         if(type === 'write'){
+
+            // 송금, 세금계산서 등록/수정시 하단에 선택한 발주서 항목 더블클릭
+            if ( customType === 'Tax') {
+                if(field === 'quantity'|| field === 'unitPrice' || field === 'net'){
+
+                }else{
+                    tempFunc(event.data);
+                }
+
+                return;
+            }
+
+
             if(event.column.getId() === 'content'){
-                const field = event.colDef.field;
+
                 const rowNode = event.node;
 
                 if (rowNode) {

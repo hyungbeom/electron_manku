@@ -1,14 +1,4 @@
 import React, {memo, useEffect, useRef, useState} from "react";
-import LayoutComponent from "@/component/LayoutComponent";
-import {CopyOutlined, SaveOutlined} from "@ant-design/icons";
-import {storeWriteColumn} from "@/utils/columnList";
-import {orderDetailUnit, storeDetailUnit, storeWriteInitial} from "@/utils/initialList";
-import Button from "antd/lib/button";
-import message from "antd/lib/message";
-import {wrapper} from "@/store/store";
-import initialServerRouter from "@/manage/function/initialServerRouter";
-import {setUserInfo} from "@/store/user/userSlice";
-import TableGrid from "@/component/tableGrid";
 import {useAppSelector} from "@/utils/common/function/reduxHooks";
 import {
     BoxCard,
@@ -16,32 +6,35 @@ import {
     inputForm,
     inputNumberForm,
     MainCard,
-    numbFormatter,
-    numbParser,
+    radioForm,
+    selectBoxForm,
+    textAreaForm,
     TopBoxCard
 } from "@/utils/commonForm";
-import {commonFunc, commonManage, gridManage} from "@/utils/commonManage";
+import {commonFunc, commonManage} from "@/utils/commonManage";
 import _ from "lodash";
-import OrderListModal from "@/component/OrderListModal";
-import {saveProject, saveStore} from "@/utils/api/mainApi";
 import {useRouter} from "next/router";
+import {rfqInfo, storeInfo} from "@/utils/column/ProjectInfo";
+import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import SearchInfoModal from "@/component/SearchAgencyModal";
 import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
-import Table from "@/component/util/Table";
-import {orderInfo, storeInfo} from "@/utils/column/ProjectInfo";
+import {inboundColumn} from "@/utils/columnList";
+import TableGrid from "@/component/tableGrid";
 import {getData} from "@/manage/function/api";
-import moment from "moment";
 
 const listType = 'orderStatusDetailList'
 
 
 function StoreWrite({copyPageInfo, notificationAlert = null, getPropertyId}: any) {
+
+    const {userInfo, adminList} = useAppSelector((state) => state.user);
     const [ready, setReady] = useState(false);
     const router = useRouter();
 
     const gridRef = useRef(null);
     const groupRef = useRef<any>(null)
     const tableRef = useRef(null);
-    const infoRef = useRef<any>(null)
+    const infoRef = useRef<any>(null);
 
     const getSavedSizes = () => {
         const savedSizes = localStorage.getItem('order_write');
@@ -50,333 +43,324 @@ function StoreWrite({copyPageInfo, notificationAlert = null, getPropertyId}: any
 
 
     const [sizes, setSizes] = useState(getSavedSizes); // 패널 크기 상태
-    const [memberList, setMemberList] = useState([]);
+
     const [tableData, setTableData] = useState([]);
-    useEffect(() => {
-        getMemberList();
-    }, []);
 
 
-    async function getMemberList() {
-        // @ts-ignore
-        return await getData.post('admin/getAdminList', {
-            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-            "searchAuthority": null,    // 1: 일반, 0: 관리자
-            "page": 1,
-            "limit": -1
-        }).then(v => {
-            setMemberList(v?.data?.entity?.adminList)
-        })
-    }
-
-    const options = memberList?.map((item) => ({
-        ...item,
-        value: item.adminId,
-        label: item.name,
-    }));
-
-    const copyInit = _.cloneDeep(storeWriteInitial)
-
-    const userInfo = useAppSelector((state) => state.user.userInfo);
-
-    const infoInit = {
+    const adminParams = {
         ...storeInfo['defaultInfo'],
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
+        createdBy: userInfo['name'],
     }
 
+    const getStoreInit = () => {
+        const copyInit = _.cloneDeep(storeInfo['defaultInfo']);
+        return {
+            ...copyInit,
+            ...adminParams
+        }
+    }
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [info, setInfo] = useState<any>({...infoInit})
+    const [info, setInfo] = useState<any>(getStoreInit())
     const [mini, setMini] = useState(true);
 
+    const onGridReady = async (params) => {
+        gridRef.current = params.api;
+
+        params.api.applyTransaction({add: copyPageInfo?.inboundDetailInfo?.length ? copyPageInfo?.inboundDetailInfo : []});
+    };
+
 
     useEffect(() => {
-        if (ready) {
-            // if(copyPageInfo['store_write'] && !isEmptyObj(copyPageInfo['store_write'])){
-            //     setInfo(infoInit);
-            //     gridManage.resetData(gridRef,[])
-            // }else{
-            //     setInfo({...copyPageInfo['store_write']});
-            //     gridManage.resetData(gridRef, copyPageInfo['store_write'][listType])
-            // }
+
+
+        if (!isEmptyObj(copyPageInfo)) {
+            // copyPageInfo 가 없을시
+
+            setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000))
+        } else {
+
         }
-    }, [copyPageInfo['store_write'], ready]);
 
-    useEffect(() => {
-        // if (!isEmptyObj(copyPageInfo['store_write'])) {
-        //     // copyPageInfo 가 없을시
-        //     setInfo(infoInit);
-        //     setTableData(commonFunc.repeatObject(orderInfo['write']['defaultData'], 1000))
-        // } else {
-        //     // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
-        //     // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
-        //     setInfo({...copyPageInfo['store_write'], writtenDate: moment().format('YYYY-MM-DD')});
-        //     setTableData(copyPageInfo['store_write'][listType])
-        // }
-    }, [copyPageInfo['store_write']]);
+    }, [copyPageInfo?._meta?.updateKey]);
 
-
-    function getTotalTableValue() {
-        const totalList = gridManage.getAllData(gridRef)
-
-        const totals = totalList.reduce(
-            (acc, curr) => {
-                // `commissionFee`는 문자열이므로 ',' 제거 후 숫자로 변환
-                const commissionFee = curr.commissionFee || 0;
-                const returnAmount = curr.returnAmount || 0;
-                const salesAmount = curr.salesAmount || 0;
-                const salesAmountVat = curr.salesAmountVat || 0;
-
-                acc.commissionFeeTotal += commissionFee;
-                acc.returnAmountTotal += returnAmount;
-                acc.salesAmountTotal += salesAmount;
-                acc.salesAmountVatTotal += salesAmountVat;
-
-                return acc;
-            },
-            {
-                commissionFeeTotal: 0,
-                returnAmountTotal: 0,
-                salesAmountTotal: 0,
-                salesAmountVatTotal: 0
-            }
-        );
-
-        return totals;
-    }
-
-    function onCellEditingStopped() {
-        updateMainInput()
-    }
-
-    function onChange(e) {
-        updateMainInput()
-        commonManage.onChange(e, setInfo)
-    }
 
     async function saveFunc() {
 
+        const allData = [];
+        gridRef?.current?.forEachNode((node) => {
+            allData.push(node.data);
+        });
 
+        return await getData.post('inbound/addInbound', {
+            ...info,
+            inboundDetail: allData
+        }).then(v => {
+
+        })
     }
 
 
     function clearAll() {
-        setInfo({...infoInit});
-        gridManage.deleteAll(gridRef)
+        getStoreInit()
     }
 
+    useEffect(() => {
+    }, []);
 
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
+    function modalSelected(list = []) {
 
-    function updateMainInput() {
-        const {commissionFeeTotal, returnAmountTotal, salesAmountTotal, salesAmountVatTotal} = getTotalTableValue();
+        const newList = list.map(v => {
+
+            v['exchange'] = 1;
+            const amount = parseInt(v['receivedQuantity']) * parseFloat(v['unitPrice']);
+            v['amount'] = !isNaN(amount) ? amount : 0
+            v['krw'] = !isNaN(amount) ? amount : 0
+            const saleAmount = parseInt(v['receivedQuantity']) * parseFloat(v['net']);
+            v['saleAmount'] = !isNaN(saleAmount) ? saleAmount : 0
+            v['saleTaxAmount'] = !isNaN(saleAmount) ? saleAmount * 1.1 : 0
+            return v
+        })
+        gridRef.current.applyTransaction({add: newList.length ? newList : []})
+        updateCalc()
+    }
+
+    function updateCalc(){
+        const allData = {totalKrw: 0, totalTax: 0, saleTotal : 0 };
+        gridRef?.current?.forEachNode((node) => {
+            let krw = !isNaN(parseFloat(node.data.krw)) ? parseFloat(node.data.krw) : 0;
+            let tax = !isNaN(parseFloat(node.data.tax)) ? parseFloat(node.data.tax) : 0;
+            let saleAmount = !isNaN(parseFloat(node.data.saleAmount)) ? parseFloat(node.data.saleAmount) : 0;
+            allData['totalKrw'] += krw
+            allData['totalTax'] += tax
+            allData['saleTotal'] += saleAmount
+
+        });
+
+        const shippingFee = !isNaN(parseFloat(info?.shippingFee)) ? parseFloat(info?.shippingFee) : 0;
+        const tariff = !isNaN(parseFloat(info?.tariff)) ? parseFloat(info?.tariff) : 0;
+        const etcPrice = !isNaN(parseFloat(info?.etcPrice)) ? parseFloat(info?.etcPrice) : 0;
+        const tax = !isNaN(parseFloat(info?.tax)) ? parseFloat(info?.tax) : 0;
+
+        const total = allData['totalKrw'] + allData['totalTax'] + shippingFee + tariff + etcPrice
+
+        console.log(allData['saleTotal'],'allData[\'saleVatTotal\']????')
+        console.log(allData['saleTotal'] * 1.1,'allData[\'saleVatTotal\']????')
+
         setInfo(v => {
-            return {
-                ...v,
-                total: returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee,
-                totalVat: returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee + v.vatAmount,
-                saleTotal: salesAmountTotal,
-                saleVatTotal: salesAmountVatTotal,
-                operationIncome: salesAmountTotal + (returnAmountTotal + commissionFeeTotal + v.tariff + v.shippingFee),
-            }
+            return {...v, ...allData, total : total, totalVat : total + tax, operationIncome :   allData['saleTotal'] - total, saleVatTotal : allData['saleTotal'] * 1.1}
         })
     }
 
-    function getSelectedRows(ref) {
-        if (ref.current) {
-            const selectedRows = ref.current.getSelectedRows();
+    function openModal(e) {
+        commonManage.openModal(e, setIsModalOpen)
+    }
 
-            const result = selectedRows.map(v => {
-
-                let copyData = _.cloneDeep(storeDetailUnit);
-                copyData['orderDocumentNumberFull'] = v['documentNumberFull'];
-                copyData['orderDate'] = v['writtenDate'];
-                copyData['orderDetailId'] = v['orderDetailId'];
-                copyData['itemDetailNo'] = v['key'];
-                copyData['customerName'] = v['customerName'];
-                copyData['currencyUnit'] = v['currency'];
-                copyData['exchangeRate'] = 1;
-                copyData['commissionFee'] = 0;
-                copyData['amount'] = v['receivedQuantity'] * v['net'];
-                copyData['returnAmount'] = v['receivedQuantity'] * v['net'];
-                copyData['salesAmount'] = v['receivedQuantity'] * v['unitPrice'];
-                copyData['salesAmountVat'] = Math.round((v['receivedQuantity'] * v['unitPrice']) * 1.1);
-                // copyData['agencyName'] = v['customerName'];
-                return copyData;
-            })
-
-            const groupedData = result.reduce((acc, curr) => {
-                const key = curr.orderDocumentNumberFull;
-
-                // 기존 그룹이 있으면 합산
-                if (acc[key]) {
-                    acc[key].salesAmount += curr.salesAmount;
-                    acc[key].salesAmountVat += curr.salesAmountVat;
-                    acc[key].returnAmount += curr.returnAmount;
-                    acc[key].amount += curr.amount;
-                    acc[key].itemDetailNo.push(curr.orderDetailId)
-                } else {
-                    // 새로운 그룹 추가
-                    acc[key] = {
-                        ...storeDetailUnit,
-                        orderDocumentNumberFull: curr.orderDocumentNumberFull,
-                        customerName: curr.customerName, // 첫 번째 항목의 이름 사용
-                        salesAmount: curr.salesAmount,
-                        salesAmountVat: curr.salesAmountVat,
-                        amount: curr.amount,
-                        returnAmount: curr.returnAmount,
-                        currencyUnit: curr.currencyUnit,
-                        exchangeRate: curr.exchangeRate,
-                        orderDate: curr.orderDate,
-                        itemDetailNo: [curr.orderDetailId]
-                    };
-                }
-
-                return acc;
-            }, {});
-
-
-            gridRef.current.applyTransaction({add: Object.values(groupedData)});
-
-            updateMainInput();
-        } else {
-            console.warn('Grid API is not available.');
-            return [];
+    function onChange(e) {
+        commonManage.onChange(e, setInfo)
+        if(e.target.id === 'tariff' ||e.target.id === 'shippingFee'  ||e.target.id === 'etcPrice' ){
+            updateCalc()
         }
     }
 
-
-
-     function saveApi(){
-         const sendParam = {
-             blNo: '운송넘버',
-             carrier: '운수사명',
-             inboundDate: '2025-05-22',  //입고일자
-             tax: 500,                   //부가세
-             tariff: 30000,              //관세
-             freightCost: 30000,         //운임비
-             selectOrderList: JSON.stringify([202,204,278]),
-             managerAdminId: 26,
-         }
-         getData.post('inbound/addInbound',sendParam).then(v=>{
-             if(v?.data?.code === 1){
-                 console.log(v.data?.entity?.inboundId,'< ==== invoundId ')
-             }
-         })
-     }
-
-    function updateApi(){
-        const sendParam = {
-            inboundId: 5,
-            blNo: '운송update넘버',
-            carrier: '운수update사명',
-            inboundDate: '2025-06-22',  //입고일자
-            tax: 1500,                   //부가세
-            tariff: 130000,              //관세
-            freightCost: 130000,         //운임비
-            selectOrderList: JSON.stringify([212,224,288]),
-            managerAdminId: 26,
-        }
-        getData.post('inbound/updateInbound',sendParam).then(v=>{
-            if(v?.data?.code === 1){
-                console.log(v,'< ==== invoundId ')
-            }
-        })
+    function updateFunc() {
+        updateCalc()
     }
-
 
     return <>
-        {isModalOpen ? <OrderListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}
-                                       getRows={getSelectedRows}/> : <></>}
-        <>
-            <div style={{
-                display: 'grid',
-                gridTemplateRows: `${mini ? '390px' : '65px'} calc(100vh - ${mini ? 530 : 195}px)`,
-                rowGap: 10,
-            }}>
+        {/*{isModalOpen ? <OrderListModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}*/}
+        {/*                               getRows={getSelectedRows}/> : <></>}*/}
+        <SearchInfoModal infoRef={infoRef}
+                         open={isModalOpen}
+                         setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
 
-                <MainCard title={<>입고 등록
-                    <Button onClick={saveApi}>saveApi</Button>
-                    <Button onClick={updateApi}>updateApi</Button>
-                </>} list={[
-                    {name: '저장', func: saveFunc, type: 'primary'},
-                    {name: '초기화', func: clearAll, type: 'danger'}
-                ]} mini={mini} setMini={setMini}>
 
-                    {mini ? <div>
-                            <TopBoxCard grid={'100px 120px 120px'}>
-                                {datePickerForm({title: '입고일자', id: 'arrivalDate'})}
-                                {inputForm({title: '운수사명', id: 'carrierName'})}
-                                {inputForm({title: 'B/L No.', id: 'blNo'})}
+        <div ref={infoRef} style={{
+            display: 'grid',
+            gridTemplateRows: `${mini ? '495px' : '65px'} calc(100vh - ${mini ? 590 : 195}px)`,
+            // overflowY: 'hidden',
+            rowGap: 10,
+        }}>
 
-                            </TopBoxCard>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: "300px 300px 1fr  ",
-                                gap: 10,
-                                marginTop: 10
-                            }}>
+            <MainCard title={<>매입 등록
+                {/*<Button onClick={saveApi}>saveApi</Button>*/}
+                {/*<Button onClick={updateApi}>updateApi</Button>*/}
+            </>} list={[
+                {name: '저장', func: saveFunc, type: 'primary'},
+                {name: '초기화', func: clearAll, type: 'danger'}
+            ]} mini={mini} setMini={setMini}>
+
+                {mini ? <div>
+                        <TopBoxCard grid={'120px 120px 120px 120px 120px 120px 120px 120px'}>
+                            {datePickerForm({
+                                title: '작성일',
+                                id: 'createdDate',
+                                disabled: true,
+                                data: info
+                            })}
+                            {inputForm({title: '작성자', id: 'createdBy', disabled: true, data: info})}
+                            <div>
+                                {selectBoxForm({
+                                    title: '담당자',
+                                    id: 'managerAdminId',
+                                    onChange: onChange,
+                                    data: info,
+                                    list: adminList?.map((item) => ({
+                                        ...item,
+                                        value: item.adminId,
+                                        label: item.name,
+                                    }))
+                                })}
+                            </div>
+                            {inputForm({
+                                title: '만쿠발주서 No.',
+                                id: 'documentNumber',
+                                onChange: onChange,
+                                data: info,
+                                disabled: true,
+                                suffix: <span style={{cursor: 'pointer'}} onClick={
+                                    (e) => {
+                                        e.stopPropagation();
+                                        openModal('connectInquiryNo');
+                                    }
+                                }>🔍</span>,
+                            })}
+                            {datePickerForm({title: '입고일자', id: 'inboundDate', data: info, onChange: onChange})}
+                            {inputForm({title: '운수사명', id: 'carrierName', data: info, onChange: onChange})}
+                            {inputForm({title: 'B/L No.', id: 'blNo', data: info, onChange: onChange})}
+                            {datePickerForm({title: '도착일', id: 'arrivalDate', data: info, onChange: onChange})}
+                        </TopBoxCard>
+                        <div style={{height: 3}}/>
+
+                        <PanelGroup ref={groupRef} direction="horizontal" style={{gap: 0.5, paddingTop: 3}}>
+                            <Panel defaultSize={sizes[0]} minSize={5}>
                                 <BoxCard title={'비용 정보'}>
-                                    {inputNumberForm({
+                                    {inputForm({
                                         title: '부가세',
                                         id: 'vatAmount',
+                                        onChange: onChange,
+                                        data: info,
                                     })}
-                                    {inputNumberForm({
+                                    {inputForm({
                                         title: '관세',
                                         id: 'tariff',
-                                        placeholder: '매입처 담당자 입력 필요',
+                                        onChange: onChange,
+                                        data: info,
                                     })}
-                                    {inputNumberForm({
+                                    {inputForm({
                                         title: '운임비',
                                         id: 'shippingFee',
+                                        onChange: onChange,
+                                        data: info,
                                     })}
                                 </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[1]} minSize={5}>
                                 <BoxCard title={'매입금액 정보'}>
-
-                                    {inputNumberForm({
+                                    {inputForm({
+                                        title: '기타비용',
+                                        id: 'etcPrice',
+                                        data: info,
+                                        onChange: onChange
+                                    })}
+                                    {inputForm({
                                         title: '합계',
                                         id: 'total',
+                                        data: info,
                                         disabled: true,
                                     })}
-                                    {inputNumberForm({
+                                    {inputForm({
                                         title: '합계 (VAT포함)',
                                         id: 'totalVat',
+                                        data: info,
                                         disabled: true,
 
                                     })}
                                 </BoxCard>
-
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[2]} minSize={5}>
                                 <BoxCard title={'매출금액 정보'}>
 
                                     {inputNumberForm({
                                         title: '판매금액합계',
                                         id: 'saleTotal',
+                                        data: info,
                                         disabled: true,
                                     })}
                                     {inputNumberForm({
                                         title: '판매금액 합계 (VAT포함)',
                                         id: 'saleVatTotal',
+                                        data: info,
                                         disabled: true
                                     })}
                                     {inputNumberForm({
                                         title: '영업이익금',
                                         id: 'operationIncome',
+                                        data: info,
                                         disabled: true
                                     })}
                                 </BoxCard>
+                            </Panel>
+                            <PanelResizeHandle/>
+                            <Panel defaultSize={sizes[3]} minSize={5}>
+                                <BoxCard title={'기타'}>
+                                    {radioForm({
+                                        title: '운송수단',
+                                        id: 'transport',
+                                        onChange: onChange,
+                                        data: info,
+                                        list: [
+                                            {value: '항공', title: '항공'},
+                                            {value: '해운', title: '해운'},
+                                        ]
+                                    })}
+                                    {radioForm({
+                                        title: '매입상태',
+                                        id: 'inboundStatus',
+                                        onChange: onChange,
+                                        data: info,
+                                        list: [
+                                            {value: '완료', title: '완료'},
+                                            {value: '진행중', title: '진행중'},
+                                            {value: '취소', title: '취소'},
+                                            {value: '환불', title: '환불'}
+                                        ]
+                                    })}
+                                    {textAreaForm({title: '비고란', id: 'remarks', onChange: onChange, data: info})}
 
-                            </div>
-                        </div>
-                        : <></>}
-                </MainCard>
+                                </BoxCard>
+                            </Panel>
+                        </PanelGroup>
+                    </div>
+                    : <></>}
+            </MainCard>
 
-                <Table data={tableData} column={storeInfo['write']} funcButtons={['print']} ref={tableRef}
-                       type={'order_write_column'}/>
-            </div>
-        </>
+            <TableGrid
+                // deleteComp={
+                //     <Popconfirm
+                //         title="삭제하시겠습니까?"
+                //         onConfirm={confirm}
+                //         icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                //         <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                //             <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                //         </Button>
+                //     </Popconfirm>
+                // }
+                // totalRow={totalRow}
+                gridRef={gridRef}
+                columns={inboundColumn}
+                customType={'inbound'}
+                onGridReady={onGridReady}
+                funcButtons={['agPrint']}
+                type={'write'}
+                // tempFunc={getOrderFile}
+                updateFunc={updateFunc}
+            />
+        </div>
     </>
 }
 

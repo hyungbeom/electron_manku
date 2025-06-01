@@ -391,3 +391,32 @@ export const estimateTopInfo = {
     faxNumber: 'Fax',
     shippingTerms: '납품조건'
 }
+
+
+export function summarizeNotifications(notifications) {
+    const grouped = {};
+
+    // 1. title 기준으로 그룹화
+    notifications?.forEach((item) => {
+        if (!grouped[item.title]) {
+            grouped[item.title] = [];
+        }
+        grouped[item.title].push(item);
+    });
+
+    // 2. 그룹별 요약 생성
+    const summarized = Object.entries(grouped).map(([title, group]: any) => {
+        const count = group.length;
+        const displayTitle = count > 1 ? `${title} 외 ${count - 1}건` : title;
+        const first = group[0];
+
+        return {
+            title: displayTitle,
+            message: first.message,
+            pk: first.pk
+        };
+    });
+    console.log(notifications, 'summarized::::')
+
+    return summarized;
+}

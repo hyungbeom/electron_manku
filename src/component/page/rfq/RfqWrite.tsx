@@ -49,29 +49,14 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
     };
     const [sizes] = useState(getSavedSizes); // 패널 크기 상태
 
-    const [memberList, setMemberList] = useState([]);
 
-    useEffect(() => {
-        getMemberList();
-    }, []);
-
-    async function getMemberList() {
-        // @ts-ignore
-        return await getData.post('admin/getAdminList', {
-            "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-            "searchAuthority": null,    // 1: 일반, 0: 관리자
-            "page": 1,
-            "limit": -1
-        }).then(v => {
-            setMemberList(v.data.entity.adminList)
-        })
-    }
 
     const [loading, setLoading] = useState(false);
     const [mini, setMini] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(ModalInitList);
 
-    const userInfo = useAppSelector((state) => state.user.userInfo);
+    const { userInfo, adminList } = useAppSelector((state) => state.user);
+
     const adminParams = {
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
@@ -181,7 +166,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         info['deliveryDate'] = maxDeliveryDate;
         //
 
-        const findMember = memberList.find(v => v.adminId === parseInt(info['managerAdminId']));
+        const findMember = adminList.find(v => v.adminId === parseInt(info['managerAdminId']));
         info['managerAdminName'] = findMember['name'];
 
         setLoading(true);
@@ -286,7 +271,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                                         onChange: onChange,
                                         data: info,
                                         validate: validate['managerAdminId'],
-                                        list: memberList?.map((item) => ({
+                                        list: adminList?.map((item) => ({
                                             ...item,
                                             value: item.adminId,
                                             label: item.name,

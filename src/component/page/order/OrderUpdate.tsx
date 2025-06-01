@@ -357,7 +357,9 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
 
 
     function alertConfirm() {
-        getData.post('order/replyStatusConfirm', updateKey['order_update']).then(v => {
+
+        const member = adminList.find(v => v.adminId === parseInt(info.managerAdminId))
+        getData.post('order/replyStatusConfirm', {pk :updateKey['order_update'], receiverEmail : member.email, documentNumberFull : info.documentNumberFull, customerName : info.customerName}).then(v => {
             message.success({
                 content: '메일회신확인 완료',
                 duration: 2, // 3초 후 사라짐
@@ -367,7 +369,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
 
     function getMergePdf(){
         console.log(info.folderId,'info.folderId:')
-        getData.post('common/getMergePdf', {folderId : info.folderId}).then(v => {
+        getData.post('common/getMergePdf', {documentNumberFull : info.documentNumberFull}).then(v => {
 
             if(v?.data.code === 1 && v?.data?.entity){
 
@@ -396,7 +398,7 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'order_update'}/>
         {(isModalOpen['agencyCode'] || isModalOpen['customerName']) &&
-            <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo}
+            <SearchInfoModal  infoRef={infoRef} setInfo={setInfo}
                              open={isModalOpen}
 
                              setIsModalOpen={setIsModalOpen}/>}

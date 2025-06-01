@@ -31,13 +31,23 @@ function Remittance({
         });
     }
 
+    function subFunc(){
+        setInfo(v=>{
+            return {...v, sendStatusCount: v.sendStatusCount + 1}
+        })
+        console.log('????')
+    }
+
     return (
         type == 'overseas'
             ? <Table data={tableData} column={ORInfo['write']} funcButtons={['print']} ref={tableRef}
                      type={'overseas_remittance_write_column'} customFunc={partialRemittance} />
             : <Table data={tableData} column={DRInfo['write']} funcButtons={['print']} ref={tableRef}
                     type={'domestic_remittance_write_column'}
-                     customFunc={partialRemittance} />
+                     customFunc={partialRemittance}
+                     subFunc={subFunc}
+
+            />
     );
 }
 

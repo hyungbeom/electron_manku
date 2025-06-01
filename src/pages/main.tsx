@@ -20,34 +20,9 @@ import Drawer from "antd/lib/drawer";
 import AlertHistoryRead from "@/component/page/etc/AlertHistoryRead";
 import {setHistoryList} from "@/store/history/historySlice";
 import GPT from "@/component/page/etc/GPT";
+import {summarizeNotifications} from "@/utils/common";
 
-function summarizeNotifications(notifications) {
-    const grouped = {};
 
-    // 1. title 기준으로 그룹화
-    notifications?.forEach((item) => {
-        if (!grouped[item.title]) {
-            grouped[item.title] = [];
-        }
-        grouped[item.title].push(item);
-    });
-
-    // 2. 그룹별 요약 생성
-    const summarized = Object.entries(grouped).map(([title, group]: any) => {
-        const count = group.length;
-        const displayTitle = count > 1 ? `${title} 외 ${count - 1}건` : title;
-        const first = group[0];
-
-        return {
-            title: displayTitle,
-            message: first.message,
-            pk: first.pk
-        };
-    });
-    console.log(notifications,'summarized::::')
-
-    return summarized;
-}
 
 export default function Main() {
     const notificationAlert = useNotificationAlert();
@@ -61,113 +36,93 @@ export default function Main() {
     const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
 
-
+    // @ts-ignore
     useEffect(() => {
+        let client; // 클라이언트를 useEffect 외부로 선언해 반환 함수에서 접근 가능하게
 
+        // 알림 끈 상태면 아무 것도 하지 않고 연결도 해제
+        if (userInfo.alertStatus !== 'on') {
+            return () => {
+                if (client?.connected) {
+                    client.deactivate();
+                    console.log('🔌 알림 끔 - 소켓 연결 해제됨');
+                }
+            };
+        }
+
+        // 알림 ON일 때만 동작
         getData.post('socket/getQueue').then(v => {
-            if(v?.data.length) {
+            if (v?.data.length) {
                 const summary = summarizeNotifications(v?.data);
                 summary.forEach(data => {
-                    notificationAlert('success', "🔔" + data.title,
-                        <>
-                            {data.message}
-                        </>
-
-                        , function () {
+                    notificationAlert(
+                        'success',
+                        "🔔" + data.title,
+                        <>{data.message}</>,
+                        () => {
                             if (data.title.includes('[회신알림]')) {
                                 getPropertyId('rfq_update', data?.pk);
                             } else if (data.title.includes('[견적서알림]')) {
                                 getPropertyId('estimate_update', data?.pk);
                             }
                         },
-
-                        {cursor: 'pointer'},
+                        { cursor: 'pointer' },
                         null
-                    )
-                })
+                    );
+                });
             }
-        })
-        getData.post('socket/getQueue').then(v => {
-            if(v?.data.length) {
-                const summary = summarizeNotifications(v?.data);
-                summary.forEach(data => {
-                    notificationAlert('success', "🔔" + data.title,
-                        <>
-                            {data.message}
-                        </>
+        });
 
-                        , function () {
-                            if (data.title.includes('[회신알림]')) {
-                                getPropertyId('rfq_update', data?.pk);
-                            } else if (data.title.includes('[견적서알림]')) {
-                                getPropertyId('estimate_update', data?.pk);
-                            }
-                        },
+        const socket = new SockJS(
+            process.env.NODE_ENV === 'development'
+                ? `http://localhost:3002/ws?userId=${userInfo.adminId}`
+                : `https://server.progist.co.kr/ws?userId=${userInfo.adminId}`
+        );
 
-                        {cursor: 'pointer'},
-                        null
-                    )
-                })
-            }
-        })
-        const socket = new SockJS(`https://manku.progist.co.kr/ws?userId=${userInfo.adminId}`);
-        // const socket = new SockJS(`http://localhost:3002/ws?userId=${userInfo.adminId}`);
-
-
-        // STOMP 클라이언트 생성 및 설정
-        const client = new Client({
+        client = new Client({
             webSocketFactory: () => socket,
             reconnectDelay: 5000,
             onConnect: () => {
-
                 console.log('[WebSocket 연결 성공]');
                 client.subscribe('/user/queue/notifications', async (msg) => {
                     const data = JSON.parse(msg.body);
 
+                    const v = await getData.post('history/getHistoryReceiveList');
+                    const rawData = v?.data;
+                    if (rawData?.length) {
+                        const grouped = rawData.reduce((acc, curr) => {
+                            const date = curr.writtenDate;
+                            if (!acc[date]) acc[date] = [];
+                            acc[date].push(curr);
+                            return acc;
+                        }, {});
+                        dispatch(setHistoryList(grouped));
+                    }
 
-                    await getData.post('history/getHistoryReceiveList').then(v => {
+                    const findMember = adminList.find(v => v.adminId === data.senderId);
 
-
-                        const rawData = v?.data;
-
-// 날짜 기준으로 묶기
-
-                        if (rawData?.length) {
-                            const groupedByDate = rawData?.reduce((acc, curr) => {
-                                const date = curr.writtenDate;
-                                if (!acc[date]) {
-                                    acc[date] = [];
-                                }
-                                acc[date].push(curr);
-                                return acc;
-                            }, {});
-                            dispatch(setHistoryList(groupedByDate))
-
-                        }
-                    })
-
-
-                    // OS 알림 띄우기 (preload에서 노출한 API 호출)
-                    const findMember = adminList.find(v => v.adminId === data.senderId)
-
-                    notificationAlert('success', "🔔" + data.title + `  요청자 : ${findMember?.name}`,
-                        <>
-                            {data.message}
-                        </>
-                        , function () {
+                    notificationAlert(
+                        'success',
+                        "🔔" + data.title + `  요청자 : ${findMember?.name}`,
+                        <>{data.message}</>,
+                        () => {
                             if (data.title.includes('[회신알림]')) {
                                 getPropertyId('rfq_update', data?.pk);
-                            }else if (data.title.includes('[견적서알림]')) {
+                            } else if (data.title.includes('[견적서알림]')) {
                                 getPropertyId('estimate_update', data?.pk);
                             }
                         },
-                        {cursor: 'pointer'},
+                        { cursor: 'pointer' },
                         null
-                    )
-                    // @ts-ignore
-                    if (window.electron && window.electron.notify) {
-                        // @ts-ignore
-                        window.electron.notify(data.title + `  요청자 : ${findMember.name}`, data.message);
+                    );
+
+                    // @ts-ignored
+                    if (window?.electron?.notify) {
+                        // @ts-ignored
+                        window.electron.notify(
+                            data.title + `  요청자 : ${findMember?.name}`,
+                            data.message
+                        );
                     }
                 });
             },
@@ -176,24 +131,23 @@ export default function Main() {
             },
         });
 
-
         client.activate();
-        // @ts-ignore
-        if (window?.electron) {
-            // @ts-ignore
-            window.electron.onNotificationClicked(({title, body}) => {
-                // console.log('Notification clicked:', title, body);
-                // 여기서 원하는 동작 실행
+
+        // @ts-ignored
+        if (window?.electron?.onNotificationClicked) {
+            // @ts-ignored
+            window.electron.onNotificationClicked(({ title }) => {
                 alert(`알림 클릭됨: ${title}`);
-                // 또는 React 상태 업데이트, 라우팅 등
             });
         }
 
-
         return () => {
-            client.deactivate();
+            if (client?.connected) {
+                client.deactivate();
+                console.log('🧹 WebSocket 정리됨');
+            }
         };
-    }, [activeTabId]);
+    }, [activeTabId, userInfo.alertStatus]); // userInfo.alertStatus도 의존성에 추가
 
     const modelRef = useRef(Model.fromJson({
         global: {},
@@ -452,42 +406,23 @@ export default function Main() {
                 />
 
             </div>
-       <AlertHistoryRead open={open} setOpen={setOpen} getPropertyId={getPropertyId}/>
-       <GPT open={open2} setOpen={setOpen2} />
+            <AlertHistoryRead open={open} setOpen={setOpen} getPropertyId={getPropertyId}/>
+            <GPT open={open2} setOpen={setOpen2}/>
         </LayoutComponent>
     );
 }
 
+// @ts-ignore
 export const getServerSideProps: any = wrapper.getStaticProps((store: any) => async (ctx: any) => {
+    const redirectResult = await initialServerRouter(ctx, store);
 
-
-    const {userInfo, codeInfo, adminList} = await initialServerRouter(ctx, store);
-
-    getData.defaults.headers["authorization"] = `Bearer ${getCookie(ctx, 'token')}`;
-    getData.defaults.headers["refresh_token"] = getCookie(ctx, "refreshToken");
-    await getData.post('admin/getAdminList', {
-        "searchText": null,         // 아이디, 이름, 직급, 이메일, 연락처, 팩스번호
-        "searchAuthority": null,    // 1: 일반, 0: 관리자
-        "page": 1,
-        "limit": -1
-    }).then(v => {
-        console.log(v?.data?.entity?.adminList, 'v?.data?.entity?.adminList')
-        store.dispatch(setAdminList(v?.data?.entity?.adminList));
-    })
-
-    const {first} = ctx.query;
-
-    if (codeInfo !== 1) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        };
-    } else {
-        store.dispatch(setUserInfo(userInfo));
-
+    if (redirectResult?.redirect) {
+        return redirectResult;  // ⬅️ redirect 정보가 있으면 바로 리턴
     }
 
-    return {props: {alarm: first === 'true'}}
+    return {
+        props: {},
+    };
+
+
 })

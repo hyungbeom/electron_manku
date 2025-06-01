@@ -137,11 +137,17 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
             allData.push(node.data);
         });
 
-        const selectOrderNos = allData.map(item => item.orderDetailId)
+        const selectOrderNos = allData.map(item => item.orderDetailId);
+        // @ts-ignore
+        const documentNumberFullList = [...new Set(allData.map((item:any) => item.documentNumberFull))].join('\n');
+
+
         const copyInfo = {
             ...info,
             supplyAmount: Number(String(info?.supplyAmount).replace(/,/g, '')),
-            selectOrderList: JSON.stringify(selectOrderNos)
+            selectOrderList: JSON.stringify(selectOrderNos),
+            invoiceDetailList: allData,
+            documentNumberFullList: documentNumberFullList
         }
         setLoading(true);
         try {
@@ -334,9 +340,21 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
         });
     }
 
+    function updateFunc(){
+        let supplyAmount = 0;
+        gridRef.current.forEachNode(node => {
+            const totalNet = parseFloat(node.data.net) * parseFloat(node.data.quantity);
+            supplyAmount += !isNaN(totalNet) ? totalNet : 0
+        });
+        setInfo(v=>{
+            return {...v, supplyAmount : supplyAmount.toLocaleString(), tax : (supplyAmount * 0.1).toLocaleString(), totalAmount : (supplyAmount + (supplyAmount * 0.1)).toLocaleString()}
+        })
+    }
+
+
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'tax_invoice_write'}/>
-        <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
+        <SearchInfoModal  infoRef={infoRef} setInfo={setSelectOrderList}
                              open={isModalOpen}
                              setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
 
@@ -561,7 +579,9 @@ export default function TaxInvoiceWrite({copyPageInfo, getPropertyId}: any) {
                     customType={'Tax'}
                     onGridReady={onGridReady}
                     funcButtons={['agPrint']}
+                    type={'write'}
                     tempFunc={getOrderFile}
+                    updateFunc={updateFunc}
                 />
             </div>
     </Spin>

@@ -46,11 +46,11 @@ export const treeData = [
             {title: "입고예정 조회", key: "expected_delivery_read"}
         ],
     }, {
-        title: "입고",
+        title: "매입",
         key: "store",
         children: [
-            {title: "입고 등록", key: "store_write"},
-            {title: "입고 조회", key: "store_read"}
+            {title: "매입 등록", key: "store_write"},
+            {title: "발주현황표", key: "store_read"}
         ],
     }, {
         title: "배송",
@@ -152,8 +152,8 @@ export const introMenulist = [
     {
         icon: <DropboxSquareFilled/>,
         color: 'lightskyblue',
-        title: '입고',
-        children: [{name: '입고 등록', key: 'store_write'}, {name: '입고 조회', key: 'store_read'}]
+        title: '매입',
+        children: [{name: '매입 등록', key: 'store_write'}, {name: '발주현황표', key: 'store_read'}]
     },
     {
         icon: <CarFilled/>,

@@ -285,6 +285,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
      * @param list
      */
     function modalSelected(list= []) {
+
         if (!list?.length) return;
 
         setSelectOrderList(prevList => {
@@ -293,7 +294,6 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                 newItem => !prevList.some(existing => existing.orderDetailId === newItem.orderDetailId)
             );
             const updatedList = [...prevList, ...newItems];
-
             // Inquiry No. 정리
             const connectInquiryNos = [];
             for (const item of updatedList || []) {
@@ -335,10 +335,12 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
             // 잔액 계산
             const balance = totalAmount - partialRemittance;
 
+
             setInfo(prevInfo => {
                 return {
                     ...prevInfo,
                     rfqNo: updatedList?.[0]?.rfqNo || '',
+                    bankAccountNumber: updatedList?.[0]?.bankAccountNumber || '',
                     customerName: updatedList?.[0]?.customerName || '',
                     agencyName: updatedList?.[0]?.agencyName || '',
                     connectInquiryNo: connectInquiryNos.join(', '),
@@ -354,7 +356,7 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
 
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'domestic_remittance_write'}/>
-        <SearchInfoModal info={selectOrderList} infoRef={infoRef} setInfo={setSelectOrderList}
+        <SearchInfoModal  infoRef={infoRef} setInfo={setSelectOrderList}
                              open={isModalOpen}
                              setIsModalOpen={setIsModalOpen} returnFunc={modalSelected}/>
 
@@ -501,6 +503,13 @@ export default function DomesticRemittanceWrite({copyPageInfo, getPropertyId}: a
                                         {value: '', title: '해당없음'}
                                     ]
                                 })}
+                                    {inputForm({
+                                        title: '계좌번호',
+                                        id: 'bankAccountNumber',
+
+                                        onChange: onChange,
+                                        data: info,
+                                    })}
                                 </BoxCard>
                             </Panel>
                             <PanelResizeHandle/>

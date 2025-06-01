@@ -25,7 +25,8 @@ const Table = forwardRef(({
                               type = '',
                               funcButtons,
                               infoRef = null,
-                              customFunc = null
+                              customFunc = null,
+                              subFunc = null
                           }: any, ref) => {
 
     const rowRef = useRef(null)
@@ -118,9 +119,12 @@ const Table = forwardRef(({
      * @param source
      */
     function afterChange(changes, source) {
-        if (source === "edit" || source === "Checkbox") {
+        console.log(source,'source:')
+
+        if (source === "edit" || source === "Checkbox"  || source === "CopyPaste.paste") {
             changes.forEach((change, index) => {
                 const [row, prop, oldValue, newValue] = change; // 구조 분해 할당
+                console.log(prop,'prop:')
                 if (prop === "content" && newValue === "회신") {
                     hotRef.current.hotInstance.suspendExecution(); // ⚠️ 자동 계산 방지
                     hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
@@ -131,6 +135,12 @@ const Table = forwardRef(({
                         hotRef.current.hotInstance.setDataAtCell(row, 8, newValue); // replyDate 컬럼 업데이트
                     }
                 }
+                // subFunc
+                if (prop === "sendStatus") {
+                    if(newValue === '요청'){
+                        subFunc('check')
+                    }
+                }
                 if (prop === 'unitPrice') {
                     const propIndex = change.indexOf('unitPrice'); // 'unitPrice'의 인덱스 찾기
                     const newValueIndex = propIndex + 2; // newValue 위치 (prop + 2)
@@ -138,7 +148,7 @@ const Table = forwardRef(({
                     if (type === 'rfq_write_column') {
                         const format = Math.floor(parseFloat(change[newValueIndex]) * 100) / 100
                         // hotRef.current.hotInstance.setDataAtCell(row, 4, format);
-                        4
+
                         hotRef.current.hotInstance.setDataAtCell(row, 7, '회신'); // replyDate 컬럼 업데이트
                         hotRef.current.hotInstance.setDataAtCell(row, 8, moment().format('YYYY-MM-DD')); // replyDate 컬럼 업데이트
                     }

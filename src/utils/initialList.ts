@@ -856,15 +856,30 @@ export const storeDetailUnit = {
 }
 
 export const storeRealInitial = {
-    "searchBlNo": "",                           // B/L No.
-    "searchPaymentStatus": "",                  // 결제 여부
-    "searchArrivalDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],               // 입고일자 시작-종료
-    "searchStartArrivalDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),               // 입고일자 시작
-    "searchEndArrivalDate": moment().format('YYYY-MM-DD'),                 // 입고일자 종료
-    "searchOrderDocumentNumberFull": "",        // 발주 Inquirty No
-    "searchCustomerName": "",                   // 고객사명
-    page : 1,
-    limit : -1
+    "searchDocumentNumberFull": "",                           // 문서번호.
+    "searchRfqNo": "",                           // Project No.
+    "searchCustomerName": "",                   //고객사명
+    "searchBlNo": "",                  // B/L No.
+
+
+    "searchInboundDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],               // 입고일자 시작-종료
+    "searchStartInboundDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),               // 입고일자 시작
+    "searchEndInboundDate": moment().format('YYYY-MM-DD'),                 // 입고일자 종료
+
+    "searchOutboundDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],               // 입고일자 시작-종료
+    "searchStartOutboundDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),               // 입고일자 시작
+    "searchEndOutboundDate": moment().format('YYYY-MM-DD'),                 // 입고일자 종료
+
+    "searchRequestDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],               // 입고일자 시작-종료
+    "searchStartRequestDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),               // 입고일자 시작
+    "searchEndRequestDate": moment().format('YYYY-MM-DD'),                 // 입고일자 종료
+
+
+    "searchInvoiceDate": [moment().subtract(1, 'years').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],               // 입고일자 시작-종료
+    "searchStartInvoiceDate": moment().subtract(1, 'years').format('YYYY-MM-DD'),               // 입고일자 시작
+    "searchEndInvoiceDate": moment().format('YYYY-MM-DD'),                 // 입고일자 종료
+
+    "searchPaymentStatus": "완료",                  // 결제 여부
 }
 
 

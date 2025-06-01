@@ -297,7 +297,7 @@ function ProjectWrite({copyPageInfo = {}, getPropertyId, layoutRef, getCopyPage}
     }
 
     return <Spin spinning={loading}>
-        <SearchInfoModal info={info} infoRef={infoRef} setInfo={setInfo} open={isModalOpen}
+        <SearchInfoModal  infoRef={infoRef} setInfo={setInfo} open={isModalOpen}
                          setIsModalOpen={setIsModalOpen}/>
         <PanelSizeUtil groupRef={groupRef} storage={'project_write'}/>
         <div ref={infoRef} style={{

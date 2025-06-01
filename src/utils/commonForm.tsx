@@ -722,10 +722,6 @@ export const tableButtonList = (type: any, gridRef?: any) => {
     }
 }
 
-
-/**
- * @description 탭을 활성화 시키기 위한 컴포넌트 집약 데이터
- */
 export const tabComponents = {
 
     project_write: {name: "프로젝트 등록", component: <ProjectWrite/>},
@@ -755,9 +751,9 @@ export const tabComponents = {
     order_update: {name: "발주서 수정", component: <OrderUpdate/>},
     expected_delivery_read: {name: "입고예정 조회", component: <ExpectedDeliveryRead/>},
 
-    store_write: {name: "입고 등록", component: <StoreWrite/>},
-    store_read: {name: "입고 조회", component: <StoreRead/>},
-    store_update: {name: "입고 수정", component: <StoreUpdate/>},
+    store_write: {name: "매입 등록", component: <StoreWrite/>},
+    store_read: {name: "발주현황표", component: <StoreRead/>},
+    store_update: {name: "매입 수정", component: <StoreUpdate/>},
 
     delivery_write: {name: "배송 등록", component: <DeliveryWrite/>},
     delivery_read: {
