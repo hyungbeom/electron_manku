@@ -21,14 +21,17 @@ import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {inboundColumn} from "@/utils/columnList";
 import TableGrid from "@/component/tableGrid";
 import {getData} from "@/manage/function/api";
+import moment from "moment/moment";
+import {useNotificationAlert} from "@/component/util/NoticeProvider";
 
 const listType = 'orderStatusDetailList'
 
 
-function StoreWrite({copyPageInfo, notificationAlert = null, getPropertyId}: any) {
-
+function StoreWrite({copyPageInfo,  getPropertyId}: any) {
+    const notificationAlert = useNotificationAlert();
     const {userInfo, adminList} = useAppSelector((state) => state.user);
     const [ready, setReady] = useState(false);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const gridRef = useRef(null);
@@ -98,7 +101,31 @@ function StoreWrite({copyPageInfo, notificationAlert = null, getPropertyId}: any
             ...info,
             inboundDetail: allData
         }).then(v => {
-
+            if (v?.data?.code === 1) {
+                window.postMessage({message: 'reload', target: 'overseas_remittance_read'}, window.location.origin);
+                notificationAlert('success', '💾 매입등록 등록완료',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , null, null, 2
+                )
+                clearAll();
+                getPropertyId('store_update', v?.data?.entity)
+            } else {
+                console.warn(v?.data?.message);
+                notificationAlert('error', '⚠️ 작업실패',
+                    <>
+                        <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
+                    </>
+                    , function () {
+                        alert('작업 로그 페이지 참고')
+                    },
+                    {cursor: 'pointer'}
+                )
+            }
+        })
+            .finally(() => {
+                setLoading(false);
         })
     }
 

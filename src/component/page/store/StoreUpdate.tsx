@@ -21,6 +21,10 @@ import {isEmptyObj} from "@/utils/common/function/isEmptyObj";
 import {inboundColumn} from "@/utils/columnList";
 import TableGrid from "@/component/tableGrid";
 import {getData} from "@/manage/function/api";
+import Popconfirm from "antd/lib/popconfirm";
+import {DeleteOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
+import Button from "antd/lib/button";
+import message from "antd/lib/message";
 
 const listType = 'orderStatusDetailList'
 
@@ -80,6 +84,7 @@ function StoreUpdate({
         isGridLoad.current = true;
     };
 
+    console.log(updateKey,'updateKey[\'store_update\']:')
 
     // setTableData(commonFunc.repeatObject(rfqInfo['write']['defaultData'], 1000))
     async function getDataInfo() {
@@ -91,6 +96,8 @@ function StoreUpdate({
         const {entity} = result?.data;
         // const findMember = adminList.find(v=> v.adminId === invoiceInfo.createdId);
         // console.log(findMember,'::')
+
+        console.log(result,'::::::::::::entity:::::::::::::::')
         gridManage.resetData(gridRef, entity?.inboundDetail ?? []);
         setTotalRow(entity?.inboundDetail?.length);
         setInfo({
@@ -123,11 +130,11 @@ function StoreUpdate({
             allData.push(node.data);
         });
 
-        return await getData.post('inbound/addInbound', {
+        return await getData.post('inbound/updateInbound', {
             ...info,
             inboundDetail: allData
         }).then(v => {
-
+            console.log("sadasdasd")
         })
     }
 
@@ -196,6 +203,37 @@ function StoreUpdate({
 
     function updateFunc() {
         updateCalc(info)
+    }
+
+
+    async function confirm() {
+        const list = gridRef.current.getSelectedRows();
+        if (list.length < 1) {
+            return message.error('삭제할 발주서 정보를 선택해주세요.');
+        }
+
+        const deleteList = gridManage.getFieldDeleteList(gridRef, {inboundDetailId: 'inboundDetailId'});
+        const inboundDetailIdList = deleteList.map(v=> v.inboundDetailId)
+
+
+        const allData = [];
+        gridRef?.current?.forEachNode((node) => {
+            allData.push(node.data);
+        });
+
+
+        const updateList = allData.filter(v=> !inboundDetailIdList.includes(v.inboundDetailId))
+        gridManage.resetData(gridRef, updateList)
+        console.log(updateList,'updateList')
+
+
+
+        // gridManage.resetData(gridRef, data?.data?.entity?.agencyList)
+
+        setInfo(v=>{
+            return {...v, deleteList : [...v.deleteList, ...inboundDetailIdList]}
+        })
+
     }
 
     return <>
@@ -369,17 +407,17 @@ function StoreUpdate({
             </MainCard>
 
             <TableGrid
-                // deleteComp={
-                //     <Popconfirm
-                //         title="삭제하시겠습니까?"
-                //         onConfirm={confirm}
-                //         icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
-                //         <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
-                //             <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
-                //         </Button>
-                //     </Popconfirm>
-                // }
-                // totalRow={totalRow}
+                deleteComp={
+                    <Popconfirm
+                        title="삭제하시겠습니까?"
+                        onConfirm={confirm}
+                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                            <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                        </Button>
+                    </Popconfirm>
+                }
+                totalRow={totalRow}
                 gridRef={gridRef}
                 columns={inboundColumn}
                 customType={'inbound'}

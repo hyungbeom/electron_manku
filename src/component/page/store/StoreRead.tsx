@@ -1,7 +1,13 @@
 import React, {memo, useRef, useState} from "react";
 import {storeRealInitial} from "@/utils/initialList";
 import Button from "antd/lib/button";
-import {CopyOutlined, RadiusSettingOutlined, SaveOutlined, SearchOutlined} from "@ant-design/icons";
+import {
+    CopyOutlined, DeleteOutlined,
+    ExclamationCircleOutlined,
+    RadiusSettingOutlined,
+    SaveOutlined,
+    SearchOutlined
+} from "@ant-design/icons";
 import {deleteOrderStatusDetails, getOrderStatusList} from "@/utils/api/mainApi";
 import _ from "lodash";
 import {commonManage, gridManage} from "@/utils/commonManage";
@@ -16,6 +22,7 @@ import {getData} from "@/manage/function/api";
 import * as XLSX from "xlsx";
 import moment from "moment";
 import {Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import Popconfirm from "antd/lib/popconfirm";
 
 
 function StoreRead({getPropertyId, getCopyPage}: any) {
@@ -91,16 +98,17 @@ function StoreRead({getPropertyId, getCopyPage}: any) {
 
 
     async function deleteList() {
-        if (gridRef.current.getSelectedRows().length < 1) {
+        const list = gridRef.current.getSelectedRows();
+        if (list.length < 1) {
             return message.error('삭제할 데이터를 선택해주세요.')
         }
 
-        const deleteList = gridManage.getFieldDeleteList(gridRef, {
-            orderStatusId: "orderStatusId",
-            orderStatusDetailId: "orderStatusDetailId",
-        });
+        const deleteList = list.map(v=> v.inboundDetailId)
+
         setLoading(true)
-        deleteOrderStatusDetails({data: {deleteList: deleteList}, returnFunc: searchInfo})
+        await getData.post('inbound/deleteInboundDetailList',{deleteList : deleteList}).then(v=>{
+            searchInfo(true)
+        })
     }
 
 
@@ -509,12 +517,17 @@ function StoreRead({getPropertyId, getCopyPage}: any) {
 
                 <TableGrid deleteComp={<>
                     <Button type={'primary'} size={'small'} style={{fontSize: 10}} onClick={exportExcel}>송장출력</Button>
-                    {/*@ts-ignored*/}
-                    <Button type={'danger'} size={'small'}
-                            style={{fontSize: 11, marginLeft: 5}}
-                            onClick={deleteList}>
-                        <CopyOutlined/>삭제
-                    </Button></>}
+                    <Popconfirm
+                        title="삭제하시겠습니까?"
+                        onConfirm={deleteList}
+                        icon={<ExclamationCircleOutlined style={{color: 'red'}}/>}>
+                        <Button type={'primary'} danger size={'small'} style={{fontSize: 11}}>
+                            <div><DeleteOutlined style={{paddingRight: 8}}/>삭제</div>
+                        </Button>
+                    </Popconfirm>
+
+
+                </>}
                            totalRow={totalRow}
                            type={'read'}
                            getPropertyId={getPropertyId}
@@ -522,6 +535,7 @@ function StoreRead({getPropertyId, getCopyPage}: any) {
                            columns={storeReadColumn}
                            onGridReady={onGridReady}
                            funcButtons={['print']}
+                           customType={'storeRead'}
                 />
             </div>
         </>

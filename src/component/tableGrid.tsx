@@ -83,7 +83,14 @@ const TableGrid = ({
             return;
         }
 
+
         let groupValueKey = 'documentNumberFull';
+
+        if(customType === 'storeRead'){
+            groupValueKey = 'inboundId'
+        }
+
+
         if (customType === 'DRRead' || customType === 'ORRead') groupValueKey = 'remittanceId';
 
         const groupValue = selectedData?.[groupValueKey];

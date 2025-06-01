@@ -588,6 +588,7 @@ export const storeInfo = {
         etcPrice: 0, // 기타비용
         totalKrw: 0,
         totalTax: 0,
+        deleteList: [],
 
 
         total: null,   // 합계

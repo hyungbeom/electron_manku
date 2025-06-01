@@ -4223,7 +4223,27 @@ export const storeReadColumn = [
         pinned: "left",
         filter: false,
     },
-    { headerName: "운수사명", field: "carrierName", maxWidth: 150, pinned: "left" },
+    {
+        headerName: "운수사명",
+        field: "carrierName",
+        maxWidth: 150,
+        pinned: "left",
+        valueGetter: (params) => {
+            const currentIndex = params.node.rowIndex;
+            const currentInboundId = params.data.inboundId;
+            const previousRow = params.api.getDisplayedRowAtIndex(currentIndex - 1);
+
+            if (!previousRow || previousRow.data.inboundId !== currentInboundId) {
+                return params.data.carrierName;
+            }
+
+            // inboundId가 이전 행과 같다면 빈칸 처리
+            return null;
+        },
+        cellRenderer: (params) => {
+            return params.value !== null ? params.value : '';
+        },
+    },
     { headerName: "B/L 번호", field: "blNo", maxWidth: 150, pinned: "left" },
     { headerName: "Inquiry No.", field: "documentNumberFull", maxWidth: 150, pinned: "left" },
 
@@ -4330,10 +4350,9 @@ export const inboundColumn = [
         pinned: "left", // 왼쪽에 고정
         filter: false
     },
-    { headerName: '문서번호', field: 'documentNumberFull', maxWidth: 150, pinned: 'left' },
+    { headerName: '문서번호', field: 'documentNumberFull', maxWidth: 120, pinned: 'left' },
     { headerName: '매입처', field: 'agencyName', maxWidth: 120 , pinned: 'left'},
     { headerName: '고객사', field: 'customerName', maxWidth: 120, pinned: 'left' },
-    { headerName: '결제조건', field: 'paymentTerms', maxWidth: 100, pinned: 'left' },
     { headerName: '환율', field: 'exchange', maxWidth: 80, editable: true },
     { headerName: '발주일자', field: 'writtenDate', maxWidth: 100 },
     { headerName: '송금일자', field: 'requestStartDate', maxWidth: 100 },
@@ -4341,9 +4360,19 @@ export const inboundColumn = [
     { headerName: '금액', field: 'amount', maxWidth: 100 , editable: true},
     { headerName: '화폐단위', field: 'currency', maxWidth: 80 },
     { headerName: '원화환산금액', field: 'krw', maxWidth: 120 , editable: true},
+    { headerName: '결제조건', field: 'paymentTerms', maxWidth: 100 },
     { headerName: '수수료', field: 'tax', maxWidth: 120 , editable: true},
     { headerName: '판매금액', field: 'saleAmount', maxWidth: 120 , editable: true},
-    { headerName: '판매금액(VAT 포함)', field: 'saleTaxAmount', maxWidth: 120 },
+    {
+        headerName: '판매금액(VAT 포함)',
+        field: 'saleTaxAmount',
+        maxWidth: 120,
+        valueGetter: (params) => {
+            const saleAmount = parseFloat(params.data.saleAmount);
+            const validAmount = isNaN(saleAmount) ? 0 : saleAmount;
+            return (validAmount * 1.1).toFixed(2);
+        }
+    },
 
 
     { headerName: '입고일자', field: 'inboundDate', maxWidth: 100,editable: true,       cellEditor: 'agDateCellEditor',
