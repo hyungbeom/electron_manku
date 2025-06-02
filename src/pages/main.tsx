@@ -331,52 +331,8 @@ export default function Main() {
                     />
                 </div>
                 {!tabCounts && <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr',
-                        gap: 70,
-                        gridTemplateRows: '200px auto'
-                    }}>
 
-                        {introMenulist.map(v => {
-                            if (v.title === '시스템관리' && userInfo.authority === 0) {
-                                return false;
-                            }
-                            return <div>
-                                <div style={{
-                                    border: '1px solid lightGray',
-                                    width: 70,
-                                    height: 70,
-                                    borderRadius: 10,
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    margin: '0px auto'
-                                }}>
-                                    <div style={{fontSize: 40, color: v.color}}>
-                                        {v.icon}
-                                    </div>
-                                </div>
-                                <div style={{textAlign: 'center', fontSize: 16, fontWeight: 500, paddingTop: 10}}>
-                                    {v.title}
-                                </div>
-                                <div style={{paddingTop: 10, cursor: 'pointer', textAlign: 'center'}}>
-                                    {v.children.map(src => {
-                                        return <div style={{color: v.color, paddingTop: 3}} onClick={() => {
-
-                                            if (src.key === 'accept_member') {
-                                                router.push('/manage')
-                                            } else if (src.key === 'data_log') {
-                                                router.push('/logData')
-                                            } else {
-                                                onSelect([src.key])
-                                            }
-                                        }}>{src.name}</div>
-                                    })}
-                                </div>
-                            </div>
-                        })}
-                    </div>
+                       <div>업데이트 예정</div>
                 </div>}
 
                 {/*<Layout model={model} factory={factory} onModelChange={onLayoutChange} ref={layoutRef}*/}

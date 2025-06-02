@@ -193,30 +193,40 @@ function RfqRead({getPropertyId, getCopyPage}: any) {
         sendMail(list)
 
     }
-    
+
     function sendAlertMail(){
 
         const list = gridRef.current.getSelectedRows();
 
-        const payload = [
-            {
-                email: "sales@manku.co.kr",
-                managerAdminName: "김민국",
-                detailList: list  // 이건 배열
-            }
+        const grouped = Object.values(
+            list.reduce((acc, cur) => {
+                const id = cur.managerAdminId;
+                if (!acc[id]) {
+                    const findMember = adminList.find(v=> v.adminId === id)
 
-        ];
+                    acc[id] = {
+                        email: findMember?.email,
+                        managerAdminName: cur.managerAdminName,
+                        detailList: []
+                    };
+                }
+                acc[id].detailList.push(cur);
+                return acc;
+            }, {})
+        );
+
+        console.log(grouped,'grouped:')
 
 
-        getData.post('estimate/updateCheckEmail', {data : payload}).then(v=>{
+
+        getData.post('estimate/updateCheckEmail', {data : grouped}).then(v=>{
             if(v?.data?.code === 1){
                 message.success("요청메일 보내기가 완료되었습니다");
                 searchInfo();
             }
         })
-        
-    }
 
+    }
     
     function sendMail(list){
        

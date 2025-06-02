@@ -25,6 +25,7 @@ import Popconfirm from "antd/lib/popconfirm";
 import {DeleteOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import Button from "antd/lib/button";
 import message from "antd/lib/message";
+import moment from "moment";
 
 const listType = 'orderStatusDetailList'
 
@@ -97,12 +98,12 @@ function StoreUpdate({
         // const findMember = adminList.find(v=> v.adminId === invoiceInfo.createdId);
         // console.log(findMember,'::')
 
-        console.log(result,'::::::::::::entity:::::::::::::::')
         gridManage.resetData(gridRef, entity?.inboundDetail ?? []);
         setTotalRow(entity?.inboundDetail?.length);
         setInfo({
             ...getStoreInit(),
-            ...entity
+            ...entity,
+            createdDate : moment(entity.createdDate).format('YYYY-MM-DD')
         });
 
 

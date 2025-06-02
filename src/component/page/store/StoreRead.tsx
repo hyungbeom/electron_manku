@@ -516,7 +516,7 @@ function StoreRead({getPropertyId, getCopyPage}: any) {
 
 
                 <TableGrid deleteComp={<>
-                    <Button type={'primary'} size={'small'} style={{fontSize: 10}} onClick={exportExcel}>송장출력</Button>
+                    <Button type={'primary'} size={'small'} style={{fontSize: 10}} onClick={exportExcel}>발주현황표 출력</Button>
                     <Popconfirm
                         title="삭제하시겠습니까?"
                         onConfirm={deleteList}
