@@ -63,7 +63,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                 <Text style={styles.title}>발 주 서</Text>
                             </View>
                             <View style={styles.rightInfo}>
-                                <Image src="/eng.png" style={styles.info}/>
+                                {/*<Image src="/eng.png" style={styles.info}/>*/}
                             </View>
                         </View>
                         :
