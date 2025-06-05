@@ -30,7 +30,7 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='�
                 <View style={styles.header}>
                     <View style={styles.leftInfo}>
                         <View style={styles.logoInfo}>
-                            <Image src="/manku_ci_black_text.png" style={styles.logo}/>
+                            <Image src="/kor.png" style={styles.logo}/>
                         </View>
                         <View style={styles.companyInfo}>
                             <Text>(주) 만쿠솔루션</Text>

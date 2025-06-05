@@ -48,7 +48,7 @@ export default function PrintDiploma({ data, isModalOpen, setIsModalOpen }) {
                 {/* Header */}
                 <div style={{borderBottom: '1px solid #11AFC2', backgroundColor: '#EBF6F7', display: "flex", width: "100%", alignItems: "center",  padding: "30px 24px"}}>
                     <div style={{width:'auto', display: "flex", position:'absolute', alignItems: "center", gap: "15px"}}>
-                        <img src='/manku_ci_black_text.png' width={100} alt='manku_logo' />
+                        <img src='/kor.png' width={100} alt='manku_logo' />
                         <div style={{fontSize: "6px", width:'auto'}}>
                             (주) 만쿠솔루션
                             <br/>
@@ -73,7 +73,7 @@ export default function PrintDiploma({ data, isModalOpen, setIsModalOpen }) {
 
                     {/*워터마크*/}
                     <img
-                        src='/manku_ci_black_text.png'
+                        src='/eng.png'
                         width="146px"
                         alt="manku logo"
                         style={{opacity:0.1, position:'absolute', top: '50%', left:'39%'}}
