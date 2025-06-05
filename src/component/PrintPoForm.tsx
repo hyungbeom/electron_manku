@@ -49,11 +49,11 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                         <View style={styles.header}>
                             <View style={styles.leftInfo}>
                                 <View style={styles.logoInfo}>
-                                    <Image src="/manku_ci_black_text.png" style={styles.logo}/>
+                                    <Image src="/kor.png" style={styles.logo}/>
                                 </View>
                                 <View style={styles.companyInfo}>
-                                    <Text>(주) 만쿠무역</Text>
-                                    <Text>Manku Trading Co., Ltd</Text>
+                                    <Text>(주) 만쿠솔루션</Text>
+                                    <Text>Manku Solution Co., Ltd</Text>
                                     <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
                                     <Text>B동 2층 211호, 212호</Text>
                                     <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
@@ -63,7 +63,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                 <Text style={styles.title}>발 주 서</Text>
                             </View>
                             <View style={styles.rightInfo}>
-                                <Image src="/manku_stamp_ko.png" style={styles.info}/>
+                                <Image src="/eng.png" style={styles.info}/>
                             </View>
                         </View>
                         :
@@ -73,7 +73,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                     <Image src="/manku_ci_black_text.png" style={styles.logo}/>
                                 </View>
                                 <View style={styles.companyInfo}>
-                                    <Text>Manku Trading Co.,Ltd</Text>
+                                    <Text>Manku Solution Co.,Ltd</Text>
                                     <Text>B- 211#, Garden Five Works, 52,</Text>
                                     <Text>Chungmin-ro,</Text>
                                     <Text>Songpa-gu, Seoul, South Korea</Text>
@@ -316,8 +316,8 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                         <Image src="/manku_ci_black_text.png" style={styles.logo}/>
                                     </View>
                                     <View style={styles.companyInfo}>
-                                        <Text>(주) 만쿠무역</Text>
-                                        <Text>Manku Trading Co., Ltd</Text>
+                                        <Text>(주) 만쿠솔루션</Text>
+                                        <Text>Manku Solution Co., Ltd</Text>
                                         <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
                                         <Text>B동 2층 211호, 212호</Text>
                                         <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
@@ -337,7 +337,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                         <Image src="/manku_ci_black_text.png" style={styles.logo}/>
                                     </View>
                                     <View style={styles.companyInfo}>
-                                        <Text>Manku Trading Co.,Ltd</Text>
+                                        <Text>Manku Solution Co.,Ltd</Text>
                                         <Text>B- 211#, Garden Five Works, 52,</Text>
                                         <Text>Chungmin-ro,</Text>
                                         <Text>Songpa-gu, Seoul, South Korea</Text>

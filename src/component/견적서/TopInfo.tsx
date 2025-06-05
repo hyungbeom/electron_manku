@@ -278,7 +278,7 @@ export const BottomInfo = () => {
             borderTop: '1px solid black',
         }}>
         <div>· 의뢰하실 Model로 기준한 견적입니다.</div>
-        <div>· 계좌번호 : (기업은행)069-118428-04-010/만쿠무역</div>
+        <div>· 계좌번호 : (기업은행)069-118428-04-010/만쿠솔루션</div>
         <div>· 긴급 납기시 담당자와 협의가능합니다.</div>
     </div>
 }

@@ -16,24 +16,30 @@ const styles = StyleSheet.create({
     },
     leftInfo: {
         width: '33%',
-        flexDirection: 'row',
     },
     logoInfo: {
-        paddingTop: 3
+        // width : 100,
+        // height : 15
+
     },
     logo: {
-        width: 30,
-        height: 20
+        width : 100,
+        height: 18
     },
     companyInfo: {
-        fontSize: 7,
-        paddingLeft: 8
+        marginTop : -10,
+        fontSize: 7.5,
+        display: 'flex',
+        justifyContent: 'flex-start', // 왼쪽 정렬
+        alignItems: 'flex-start',     // 위쪽 정렬 (선택)
+        paddingTop : 22
     },
     centerTitle: {
-        width: '33%',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        paddingTop: 10,
+        alignItems: 'flex-end',
+        height: 85, // 부모 높이 명시
+        display: 'flex',
+        justifyContent: 'flex-end', // 오른쪽 정렬 유지
+        paddingBottom : 20
     },
     centerTitle2: {
         width: '33%',
@@ -41,7 +47,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
     },
     title: {
-        fontSize: 25,
+        fontSize: 22,
         fontWeight: 'bold',
         fontFamily : 'NotoSansKR_large'
     },
@@ -55,6 +61,9 @@ const styles = StyleSheet.create({
     rightInfo: {
         width: '33%',
         alignItems: 'flex-end',
+        height: 85, // 부모 높이 명시
+        display: 'flex',
+        justifyContent: 'flex-end' // 오른쪽 정렬 유지
     },
     info: {
         width: 120,

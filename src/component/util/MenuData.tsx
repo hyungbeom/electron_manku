@@ -97,9 +97,9 @@ export const treeData = [
                 ]
             },
             {
-                title: "회사계정관리", key: "company_account", children: [
-                    {title: "회사계정관리 등록", key: "company_account_write"},
-                    {title: "회사계정관리 조회", key: "company_account_read"},
+                title: "계정관리", key: "company_account", children: [
+                    {title: "계정관리 등록", key: "company_account_write"},
+                    {title: "계정관리 조회", key: "company_account_read"},
                 ]
             },
             {

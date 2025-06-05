@@ -368,7 +368,6 @@ function OrderUpdate({updateKey, getCopyPage, layoutRef, getPropertyId}: any) {
     }
 
     function getMergePdf(){
-        console.log(info.folderId,'info.folderId:')
         getData.post('common/getMergePdf', {documentNumberFull : info.documentNumberFull}).then(v => {
 
             if(v?.data.code === 1 && v?.data?.entity){

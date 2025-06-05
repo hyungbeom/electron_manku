@@ -1163,7 +1163,6 @@ export const rfqReadColumns = [
         minWidth: 100,
         maxWidth: 120,
         valueFormatter: (params) => {
-            console.log(params.data,'params.value')
             return params.value
         }
         // cellEditor: 'agDateCellEditor',

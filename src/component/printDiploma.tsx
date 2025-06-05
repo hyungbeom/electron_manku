@@ -48,11 +48,11 @@ export default function PrintDiploma({ data, isModalOpen, setIsModalOpen }) {
                 {/* Header */}
                 <div style={{borderBottom: '1px solid #11AFC2', backgroundColor: '#EBF6F7', display: "flex", width: "100%", alignItems: "center",  padding: "30px 24px"}}>
                     <div style={{width:'auto', display: "flex", position:'absolute', alignItems: "center", gap: "15px"}}>
-                        <img src='/manku_ci_black_text.png' width='44px' alt='manku_logo' />
+                        <img src='/manku_ci_black_text.png' width={100} alt='manku_logo' />
                         <div style={{fontSize: "6px", width:'auto'}}>
-                            (주) 만쿠무역
+                            (주) 만쿠솔루션
                             <br/>
-                            Manku Trading Co., Ltd
+                            Manku Solution Co., Ltd
                             <br/>
                             <br/>
                             서울시 송파구 법원로 114 엠스테이트 B동 804호

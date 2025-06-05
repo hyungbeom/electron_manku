@@ -33,8 +33,8 @@ function App({Component, pageProps = {title: ''}, ...rest}: any) {
         <Script src={"https://accounts.google.com/gsi/client"} async defer/>
         <Script src="https://apis.google.com/js/api.js" async defer/>
         <Head>
-            <title>(주)만쿠무역 글로벌 무역의 가치</title>
-            <meta property="og:title" content="미래의가치를 함께하는 만쿠무역"/>
+            <title>(주)만쿠솔루션 글로벌 무역의 가치</title>
+            <meta property="og:title" content="미래의가치를 함께하는 만쿠솔루션"/>
             <meta property="og:description" content="글로벌 비지니스를 연결하며 가치를 확장합니다."/>
             <meta property="og:image" content="https://manku.progist.co.kr/homepage/preview.png"/>
             <meta property="og:url" content="https://manku.progist.co.kr/homepage"/>

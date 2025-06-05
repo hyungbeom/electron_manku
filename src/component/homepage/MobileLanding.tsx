@@ -92,7 +92,7 @@ export default function MobileLanding({isMobile, width}) {
                     >
                         <div style={{fontSize: 15}}>무역을 바탕으로</div>
                         <div style={{fontSize: 15}}>미래 사업을 창출하는 종합사업회사</div>
-                        <div style={{fontSize: 35, fontWeight: 600, paddingTop: 10}}>주식회사 만쿠무역</div>
+                        <div style={{fontSize: 35, fontWeight: 600, paddingTop: 10}}>주식회사 만쿠솔루션</div>
                         <div style={{fontSize: 12, paddingTop: 10}}>
                             글로벌 비지니스를 연결하는 가치를 확장합니다.
                         </div>
@@ -162,7 +162,7 @@ export default function MobileLanding({isMobile, width}) {
                     <div style={{fontSize: '6.3vw', fontWeight: 600}}>Discover What Drives Us</div>
                     <div style={{fontSize: '3.5vw', paddingTop: 10}}>
                         <div>우리의 원동력을 탐구하고</div>
-                        <div>만쿠무역의 비전을 확인하세요</div>
+                        <div>만쿠솔루션의 비전을 확인하세요</div>
                     </div>
                     <img style={{
                         paddingTop: 40,
@@ -181,7 +181,7 @@ export default function MobileLanding({isMobile, width}) {
                     <div style={{fontSize: '6.3vw', fontWeight: 600}}>Discover Our Expertise</div>
                     <div style={{fontSize: '3.5vw', paddingTop: 10}}>
                         <div>글로벌 무역의 전문성을 만나보세요</div>
-                        <div style={{paddingTop: 40, fontSize: '2.6vw'}}>다양한 산업에서 쌓아온 만쿠무역의 경험과 노하우를 확인해보세요</div>
+                        <div style={{paddingTop: 40, fontSize: '2.6vw'}}>다양한 산업에서 쌓아온 만쿠솔루션의 경험과 노하우를 확인해보세요</div>
                     </div>
                 </div>
 
@@ -297,7 +297,7 @@ export default function MobileLanding({isMobile, width}) {
 
                             <img src="/homepage/mobile/arrow.svg" width={'17vw'} alt=""/>
                         </div>
-                        <div style={{fontSize: 10, padding: '0px 4vw', color: 'white'}}>만쿠무역 주요 한국 대리점</div>
+                        <div style={{fontSize: 10, padding: '0px 4vw', color: 'white'}}>만쿠솔루션 주요 한국 대리점</div>
                     </div>
                     <div>
                         <img src={'homepage/mobile/content3.png'} width={'100%'} alt=""/>

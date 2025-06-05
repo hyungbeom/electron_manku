@@ -17,7 +17,7 @@ Font.register({
 
 const colWidths = [40, 210, 50, 50, 110, 110];
 
-export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠무역\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.'}) {
+export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠솔루션\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.'}) {
 
     return <Document>
         <Page size="A4" style={styles.page}>
@@ -26,27 +26,27 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                 <View style={styles.header}>
                     <View style={styles.leftInfo}>
                         <View style={styles.logoInfo}>
-                            <Image src="/manku_ci_black_text.png" style={styles.logo}/>
+                            <Image src="/kor.png" style={styles.logo}/>
                         </View>
                         <View style={styles.companyInfo}>
-                            <Text>(주) 만쿠무역</Text>
-                            <Text>Manku Trading Co., Ltd</Text>
+                            <Text>(주) 만쿠솔루션</Text>
+                            <Text>Manku Solution Co., Ltd</Text>
                             <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
                             <Text>B동 2층 211호, 212호</Text>
                             <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
                         </View>
                     </View>
                     <View style={styles.centerTitle}>
-                        <Text style={styles.title}>견    적    서</Text>
+                        <Text style={styles.title}>견&nbsp;&nbsp;&nbsp;&nbsp;적&nbsp;&nbsp;&nbsp;&nbsp;서</Text>
                     </View>
                     <View style={styles.rightInfo}>
-                        <Image src="/manku_stamp_ko.png" style={styles.info}/>
+                        {/*<Image src="/manku_stamp_ko.png" style={styles.info}/>*/}
                     </View>
                 </View>
 
                 <View style={styles.titleLine}/>
                 <Text style={styles.subtitle}>
-                    (주) 만쿠무역은 세계 각지의 공급자를 통해 의뢰하시는 부품 및 산업자재를 저렴하게 공급합니다.
+                    {/*(주) 만쿠무역은 세계 각지의 공급자를 통해 의뢰하시는 부품 및 산업자재를 저렴하게 공급합니다.*/}
                 </Text>
 
 

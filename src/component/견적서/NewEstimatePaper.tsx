@@ -70,7 +70,7 @@ function transformEstimateData(data: any) {
 
 export default function NewEstimatePaper({gridRef, openEstimateModal}) {
 
-    const [bottomInfo, setBottomInfo] = useState('▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠무역\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.');
+    const [bottomInfo, setBottomInfo] = useState('▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠솔루션\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.');
 
 
     const [title, setTitle] = useState<any>(estimateTopInfo)

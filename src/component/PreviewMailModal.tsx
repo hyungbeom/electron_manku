@@ -148,7 +148,7 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
 
             let content = ''
             if (agencyCode.startsWith('K')) {
-                content = `${agencyManagerName ? agencyManagerName : '직접입력'} 님  \n\n안녕하십니까 만쿠무역 ${managerAdminName} 입니다.\n아래 확인하시어 견적 부탁 드립니다.\n\n\n`
+                content = `${agencyManagerName ? agencyManagerName : '직접입력'} 님  \n\n안녕하십니까 만쿠솔루션 ${managerAdminName} 입니다.\n아래 확인하시어 견적 부탁 드립니다.\n\n\n`
             } else {
                 content = `Dear ${agencyManagerName ? agencyManagerName : '직접입력'}  \n\nPlease see below and let me know your quote\n\n\n`
             }
@@ -175,7 +175,6 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
         return emailRegex.test(email);
     }
 
-
     async function sendMail() {
         showModal();
     }
@@ -183,15 +182,15 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
     async function sendEmail() {
         const result = info.map((v, idx) => {
 
-            let detailList = []
+            let detailList = [];
 
-            v.detailList.map(source => {
+            v.detailList.forEach(source => {
                 {
                     source.forEach((data: any, index) => {
                         detailList.push(data.estimateRequestDetailId)
                     })
                 }
-            })
+            });
 
             const searchDom = document.getElementById(`cc_${idx}`)
 
@@ -202,15 +201,15 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
             let checked = false;
             list.forEach(v => {
                 if (isValidEmail(v.value)) {
-                    bowl.push(v.value)
+                    bowl.push(v.value);
                 } else {
-                    checked = true
-                    v.style.borderColor = 'red'
+                    checked = true;
+                    v.style.borderColor = 'red';
                 }
             })
 
             if (checked) {
-                message.error('올바른 형식의 이메일이 아닙니다.')
+                message.error('올바른 형식의 이메일이 아닙니다.');
                 return false;
             }
 
@@ -223,7 +222,7 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
                 subject: v.title,
                 ccList: bowl
             }
-        })
+        });
 
         const {name, contactNumber, position, englishName, department} = userInfo;
         const list = result.map(v => {
@@ -231,9 +230,10 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
             return {
                 ...v, content: info[0].agencyCode.startsWith('K') ? `<div><div>${v.content}</div>
 <div style="padding-top: 200px">
-    <div style="font-size: 15px; font-weight: 800;">${name} ${position}(${englishName})/${department}</div>
+  <img src='/kor.png' width="200px" alt="">
+    <div style="font-size: 15px; font-weight: 800;padding-top : 20px">${name} ${position}(${englishName})/${department}</div>
     <div style="font-weight: normal;">Mobile ${contactNumber}</div>
-    <div style="color: #56cbdb; font-weight: 500;">주식회사 만쿠무역(Manku Trading)</div>
+    <div style="color: #56cbdb; font-weight: 500;">주식회사 만쿠솔루션(Manku Solution)</div>
     <div style="font-weight: 500;">서울시 송파구 충민로 52 가든파이브 웍스 B동 211,212호</div>
     <div style="font-weight: 500;">Post Code 05839</div>
     <div style="text-decoration: underline;">Tel: +82/2-465-7838</div>
@@ -242,19 +242,18 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
 </div>
 </div>` : `<div><div>${v.content}</div>
 <div style="padding-top: 200px">
-    <div style="font-size: 15px; font-weight: 800;">${englishName}</div>
-    <div style="color: #56cbdb; font-weight: 500;">Manku Trading Co., Ltd.</div>
+    <img src='/eng.png' width="200px" alt="">
+    <div style="font-size: 15px; font-weight: 800;padding-top : 20px">${englishName}</div>
+    <div style="color: #56cbdb; font-weight: 500;">Manku Solution Co., Ltd.</div>
     <div style="font-weight: 500;">B- 211#, Garden Five Works, 52, Chungmin- ro , Songpa-gu, Seoul, South Korea</div>
     <div style="font-weight: 500;">Post Code 05839</div>
     <div style="text-decoration: underline;">Tel: +82/2-465-7838</div>
- <div style="text-decoration: underline;">HP: +82/${contactNumber}</div>
+    <div style="text-decoration: underline;">HP: +82/${contactNumber}</div>
     <div style="text-decoration: underline;">Fax: +82/2-465-7839</div>
     <a href="https://www.manku.co.kr" style="text-decoration: none; color: inherit;">www.manku.co.kr</a>
 </div>
 </div>`
-            }
-
-        })
+            }})
 
         await getData.post('estimate/sendMailEstimateRequests', {mailList: list}).then(v => {
             if (v.data.code === 1) {
@@ -413,14 +412,12 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
                                                 cursor: 'pointer',
                                                 color: 'blue'
                                             }}
-                                                 onClick={e => preview(e, value)}
-                                            >
+                                                 onClick={e => preview(e, value)}>
                                                 {value.fileName}
                                             </div>
                                         </div>
                                     </>
-                                })
-                                }
+                                })}
                             </Card>
                             <div style={{borderBottom: '1px solid lightGray', marginBottom: 50, paddingTop: 20}}/>
                         </div>

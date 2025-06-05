@@ -340,7 +340,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
                                 <thead>
                                 <tr>
                                     <th style={headerStyle}>상호</th>
-                                    <th style={cellStyle}>주식회사 만쿠무역</th>
+                                    <th style={cellStyle}>주식회사 만쿠솔루션</th>
                                     <th style={headerStyle}>대표자</th>
                                     <th style={cellStyle}>김민국 <img src={'/manku_stamp_only.png'} width={30} alt=""
                                                                    style={{marginLeft: -10}}/></th>
@@ -716,7 +716,7 @@ function TransactionStatementHeader({isModalOpen, setIsModalOpen, info, pdfRef, 
                                 <thead>
                                 <tr>
                                     <th style={headerStyle}>상호</th>
-                                    <th style={cellStyle}>주식회사 만쿠무역</th>
+                                    <th style={cellStyle}>주식회사 만쿠솔루션</th>
                                     <th style={headerStyle}>대표자</th>
                                     <th style={cellStyle}>김민국 <img src={'/manku_stamp_only.png'} width={30} alt=""
                                                                    style={{marginLeft: -10}}/></th>

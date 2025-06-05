@@ -79,7 +79,7 @@ export default function Header() {
                             cursor: 'pointer'
                         }} onClick={() => router.push('/homepage')}>
                         <img src={"/homepage/logo_1.png"}/>
-                        Manku Trading
+                        Manku Solution
                     </div>
 
                     <div style={{
