@@ -44,7 +44,7 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='�
                         <Text style={styles.title}>견    적    서</Text>
                     </View>
                     <View style={styles.rightInfo}>
-                        <Image src="/manku_stamp_ko.png" style={styles.info}/>
+                        {/*<Image src="/manku_stamp_ko.png" style={styles.info}/>*/}
                     </View>
                 </View>
 

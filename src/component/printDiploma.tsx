@@ -64,7 +64,7 @@ export default function PrintDiploma({ data, isModalOpen, setIsModalOpen }) {
                         {data.documentTitle}
                     </div>
                     <div style={{width: "120px", height: "60px", position:'absolute', right:50,}}>
-                        <img src='/manku_stamp_ko.png' width={120} alt='stamp'/>
+                        {/*<img src='/manku_stamp_ko.png' width={120} alt='stamp'/>*/}
                     </div>
                 </div>
 

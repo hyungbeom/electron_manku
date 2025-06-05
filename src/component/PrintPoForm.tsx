@@ -85,7 +85,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                 <Text style={styles.title2}>ORDER</Text>
                             </View>
                             <View style={styles.rightInfo}>
-                                <Image src="/manku_stamp_en.png" style={styles.info}/>
+                                {/*<Image src="/manku_stamp_en.png" style={styles.info}/>*/}
                             </View>
                         </View>
                 }
@@ -327,7 +327,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                     <Text style={styles.title}>발 주 서</Text>
                                 </View>
                                 <View style={styles.rightInfo}>
-                                    <Image src="/manku_stamp_ko.png" style={styles.info}/>
+                                    {/*<Image src="/manku_stamp_ko.png" style={styles.info}/>*/}
                                 </View>
                             </View>
                             :
@@ -349,7 +349,7 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                                     <Text style={styles.title2}>ORDER</Text>
                                 </View>
                                 <View style={styles.rightInfo}>
-                                    <Image src="/manku_stamp_en.png" style={styles.info}/>
+                                    {/*<Image src="/manku_stamp_en.png" style={styles.info}/>*/}
                                 </View>
                             </View>
                     }
