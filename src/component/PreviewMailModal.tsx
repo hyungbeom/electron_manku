@@ -230,7 +230,7 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
             return {
                 ...v, content: info[0].agencyCode.startsWith('K') ? `<div><div>${v.content}</div>
 <div style="padding-top: 200px">
-  <img src='/kor.png' width="200px" alt="">
+  <img src='https://manku.progist.co.kr/kor.png' width="200px" alt="">
     <div style="font-size: 15px; font-weight: 800;padding-top : 20px">${name} ${position}(${englishName})/${department}</div>
     <div style="font-weight: normal;">Mobile ${contactNumber}</div>
     <div style="color: #56cbdb; font-weight: 500;">주식회사 만쿠솔루션(Manku Solution)</div>
@@ -242,7 +242,7 @@ function PreviewMailModal({data, isModalOpen, setIsModalOpen, fileList}) {
 </div>
 </div>` : `<div><div>${v.content}</div>
 <div style="padding-top: 200px">
-    <img src='/eng.png' width="200px" alt="">
+    <img src='https://manku.progist.co.kr/eng.png' width="200px" alt="">
     <div style="font-size: 15px; font-weight: 800;padding-top : 20px">${englishName}</div>
     <div style="color: #56cbdb; font-weight: 500;">Manku Solution Co., Ltd.</div>
     <div style="font-weight: 500;">B- 211#, Garden Five Works, 52, Chungmin- ro , Songpa-gu, Seoul, South Korea</div>
