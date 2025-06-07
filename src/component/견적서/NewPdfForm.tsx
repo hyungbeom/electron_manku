@@ -11,17 +11,21 @@ Font.register({
 });
 
 
-
 Font.register({
     family: 'NotoSansKR_large',
     src: '/NotoSansKR-Bold.ttf',
 });
 
 
-
 const colWidths = [40, 210, 50, 50, 110, 110];
 
-export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠솔루션\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.'}) {
+export function NewPdfForm({
+                               data,
+                               topInfoData,
+                               totalData,
+                               type = '',
+                               bottomInfo = '▶의뢰하신 Model로 기준한 견적입니다.\n▶계좌번호 :  (기업은행)069-118428-04-010/만쿠솔루션\n▶긴급 납기시 담당자와 협의가능합니다.\n▶견적서에 기재되지 않은 서류 및 성적서는 미 포함 입니다.'
+                           }) {
 
     return <Document>
         <Page size="A4" style={styles.page}>
@@ -29,29 +33,36 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='�
                 {/* 상단 헤더 */}
                 <View style={styles.header}>
                     <View style={styles.leftInfo}>
-                        <View style={styles.logoInfo}>
-                            <Image src="/kor.png" style={styles.logo}/>
-                        </View>
-                        <View style={styles.companyInfo}>
-                            <Text>(주) 만쿠솔루션</Text>
-                            <Text>Manku Solution Co., Ltd</Text>
-                            <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
-                            <Text>B동 2층 211호, 212호</Text>
-                            <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
-                        </View>
+                        <Image src="/kor.png" style={styles.logo}/>
                     </View>
                     <View style={styles.centerTitle}>
-                        <Text style={styles.title}>견    적    서</Text>
+                        <Text style={styles.title}>견&nbsp;&nbsp;&nbsp;&nbsp;적&nbsp;&nbsp;&nbsp;&nbsp;서</Text>
                     </View>
-                    <View style={styles.rightInfo}>
-                        {/*<Image src="/manku_stamp_ko.png" style={styles.info}/>*/}
+                    {/*<View style={styles.rightInfo}>*/}
+                    <View style={styles.companyInfo}>
+                        <View style={{   justifyContent: 'flex-start', width : 140}}>
+                        <Text>(주) 만쿠솔루션</Text>
+                        <Text>Manku Solution Co., Ltd</Text>
+                        <Text>서울시 송파구 충민로 52</Text>
+                        <Text>가든파이브웍스 B동 2층 211호, 212호</Text>
+                        <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
+                        </View>
+                        <Image
+                            src="/stamp.png"
+                            style={{
+                                position: 'absolute',
+                                top: -17,
+                                right: 0,
+                                width: 55,
+                            }}
+                        />
+
                     </View>
+
+                    {/*</View>*/}
                 </View>
 
                 <View style={styles.titleLine}/>
-                <Text style={styles.subtitle}>
-                    (주) 만쿠솔루션은 세계 각지의 공급자를 통해 의뢰하시는 부품 및 산업자재를 저렴하게 공급합니다.
-                </Text>
 
 
                 {/* 상단 정보 */}
@@ -147,12 +158,13 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='�
                                         ...styles.cell,
                                         width: colWidths[0] + colWidths[1],
                                     }}>
-                                        <Text style={{textAlign: 'left', paddingLeft : 5}}>{documentNumberFull}</Text>
+                                        <Text style={{textAlign: 'left', paddingLeft: 5}}>{documentNumberFull}</Text>
                                     </View>
                                     <View key={i} style={{...styles.cell, width: colWidths[2]}}></View>
                                     <View key={i} style={{...styles.cell, width: colWidths[3]}}></View>
                                     <View key={i} style={{...styles.cell, width: colWidths[4]}}></View>
-                                    <View key={i} style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}></View>
+                                    <View key={i}
+                                          style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}></View>
                                 </>
                                 :
                                 <>
@@ -160,7 +172,8 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='�
                                         ...styles.cell,
                                         width: colWidths[0],
                                     }}>
-                                        <Text style={{textAlign: 'center'}}>{type==='total'? modelIndex :  i + 1}</Text>
+                                        <Text
+                                            style={{textAlign: 'center'}}>{type === 'total' ? modelIndex : i + 1}</Text>
                                     </View>
                                     <View key={i} style={{
                                         ...styles.cell,
@@ -173,7 +186,11 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='�
                                             <View key={i} style={{...styles.cell, width: colWidths[2]}}></View>
                                             <View key={i} style={{...styles.cell, width: colWidths[3]}}></View>
                                             <View key={i} style={{...styles.cell, width: colWidths[4]}}></View>
-                                            <View key={i} style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}></View>
+                                            <View key={i} style={{
+                                                ...styles.cell,
+                                                width: colWidths[5],
+                                                borderRightWidth: 0
+                                            }}></View>
                                         </>
                                         :
                                         <>
@@ -333,12 +350,14 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='�
                                             ...styles.cell,
                                             width: colWidths[0] + colWidths[1],
                                         }}>
-                                            <Text style={{textAlign: 'left', paddingLeft : 5}}>{documentNumberFull}</Text>
+                                            <Text
+                                                style={{textAlign: 'left', paddingLeft: 5}}>{documentNumberFull}</Text>
                                         </View>
                                         <View key={i} style={{...styles.cell, width: colWidths[2]}}></View>
                                         <View key={i} style={{...styles.cell, width: colWidths[3]}}></View>
                                         <View key={i} style={{...styles.cell, width: colWidths[4]}}></View>
-                                        <View key={i} style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}></View>
+                                        <View key={i}
+                                              style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}></View>
                                     </>
                                     :
                                     <>
@@ -346,7 +365,8 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='�
                                             ...styles.cell,
                                             width: colWidths[0],
                                         }}>
-                                            <Text style={{textAlign: 'center'}}>{type==='total'? modelIndex :  count + i + 1}</Text>
+                                            <Text
+                                                style={{textAlign: 'center'}}>{type === 'total' ? modelIndex : count + i + 1}</Text>
                                         </View>
                                         <View key={i} style={{
                                             ...styles.cell,
@@ -359,7 +379,11 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='�
                                                 <View key={i} style={{...styles.cell, width: colWidths[2]}}></View>
                                                 <View key={i} style={{...styles.cell, width: colWidths[3]}}></View>
                                                 <View key={i} style={{...styles.cell, width: colWidths[4]}}></View>
-                                                <View key={i} style={{...styles.cell, width: colWidths[5], borderRightWidth: 0}}></View>
+                                                <View key={i} style={{
+                                                    ...styles.cell,
+                                                    width: colWidths[5],
+                                                    borderRightWidth: 0
+                                                }}></View>
                                             </>
                                             :
                                             <>
@@ -367,7 +391,8 @@ export function NewPdfForm({data, topInfoData, totalData, type='',bottomInfo='�
                                                     ...styles.cell,
                                                     width: colWidths[2],
                                                 }}>
-                                                    <Text style={{textAlign: 'right', paddingRight: 5}}>{quantity}</Text>
+                                                    <Text
+                                                        style={{textAlign: 'right', paddingRight: 5}}>{quantity}</Text>
                                                 </View>
                                                 <View key={i} style={{
                                                     ...styles.cell,

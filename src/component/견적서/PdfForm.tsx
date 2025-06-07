@@ -25,22 +25,29 @@ export function PdfForm({data, topInfoData, totalData, type='',bottomInfo='▶�
                 {/* 상단 헤더 */}
                 <View style={styles.header}>
                     <View style={styles.leftInfo}>
-                        <View style={styles.logoInfo}>
-                            <Image src="/kor.png" style={styles.logo}/>
-                        </View>
-                        <View style={styles.companyInfo}>
-                            <Text>(주) 만쿠솔루션</Text>
-                            <Text>Manku Solution Co., Ltd</Text>
-                            <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
-                            <Text>B동 2층 211호, 212호</Text>
-                            <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
-                        </View>
+                        <Image src="/kor.png" style={styles.logo}/>
                     </View>
                     <View style={styles.centerTitle}>
                         <Text style={styles.title}>견&nbsp;&nbsp;&nbsp;&nbsp;적&nbsp;&nbsp;&nbsp;&nbsp;서</Text>
                     </View>
-                    <View style={styles.rightInfo}>
-                        {/*<Image src="/manku_stamp_ko.png" style={styles.info}/>*/}
+                    <View style={styles.companyInfo}>
+                        <View style={{   justifyContent: 'flex-start', width : 140}}>
+                            <Text>(주) 만쿠솔루션</Text>
+                            <Text>Manku Solution Co., Ltd</Text>
+                            <Text>서울시 송파구 충민로 52</Text>
+                            <Text>가든파이브웍스 B동 2층 211호, 212호</Text>
+                            <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
+                        </View>
+                        <Image
+                            src="/stamp.png"
+                            style={{
+                                position: 'absolute',
+                                top: -17,
+                                right: 0,
+                                width: 55,
+                            }}
+                        />
+
                     </View>
                 </View>
 

@@ -48,45 +48,58 @@ export function PrintPoForm({data, topInfoData, totalData, bottomInfo, title, la
                     lang === 'ko' ?
                         <View style={styles.header}>
                             <View style={styles.leftInfo}>
-                                <View style={styles.logoInfo}>
-                                    <Image src="/kor.png" style={styles.logo}/>
-                                </View>
-                                <View style={styles.companyInfo}>
-                                    <Text>(주) 만쿠솔루션</Text>
-                                    <Text>Manku Solution Co., Ltd</Text>
-                                    <Text>서울시 송파구 충민로 52 가든파이브웍스</Text>
-                                    <Text>B동 2층 211호, 212호</Text>
-                                    <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
-                                </View>
+                                <Image src="/kor.png" style={styles.logo}/>
                             </View>
                             <View style={styles.centerTitle}>
-                                <Text style={styles.title}>발 주 서</Text>
+                                <Text style={styles.title}>발&nbsp;&nbsp;&nbsp;&nbsp;주&nbsp;&nbsp;&nbsp;&nbsp;서</Text>
                             </View>
-                            <View style={styles.rightInfo}>
-                                {/*<Image src="/eng.png" style={styles.info}/>*/}
+                            <View style={styles.companyInfo}>
+                                <View style={{   justifyContent: 'flex-start', width : 140}}>
+                                    <Text>(주) 만쿠솔루션</Text>
+                                    <Text>Manku Solution Co., Ltd</Text>
+                                    <Text>서울시 송파구 충민로 52</Text>
+                                    <Text>가든파이브웍스 B동 2층 211호, 212호</Text>
+                                    <Text>Tel : 02-465-7838, Fax : 02-465-7839</Text>
+                                </View>
+                                <Image
+                                    src="/stamp.png"
+                                    style={{
+                                        position: 'absolute',
+                                        top: -17,
+                                        right: 0,
+                                        width: 55,
+                                    }}
+                                />
                             </View>
                         </View>
                         :
                         <View style={styles.header}>
-                            <View style={styles.leftInfo}>
-                                <View style={styles.logoInfo}>
-                                    <Image src="/eng.png" style={styles.logo}/>
-                                </View>
-                                <View style={styles.companyInfo}>
-                                    <Text>Manku Solution Co.,Ltd</Text>
-                                    <Text>B- 211#, Garden Five Works, 52,</Text>
-                                    <Text>Chungmin-ro,</Text>
-                                    <Text>Songpa-gu, Seoul, South Korea</Text>
-                                    <Text>Postal Code 05839</Text>
-                                </View>
+                            <View style={{...styles.leftInfo, paddingBottom : 5, marginLeft : -10}}>
+                                <Image src="/eng.png" style={{width : '90%'}}/>
                             </View>
                             <View style={styles.centerTitle2}>
                                 <Text style={styles.title2}>PURCHASE</Text>
                                 <Text style={styles.title2}>ORDER</Text>
                             </View>
-                            <View style={styles.rightInfo}>
-                                {/*<Image src="/manku_stamp_en.png" style={styles.info}/>*/}
-                            </View>
+
+                                <View style={styles.companyInfo}>
+                                    <View style={{   justifyContent: 'flex-start', width : 145}}>
+                                    <Text>Manku Solution Co.,Ltd</Text>
+                                    <Text>B- 211#, Garden Five Works,</Text>
+                                    <Text>52, Chungmin-ro,</Text>
+                                    <Text>Songpa-gu, Seoul, South Korea</Text>
+                                    <Text>Postal Code 05839</Text>
+                                    </View>
+                                    <Image
+                                        src="/stamp.png"
+                                        style={{
+                                            position: 'absolute',
+                                            top: -17,
+                                            right: -6,
+                                            width: 55,
+                                        }}
+                                    />
+                                </View>
                         </View>
                 }
 
