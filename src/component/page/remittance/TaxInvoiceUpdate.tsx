@@ -412,7 +412,11 @@ export default function TaxInvoiceUpdate({ updateKey, layoutRef, getCopyPage }: 
 
     function copyRows(){
         const list = gridRef.current.getSelectedRows();
-        const text = jsonToClipboardTable(list);
+
+       const result = list.map(v=>{
+            return {rfqNo : v.rfqNo, model: v.model, unit  : v.unit, currency : v.currency, quantity : v.quantity ,unitPrice : v.unitPrice, totalUnitPrice : parseFloat(v.quantity) * parseFloat(v.unitPrice)}
+        })
+        const text = jsonToClipboardTable(result);
         navigator.clipboard.writeText(text).then(() => {
             alert("엑셀 붙여넣기용 데이터가 복사되었습니다!");
         });
