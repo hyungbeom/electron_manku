@@ -69,7 +69,8 @@ export function PoHeader({info, type}) {
                 fontWeight: 700,
                 paddingBottom: 20,
                 textAlign: 'center'
-            }}>발&nbsp;&nbsp;&nbsp;&nbsp;주&nbsp;&nbsp;&nbsp;&nbsp;서</div> : <div style={{
+            }}>발&nbsp;&nbsp;&nbsp;&nbsp;주&nbsp;&nbsp;&nbsp;&nbsp;서</div> :
+                <div style={{
                 fontSize: 38,
                 fontWeight: 700,
                 paddingBottom: 0,
