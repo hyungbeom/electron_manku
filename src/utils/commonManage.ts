@@ -637,6 +637,7 @@ commonManage.changeCurr = function (value) {
         case "AUD":
             return 'USD'
         case "GAW":
+        case "IIA":
         case "GMT":
         case "GHY":
             return 'EUR'

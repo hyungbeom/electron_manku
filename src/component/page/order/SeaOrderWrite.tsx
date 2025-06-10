@@ -78,13 +78,24 @@ function SeaOrderWrite({copyPageInfo, getPropertyId, layoutRef}: any) {
     const userInfo = useAppSelector((state) => state.user.userInfo);
 
     const adminParams = {
+
+
+        // managerId: member?.englishName,
+        // managerAdminId: member?.adminId,
+        managerId : 'Charlie MK KIM',
+        managerPhoneNumber: '+82 10 8874 7888',
+        managerFaxNumber: '02-465-7839',
+        managerEmail: 'sales@manku.co.kr',
+
+
+
         managerAdminId: userInfo['adminId'],
         managerAdminName: userInfo['name'],
         createdBy: userInfo['name'],
-        managerId: userInfo['englishName'],
-        managerPhoneNumber: userInfo['contactNumber'],
-        managerFaxNumber: userInfo['faxNumber'],
-        managerEmail: userInfo['email'],
+        // managerId: userInfo['englishName'],
+        // managerPhoneNumber: userInfo['contactNumber'],
+        // managerFaxNumber: userInfo['faxNumber'],
+        // managerEmail: userInfo['email'],
         estimateManager: userInfo['name'],
         paymentTerms: 'T/T',
         createdId: 0,

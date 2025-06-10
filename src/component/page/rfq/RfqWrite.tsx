@@ -232,6 +232,7 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         setLoading(false);
     }
 
+
     return <Spin spinning={loading}>
         <PanelSizeUtil groupRef={groupRef} storage={'rfq_write'}/>
         <SearchAgencyModal_test info={info} setInfo={setInfo}
