@@ -133,7 +133,16 @@ function SourceUpdate({updateKey, getCopyPage, getPropertyId, layoutRef}: any) {
         ]
         copyInfo['estimateDetailList'] = [...totalList, ...commonFunc.repeatObject(estimateInfo['write']['defaultData'], 1000 - totalList.length)];
 
-        getCopyPage('estimate_write', {...copyInfo, _meta: {updateKey: Date.now()}});
+
+        getData.post('common/getSTONumber').then(v=>{
+        const newStoNumber = v.data.entity;
+            copyInfo['info']['documentNumberFull'] = newStoNumber
+            getCopyPage('estimate_write', {...copyInfo, _meta: {updateKey: Date.now()}});
+        },err=>{
+
+        })
+
+        // getCopyPage('estimate_write', {...copyInfo, _meta: {updateKey: Date.now()}});
     }
 
     /**
