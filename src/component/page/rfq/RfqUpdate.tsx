@@ -42,8 +42,8 @@ function RqfUpdate({
                        layoutRef
                    }: any) {
     const notificationAlert = useNotificationAlert();
-    const groupRef = useRef<any>(null)
-    const infoRef = useRef<any>(null)
+    const groupRef = useRef<any>(null);
+    const infoRef = useRef<any>(null);
     const tableRef = useRef(null);
     const fileRef = useRef(null);
     const uploadRef = useRef(null);
@@ -196,7 +196,6 @@ function RqfUpdate({
      * 견적의뢰 > 견적의뢰 수정
      */
     async function saveFunc() {
-        console.log(info, 'info:::')
 
         // 유효성 체크 추가
         if (!commonManage.checkValidate(info, rfqInfo['write']['validationList'], setValidate)) return;
@@ -316,7 +315,7 @@ function RqfUpdate({
      */
     function copyPage() {
         const copyInfo = _.cloneDeep(info);
-        copyInfo['documentNumberFull'] = '';
+        // copyInfo['documentNumberFull'] = '';
         copyInfo['uploadType'] = 0;
         copyInfo['folderId'] = '';
         const totalList = tableRef.current.getSourceData();
@@ -365,7 +364,6 @@ function RqfUpdate({
         <PanelSizeUtil groupRef={groupRef} storage={'rfq_update'}/>
         <SearchInfoModal infoRef={infoRef} setInfo={setInfo}
                          open={isModalOpen}
-
                          setIsModalOpen={setIsModalOpen}/>
         <>
             <div ref={infoRef} style={{

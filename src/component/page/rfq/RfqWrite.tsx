@@ -91,16 +91,129 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
         } else {
             // copyPageInfo 가 있을시(==>보통 수정페이지에서 복제시)
             // 복제시 info 정보를 복제해오지만 작성자 && 담당자 && 작성일자는 로그인 유저 현재시점으로 setting
+
+
+
             setInfo({
                 ...getRfqInit(),
                 ...copyPageInfo,
+                documentNumberFull : '',
                 writtenDate: moment().format('YYYY-MM-DD')
             });
             setTableData(copyPageInfo[listType]);
+
+            getData.post('common/getDownloadFiles', {
+                documentNumberFull: copyPageInfo['documentNumberFull'],
+                filePath : `/root:/01.견적업무/${copyPageInfo['documentNumberFull']}:/children`
+            }).then((v:any) => {
+                console.log(v,'????')
+                if(v.data.code === 1){
+                    downloadFilesSequential(v.data.entity)
+                        .then(src => {
+                            // src는 File 객체 배열
+                            console.log('다운로드된 File 객체 배열(src):', src);
+                            src.forEach((file, idx) => {
+                                console.log(`src[${idx}] - name:`, file.name,
+                                    ' size:', file.size,
+                                    ' type:', file.type,
+                                    ' instanceof File?:', file instanceof File);
+                            });
+
+                            const uploadItems = src.map(file => {
+                                const item = fileToUploadFile(file);
+                                console.log('변환된 UploadFile 객체:', item);
+                                return item;
+                            });
+                            console.log('최종 uploadItems 배열:', uploadItems);
+                            setFileList(uploadItems);
+                        })
+                        .catch(err => {
+                            console.error('downloadFilesSequential 중 에러:', err);
+                        });
+                }
+            })
+
         }
         setLoading(false);
     }, [copyPageInfo?._meta?.updateKey]);
 
+
+
+    async function downloadFilesSequential(fileList, {  onProgress = null, retryOptions = { retries: 0, delayMs: 1000 } } = {}) {
+        const files = [];
+        for (const info of fileList) {
+            let attempts = 0;
+            const maxRetries = retryOptions.retries;
+            const retryDelay = retryOptions.delayMs;
+
+            while (true) {
+                try {
+                    // downloadEndpoint가 상대경로라면, getData 인스턴스에 baseURL이 설정돼 있어야 하거나 절대 경로로 바꿔야 합니다.
+                    const resp = await getData.get(info.downloadEndpoint, {
+                        responseType: 'blob',
+                        // Axios의 onDownloadProgress를 사용해 진행률을 추적할 수 있습니다.
+                        onDownloadProgress: progressEvent => {
+                            if (onProgress) {
+                                // progressEvent.loaded, progressEvent.total가 있을 수 있음(일부 브라우저/서버 설정에 따라 total이 undefined일 수 있음)
+                                const percent = progressEvent.total
+                                    ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                                    : null;
+                                onProgress({ fileId: info.fileId, fileName: info.fileName, loaded: progressEvent.loaded, total: progressEvent.total, percent, attempt: attempts + 1 });
+                            }
+                        },
+                        // 인증 쿠키나 헤더가 필요하면 getData 인스턴스에 설정되어 있어야 합니다.
+                    });
+                    const blob = resp.data;
+                    const file = new File([blob], info.fileName, { type: blob.type });
+                    files.push(file);
+                    break; // 성공하면 while 루프 탈출
+                } catch (err) {
+                    attempts++;
+                    console.error(`파일 다운로드 실패: ${info.fileName}, 시도 ${attempts}/${maxRetries + 1}`, err);
+                    if (attempts > maxRetries) {
+                        // 재시도 옵션을 모두 소진했으면 건너뛰고 다음 파일로
+                        console.warn(`파일 ${info.fileName} 다운로드를 건너뜁니다.`);
+                        break;
+                    } else {
+                        // 재시도 전 대기
+                        await new Promise(res => setTimeout(res, retryDelay));
+                    }
+                }
+            }
+        }
+        return files; // 성공적으로 다운로드한 File 객체 배열
+    }
+
+
+    function fileToUploadFile(file) {
+        // uid: 고유하게 생성. timestamp + random 등으로.
+        const uid = `rc-upload-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+        const name = file.name;
+        const status = 'done'; // 이미 다운로드 완료된 파일이므로 'done'
+        const originFileObj = file;
+        // 이미지 미리보기용 Object URL
+        let url;
+        if (file.type.startsWith('image/')) {
+            url = URL.createObjectURL(file);
+        }
+        // lastModified, lastModifiedDate, size, type 등 추가 정보도 담을 수 있음
+        const lastModified = file.lastModified;
+        const lastModifiedDate = new Date(file.lastModified);
+
+        return {
+            uid,
+            name,
+            status,
+            originFileObj,
+            url,
+            thumbUrl: url,
+            size: file.size,
+            type: file.type,
+            lastModified,
+            lastModifiedDate,
+            // percent 필드는 업로드 진행 상황 표시가 필요하면 동적으로 추가 가능
+        };
+    }
 
     async function handleKeyPress(e) {
         if (e.key === 'Enter') {
