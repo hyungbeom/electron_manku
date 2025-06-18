@@ -106,11 +106,10 @@ function RqfWrite({copyPageInfo = {}, getPropertyId, layoutRef}: any) {
                 documentNumberFull: copyPageInfo['documentNumberFull'],
                 filePath : `/root:/01.견적업무/${copyPageInfo['documentNumberFull']}:/children`
             }).then((v:any) => {
-                console.log(v,'????')
+
                 if(v.data.code === 1){
                     downloadFilesSequential(v.data.entity)
                         .then(src => {
-                            // src는 File 객체 배열
                             console.log('다운로드된 File 객체 배열(src):', src);
                             src.forEach((file, idx) => {
                                 console.log(`src[${idx}] - name:`, file.name,
