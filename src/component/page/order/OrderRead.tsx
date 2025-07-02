@@ -378,12 +378,14 @@ function OrderRead({getPropertyId, getCopyPage}: any) {
                             </Popconfirm>
                         </>
                     }
+                    customType={'order'}
                     totalRow={totalRow}
                     getPropertyId={getPropertyId}
                     gridRef={gridRef}
                     onGridReady={onGridReady}
                     columns={tableOrderReadColumns}
-                    funcButtons={['agPrint']}/>
+                    funcButtons={['agPrint']}
+                />
 
             </div>
         </>

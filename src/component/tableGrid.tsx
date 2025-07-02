@@ -112,6 +112,9 @@ const TableGrid = ({
 
 
     const handleDoubleClicked = (e) => {
+        console.log(type,'::type::')
+        console.log(customType,'::customType::')
+        console.log(e.data,'::data::')
         if (type === 'read') {
 
             if (customType === 'Remittance' ) {
@@ -127,8 +130,8 @@ const TableGrid = ({
             if (e.data.estimateId) { // 견적서 수정
                 getPropertyId('estimate_update', e.data.estimateId)
             }
-            if (e.data.orderId) { // 발주서 수정
-                getPropertyId('order_update', e.data.orderId)
+            if (customType === 'order') { // 발주서 수정
+               return getPropertyId('order_update', e.data.orderId)
             }
             if (e.data.orderStatusId) { // 입고 수정
                 getPropertyId('store_update', e.data.orderStatusId)

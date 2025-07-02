@@ -25,20 +25,20 @@ export default function myaccount() {
         commonManage.onChange(e, setInfo)
     }
 
-    function saveFunc(){
+    function saveFunc() {
         setLoading(true)
-        getData.post('admin/updateAdmin',info).then(v=>{
+        getData.post('admin/updateAdmin', info).then(v => {
             notificationAlert('success', '💾개인정보 수정완료',
                 <>
                     <div>개인정보 수정이 완료되었습니다.</div>
                     <div>Log : {moment().format('YYYY-MM-DD HH:mm:ss')}</div>
                 </>
-                ,null,
+                , null,
                 {}
             )
             setLoading(false)
 
-        }, err=>{
+        }, err => {
             setLoading(false)
         })
 
@@ -46,95 +46,98 @@ export default function myaccount() {
 
     return <>
         <Spin spinning={loading}>
-        <div style={{maxWidth: 500, margin: '0px auto'}}>
-            <div style={{fontSize: 30, fontWeight: 500, textAlign: 'center', padding: '50px 0px 30px 0px'}}>개인정보 수정
+            <div style={{maxWidth: 500, margin: '0px auto'}}>
+                <div style={{fontSize: 30, fontWeight: 500, textAlign: 'center', padding: '50px 0px 30px 0px'}}>개인정보 수정
+                </div>
+
+
+                {inputAntdForm({
+                    title: 'ID',
+                    id: 'adminName',
+                    disabled: true,
+                    onChange: onChange,
+                    data: info,
+                    placeHolder: '아이디를 입력해 주세요',
+                    size: 'large'
+                })}
+
+                {inputAntdForm({
+                    title: 'NAME',
+                    id: 'name',
+                    onChange: onChange,
+                    data: info,
+                    placeHolder: '이름를 입력해 주세요',
+                    size: 'middle'
+                })}
+
+                {inputAntdForm({
+                    title: 'NAME(english)',
+                    id: 'englishName',
+                    onChange: onChange,
+                    data: info,
+                    placeHolder: '이름를 입력해 주세요',
+                    size: 'middle'
+                })}
+
+                {inputAntdForm({
+                    title: 'DEPARTMENT',
+                    id: 'department',
+                    onChange: onChange,
+                    data: info,
+                    placeHolder: '부서를를 입력해 주세요',
+                    size: 'middle'
+                })}
+
+                {inputAntdForm({
+                    title: 'POSITION',
+                    id: 'position',
+                    onChange: onChange,
+                    data: info,
+                    placeHolder: '잭책를 입력해 주세요',
+                    size: 'middle'
+                })}
+
+
+                {inputAntdForm({
+                    title: 'EMAIL',
+                    id: 'email',
+                    onChange: onChange,
+                    data: info,
+                    placeHolder: '이메일을 입력해 주세요',
+                    size: 'middle'
+                })}
+
+
+                {inputAntdForm({
+                    title: 'CONTACT NUMBER',
+                    id: 'contactNumber',
+                    onChange: onChange,
+                    data: info,
+                    placeHolder: '연락처 입력해 주세요',
+                    size: 'middle'
+                })}
+
+                {inputAntdForm({
+                    title: 'FAX',
+                    id: 'faxNumber',
+                    onChange: onChange,
+                    data: info,
+                    placeHolder: '팩스번호를 입력해 주세요',
+                    size: 'middle'
+                })}
+
+
+                <Button onClick={saveFunc} type={'primary'} size={'large'} style={{
+                    margin: '30px auto',
+                    width: '100%',
+                    height: 40,
+                    borderRadius: 5,
+                    fontSize: 16,
+                    fontWeight: 500
+                }}>
+                    수 정
+                </Button>
             </div>
-
-
-            {inputAntdForm({
-                title: 'ID',
-                id: 'adminName',
-                disabled : true,
-                onChange: onChange,
-                data: info,
-                placeHolder: '아이디를 입력해 주세요',
-                size: 'large'
-            })}
-
-            {inputAntdForm({
-                title: 'NAME',
-                id: 'name',
-                onChange: onChange,
-                data: info,
-                placeHolder: '이름를 입력해 주세요',
-                size: 'middle'
-            })}
-            {inputAntdForm({
-                title: 'NAME(english)',
-                id: 'englishName',
-                onChange: onChange,
-                data: info,
-                placeHolder: '이름를 입력해 주세요',
-                size: 'middle'
-            })}
-            {inputAntdForm({
-                title: 'DEPARTMENT',
-                id: 'department',
-                onChange: onChange,
-                data: info,
-                placeHolder: '부서를를 입력해 주세요',
-                size: 'middle'
-            })}
-     {inputAntdForm({
-                title: 'POSITION',
-                id: 'position',
-                onChange: onChange,
-                data: info,
-                placeHolder: '잭책를 입력해 주세요',
-                size: 'middle'
-            })}
-
-
-            {inputAntdForm({
-                title: 'EMAIL',
-                id: 'email',
-                onChange: onChange,
-                data: info,
-                placeHolder: '이메일을 입력해 주세요',
-                size: 'middle'
-            })}
-
-
-            {inputAntdForm({
-                title: 'CONTACT NUMBER',
-                id: 'contactNumber',
-                onChange: onChange,
-                data: info,
-                placeHolder: '연락처 입력해 주세요',
-                size: 'middle'
-            })}
-
-            {inputAntdForm({
-                title: 'FAX',
-                id: 'faxNumber',
-                onChange: onChange,
-                data: info,
-                placeHolder: '팩스번호를 입력해 주세요',
-                size: 'middle'
-            })}
-
-
-            <Button onClick={saveFunc} type={'primary'} size={'large'} style={{
-                margin: '30px auto',
-                width: '100%',
-                height: 40,
-                borderRadius: 5,
-                fontSize: 16,
-                fontWeight: 500
-            }}>
-                수 정
-            </Button>
-        </div>
         </Spin>
     </>
 }
@@ -151,7 +154,7 @@ export const getServerSideProps: any = wrapper.getStaticProps((store: any) => as
 
     // userInfo 추출
     const userInfo = state.user.userInfo;
-    if(!userInfo?.accessToken){
+    if (!userInfo?.accessToken) {
         return {
             redirect: {
                 destination: '/',
